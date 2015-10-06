@@ -11,12 +11,13 @@ enyo.kind({
     	access_type : "offline",
     	grant_type: "authorization_code",
     	access_token:"",
-    	refresh_token: ""
+    	refresh_token: "",
+    	query_history: "queryinicial_12",
 	},
+	fit:true,
+	classes: "enyo-fit",
 	components: [
-		{kind: "Viewer", classes: "enyo-fit", searchQuery:"webos 3.05 review", onSearch: "search", onSelect: "select", components: [
-			{kind: "YouTube",name:"youTube", classes: "enyo-fit", showing: false},
-			{kind: "onyx.Toolbar", components: [
+		{kind: "onyx.Toolbar",fit:true, classes: "enyo-fit", components: [
 				{kind: "onyx.Grabber"},
 				{kind: "onyx.Button", content: "Login", ontap:"youtubeLogin", name:"loginButton"},
 				{kind: "onyx.Button", content: "Logout", ontap: "youtubeLogout"},
@@ -35,17 +36,18 @@ enyo.kind({
 						{kind: "onyx.Button", content: "Cancelar", ontap: "cancelLogin"},
 						{kind: "onyx.Button", content: "Confirmar Login", ontap: "confirmLogin"}
 					]},
-			]}
-		]},
+			]},
+		{kind: "Viewer", classes: "enyo-fit", searchQuery:"", onSearch: "search", onSelect: "select", onLoadMore:"loadMoreVideos", components: [
+			{kind: "YouTube",name:"youTube", classes: "enyo-fit", showing: false},
+		]}
 	],
+	videos:[],
 	create:function(){
 		this.inherited(arguments);
 		enyo.loader.loadScript("https://apis.google.com/js/client.js");
 		enyo.loader.loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js");
 		var cookie = document.cookie;
 		cookie = cookie.split("=");
-		console.log(cookie[0]);
-		console.log(cookie[1]);
 		if(cookie[0] === "session_youtube"){
 			if(cookie[1]){
 				var token = JSON.parse(cookie[1]);
@@ -61,10 +63,27 @@ enyo.kind({
 	},
 
 	search: function(inSender, inEvent) {
+		console.log("App --> search: comparamos las cadenas de consulta");
+		console.log(this.$.viewer.getSearchQuery());
+		console.log(inEvent.query);
+		
 		enyo.YouTube.search(inEvent.query).response(this, "receiveResults");
 	},
 	receiveResults: function(inSender, inResults) {
-		this.$.viewer.showResults(inResults);
+
+		if(this.$.viewer.getSearchQuery() !== this.query_history){
+			this.query_history = this.$.viewer.getSearchQuery();
+			this.videos = inResults;
+		}else{
+			this.videos = this.videos.concat(inResults);
+		}
+		this.$.viewer.showResults(this.videos);
+	},
+
+	loadMoreVideos: function(inSender, inEvent){
+		console.log("Vamos a cargarr mas videos en el array");
+		enyo.YouTube.searchNext(inSender.getSearchQuery()).response(this, "receiveResults");
+		return true;
 	},
 	select: function(inSender, inEvent) {
 		console.log("enviamos a ver el sieguinet eid");
@@ -78,7 +97,7 @@ enyo.kind({
 		}
 	},
 	receiveRelatedResults: function(inSender, inResults) {
-		this.$.viewer.showRelatedResults(inResults);
+		this.$.viewer.showRelatedResults(this.videos);
 	},
 
 	youtubeLogin: function(inSender, inEvent){
@@ -148,7 +167,7 @@ enyo.kind({
 			token_type: inResponse.token_type,
 			expires_in: inResponse.expires_in,
 			refresh_token: inResponse.refresh_token
-		}
+		};
 
 		//guardamos en las cookies
 		document.cookie="session_youtube=" + JSON.stringify(ck);

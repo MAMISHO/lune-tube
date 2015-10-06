@@ -1,5 +1,5 @@
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/layout/fittable/source/FittableLayout.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/fittable/source/FittableLayout.css */
 
 .enyo-fittable-rows-layout {
 	position: relative;
@@ -71,7 +71,7 @@
 	margin-bottom: 0 !important;
 }
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/layout/list/source/List.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/list/source/List.css */
 
 .enyo-list {
 	position: relative;
@@ -89,7 +89,7 @@
 	right: 0;
 }
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/layout/list/source/PulldownList.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/list/source/PulldownList.css */
 
 .enyo-list-pulldown {
 	position: absolute;
@@ -152,7 +152,7 @@
 	-ms-transform: rotate(180deg);
 }
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/layout/panels/source/arrangers/Arranger.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/panels/source/arrangers/Arranger.css */
 
 .enyo-arranger {
 	position: relative;
@@ -185,7 +185,7 @@
 }
 
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/layout/panels/source/Panels.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/panels/source/Panels.css */
 
 .enyo-panels {
 }
@@ -200,7 +200,7 @@
 	}
 }
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/layout/tree/source/Node.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/tree/source/Node.css */
 
 .enyo-node {
 	cursor: default;
@@ -232,7 +232,7 @@
 }
 
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/layout/imageview/source/ImageViewPin.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/imageview/source/ImageViewPin.css */
 
 
 .pinDebug {
@@ -240,7 +240,7 @@
 	border:1px solid yellow;
 }
 
-/* /Applications/MAMP/htdocs/youtube/enyo/../lib/onyx/css/onyx.css */
+/* /Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/onyx/css/onyx.css */
 
 /* WARNING: This is a generated file for backward-compatibility.  Most      */
 /* usrs should instead modify LESS files.  If you choose to edit this CSS   */
@@ -1219,20 +1219,34 @@ body {
 }
 
 .item {
-	height: 50px;
-	padding: 0 10px;
+	display: flex;
+	height: 100px;
+	padding: 5px 10px;
 	border-bottom: 1px solid #0e0e0e;
 	cursor: pointer;
-	line-height: 50px;
+	/*line-height: 50px;*/
 	text-overflow: ellipsis;
-	white-space: nowrap;
-	overflow: hidden;
+	/*white-space: nowrap;*/
+	/*overflow: hidden;*/
 }
-
+.item-img{
+	min-width: 120px;
+	max-height: 100px;
+}
+.item-title{
+	padding-left: 5px;
+}
 .item-selected {
 	background: #222;
 }
-
+.item-load{
+	width: 100%;
+	height: 20px;
+	text-align: center;
+	padding: 10px;
+	color: #fff;
+	cursor: pointer;
+}
 .related-list {
 	white-space: nowrap;
 }

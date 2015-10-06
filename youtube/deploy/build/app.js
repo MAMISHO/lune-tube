@@ -1,7 +1,7 @@
 
 // minifier: path aliases
 
-enyo.path.addPaths({layout: "/Applications/MAMP/htdocs/youtube/enyo/../lib/layout/", onyx: "/Applications/MAMP/htdocs/youtube/enyo/../lib/onyx/", onyx: "/Applications/MAMP/htdocs/youtube/enyo/../lib/onyx/source/", youtube: "/Applications/MAMP/htdocs/youtube/enyo/../lib/youtube/"});
+enyo.path.addPaths({layout: "/Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/layout/", onyx: "/Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/onyx/", onyx: "/Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/onyx/source/", youtube: "/Users/developer/Desarrollo/enyo/lune-tube/youtube/enyo/../lib/youtube/"});
 
 // FittableLayout.js
 
@@ -3515,7 +3515,8 @@ enyo.kind({
 name: "enyo.YouTube",
 kind: "Control",
 published: {
-videoId: ""
+videoId: "",
+nextPage: ""
 },
 statics: {
 isApiReady: !1,
@@ -3524,18 +3525,41 @@ enyo.YouTube.isApiReady = !0, enyo.Signals.send("onApiReady");
 },
 url: "https://content.googleapis.com/youtube/v3/search?",
 search: function(e, t) {
-var n = "https://content.googleapis.com/youtube/v3/search?maxResults=15&order=relevance&part=snippet&q=" + e + "&type=video&key=AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE";
+var n = {
+maxResults: 15,
+order: "relevance",
+part: "snippet",
+type: "video",
+key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
+};
+t == null ? n.q = e : n.relatedToVideoId = e;
+var r = "https://content.googleapis.com/youtube/v3/", i = "search";
 return (new enyo.JsonpRequest({
-url: n
-})).go().response(this, "processResponse");
+url: r + i
+})).go(n).response(this, "processResponse");
 },
 processResponse: function(e, t) {
-var n = t && t.feed && t.feed.entry || [], r = t.items;
+console.log(t), this.nextPage = t.nextPageToken, console.log("nextPage" + this.nextPage);
+var n = [], r = t.items;
 for (var i = 0; i < r.length; i++) {
 var s = {};
 s.id = r[i].id.videoId, s.title = r[i].snippet.title, s.thumbnail = r[i].snippet.thumbnails.default.url, n.push(s);
 }
 return n;
+},
+searchNext: function(e) {
+console.log("searchNext");
+var t = "https://content.googleapis.com/youtube/v3/", n = "search", r = {
+order: "relevance",
+part: "snippet",
+type: "video",
+pageToken: this.nextPage,
+q: e,
+key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
+};
+return (new enyo.JsonpRequest({
+url: t + n
+})).go(r).response(this, "processResponse");
 }
 },
 components: [ {
@@ -3550,11 +3574,7 @@ this.createPlayer();
 },
 createPlayer: function() {
 if (enyo.YouTube.isApiReady) {
-this.setPlayerShowing(!0), console.log("enyo.Youtube --> createPlayer"), console.log(this.$.video.id);
-var e = document.createElement("script");
-e.src = "https://www.youtube.com/iframe_api";
-var t = document.getElementsByTagName("script")[0];
-t.parentNode.insertBefore(e, t), this.player = new YT.Player(this.$.video.id, {
+this.setPlayerShowing(!0), this.player = new YT.Player(this.$.video.id, {
 height: "100%",
 width: "100%",
 videoId: this.videoId,
@@ -3562,9 +3582,9 @@ events: {
 onReady: enyo.bind(this, "playerReady"),
 onStateChange: enyo.bind(this, "playerStateChange")
 }
-}), console.log(this.$.video), console.log(this.player);
-var n = this.$.video.hasNode().firstChild;
-console.log(this.$.video.hasNode()), console.log(n), n && (n.style.position = "absolute", this.reflow());
+});
+var e = this.$.video.hasNode().firstChild;
+e && (e.style.position = "absolute", this.reflow());
 }
 },
 playerReady: function(e) {
@@ -3586,19 +3606,100 @@ this.player && this.player.playVideo();
 pause: function() {
 this.player && this.player.pauseVideo();
 }
-}), onYouTubePlayerAPIReady = enyo.YouTube.apiReady;
+}), onYouTubeIframeAPIReady = enyo.YouTube.apiReady;
 
 // App.js
 
 enyo.kind({
 name: "App",
-kind: "Control",
+kind: "FittableRows",
+published: {
+url_base: "https://accounts.google.com/o/oauth2/auth",
+client_id: "588965728760-7v9hac1gcppmkqcnktesvvj6qt079296.apps.googleusercontent.com",
+client_secret: "ylXYTO5pxK--WuCtFIFroxLs",
+redirect_uri: "urn:ietf:wg:oauth:2.0:oob",
+scope: "https://www.googleapis.com/auth/youtube",
+response_type: "code",
+access_type: "offline",
+grant_type: "authorization_code",
+access_token: "",
+refresh_token: "",
+query_history: "queryinicial_12"
+},
+fit: !0,
+classes: "enyo-fit",
 components: [ {
+kind: "onyx.Toolbar",
+fit: !0,
+classes: "enyo-fit",
+components: [ {
+kind: "onyx.Grabber"
+}, {
+kind: "onyx.Button",
+content: "Login",
+ontap: "youtubeLogin",
+name: "loginButton"
+}, {
+kind: "onyx.Button",
+content: "Logout",
+ontap: "youtubeLogout"
+}, {
+kind: "onyx.Button",
+content: "get",
+ontap: "getVideos"
+}, {
+kind: "onyx.Button",
+content: "refresh",
+ontap: "refreshToken"
+}, {
+kind: "onyx.Button",
+content: "Iniciar session",
+ontap: "showPopup",
+popup: "modalPopup"
+}, {
+name: "modalPopup",
+classes: "onyx-sample-popup",
+kind: "onyx.Popup",
+centered: !0,
+modal: !0,
+floating: !0,
+onShow: "popupShown",
+onHide: "popupHidden",
+components: [ {
+kind: "onyx.InputDecorator",
+components: [ {
+content: "pegar el token",
+name: "token_message"
+}, {
+tag: "br"
+}, {
+tag: "br"
+}, {
+kind: "onyx.Input",
+name: "token",
+style: "background-color:white"
+} ]
+}, {
+tag: "br"
+}, {
+tag: "br"
+}, {
+kind: "onyx.Button",
+content: "Cancelar",
+ontap: "cancelLogin"
+}, {
+kind: "onyx.Button",
+content: "Confirmar Login",
+ontap: "confirmLogin"
+} ]
+} ]
+}, {
 kind: "Viewer",
 classes: "enyo-fit",
-searchQuery: "webos 3.05 review",
+searchQuery: "",
 onSearch: "search",
 onSelect: "select",
+onLoadMore: "loadMoreVideos",
 components: [ {
 kind: "YouTube",
 name: "youTube",
@@ -3606,11 +3707,24 @@ classes: "enyo-fit",
 showing: !1
 } ]
 } ],
+videos: [],
+create: function() {
+this.inherited(arguments), enyo.loader.loadScript("https://apis.google.com/js/client.js"), enyo.loader.loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js");
+var e = document.cookie;
+e = e.split("=");
+if (e[0] === "session_youtube" && e[1]) {
+var t = JSON.parse(e[1]);
+this.access_token = t.access_token, this.refresh_token = t.refresh_token, console.log("Existen tokens"), console.log(this.access_token), console.log(this.refresh_token);
+}
+},
 search: function(e, t) {
-enyo.YouTube.search(t.query).response(this, "receiveResults");
+console.log("App --> search: comparamos las cadenas de consulta"), console.log(this.$.viewer.getSearchQuery()), console.log(t.query), enyo.YouTube.search(t.query).response(this, "receiveResults");
 },
 receiveResults: function(e, t) {
-this.$.viewer.showResults(t);
+this.$.viewer.getSearchQuery() !== this.query_history ? (this.query_history = this.$.viewer.getSearchQuery(), this.videos = t) : this.videos = this.videos.concat(t), this.$.viewer.showResults(this.videos);
+},
+loadMoreVideos: function(e, t) {
+return console.log("Vamos a cargarr mas videos en el array"), enyo.YouTube.searchNext(e.getSearchQuery()).response(this, "receiveResults"), !0;
 },
 select: function(e, t) {
 console.log("enviamos a ver el sieguinet eid"), console.log(t.data.id);
@@ -3618,7 +3732,77 @@ var n = t.data.id;
 this.$.youTube.setShowing(!0), this.$.youTube.setVideoId(n), console.log(this.$.youTube), t.related || enyo.YouTube.search(n, !0).response(this, "receiveRelatedResults");
 },
 receiveRelatedResults: function(e, t) {
-this.$.viewer.showRelatedResults(t);
+this.$.viewer.showRelatedResults(this.videos);
+},
+youtubeLogin: function(e, t) {},
+youtubeLogout: function(e, t) {},
+showPopup: function(e, t) {
+var n = this.url_base + "?client_id=" + this.client_id + "&redirect_uri=" + this.redirect_uri + "&scope=" + this.scope + "&response_type=" + this.response_type;
+window.open(n, "_blank");
+var r = this.$[e.popup];
+r && r.show();
+},
+popupHidden: function(e, t) {
+this.$.token_message.setContent("Pegar el token"), this.$.token.setValue("");
+},
+cancelLogin: function(e, t) {
+this.$.modalPopup.hide(), this.$.token_message.setContent("Pegar el token");
+},
+confirmLogin: function(e, t) {
+this.$.token.getValue() !== "" ? (this.$.token_message.setContent("Confirmando Login"), this.authorizationToken(), console.log("tiene cosas")) : (console.log("no tiene cosas"), this.$.token_message.setContent("Deben indicar un token"));
+},
+authorizationToken: function() {
+var e = new FormData;
+e.append("code", this.$.token.getValue()), e.append("client_id", this.client_id), e.append("client_secret", this.client_secret), e.append("redirect_uri", this.redirect_uri), e.append("grant_type", this.grant_type);
+var t = new enyo.Ajax({
+url: "https://accounts.google.com/o/oauth2/token",
+method: "POST",
+postBody: e
+});
+t.response(enyo.bind(this, "authorizationTokenResponse")), t.go();
+},
+authorizationTokenResponse: function(e, t) {
+if (!t) return;
+console.log(t);
+var n = {
+access_token: t.access_token,
+token_type: t.token_type,
+expires_in: t.expires_in,
+refresh_token: t.refresh_token
+};
+document.cookie = "session_youtube=" + JSON.stringify(n), console.log("cookie almacenada");
+},
+getVideos: function(e, t) {
+this.access_token !== "" && this.refresh_token !== "" ? (console.log("Inicia un consulta"), this.getData()) : console.log("Es necesario iniciar session");
+},
+getData: function() {
+var e = {}, t = "https://www.googleapis.com/youtube/v3/search?part=snippet&q=dogs&type=video", n = new enyo.Ajax({
+url: t,
+method: "GET",
+headers: {
+Authorization: "Bearer " + this.access_token
+}
+});
+n.response(enyo.bind(this, "getDataResponse")), n.go();
+},
+getDataResponse: function(e, t) {
+console.log(e), console.log(t);
+if (!t) return;
+console.log("Hay datos");
+},
+refreshToken: function() {
+var e = new FormData;
+e.append("client_id", this.client_id), e.append("client_secret", this.client_secret), e.append("refresh_token", this.refresh_token), e.append("grant_type", "refresh_token");
+var t = new enyo.Ajax({
+url: "https://accounts.google.com/o/oauth2/token",
+method: "POST",
+postBody: e
+});
+t.response(enyo.bind(this, "refreshTokenResponse")), t.go();
+},
+refreshTokenResponse: function(e, t) {
+if (!t) return;
+console.log(t), t.access_token && (this.access_token = t.access_token);
 }
 });
 
@@ -3734,24 +3918,42 @@ query: this.getSearchQuery()
 });
 },
 showResults: function(e) {
-console.log("resultados a los videos"), this.selected = null, this.$.spinner.setShowing(!1), this.$.results.destroyClientControls(), this.results = e;
+this.selected = null, this.$.spinner.setShowing(!1), this.$.results.destroyClientControls(), this.results = e;
 for (var t = 0, n; n = e[t]; t++) this.$.results.createComponent({
-content: n.title || "Untitled",
 classes: "item",
 ontap: "select",
 data: n,
 owner: this,
+components: [ {
+kind: "enyo.Image",
+src: n.thumbnail,
+classes: "item-img"
+}, {
+content: n.title || "Untitled",
+classes: "item-title"
+} ],
 attributes: {
 draggable: !1
 }
 });
-this.$.results.render();
+this.$.results.createComponent({
+classes: "item-load",
+ontap: "loadMore",
+content: "Cargar m\u00e1s",
+owner: this,
+attributes: {
+draggable: !1
+}
+}), this.$.results.render();
 },
 select: function(e) {
 this.selected && this.selected.removeClass("item-selected"), e.addClass("item-selected"), this.selected = e, this.showDetailView(), this.doSelect({
 data: e.data,
 related: e.related
 });
+},
+loadMore: function(e, t) {
+this.bubble("onLoadMore", this);
 },
 showRelatedResults: function(e) {
 this.$.related.destroyClientControls();

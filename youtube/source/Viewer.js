@@ -110,16 +110,32 @@ enyo.kind({
 	},
 	//* @public
 	//* display the given search results
+	//* Se muestran los resultados de la consulta
 	showResults: function(inResults) {
-		console.log("resultados a los videos");
 		this.selected = null;
 		this.$.spinner.setShowing(false);
 		this.$.results.destroyClientControls();
 		this.results = inResults;
 		for (var i=0,r; r=inResults[i]; i++) {
-			this.$.results.createComponent({content: r.title || "Untitled", classes: "item", 
-				ontap: "select", data: r, owner: this, attributes: {draggable: false}});
+			this.$.results.createComponent({
+				classes: "item",
+				ontap: "select",
+				data: r,
+				owner: this,
+				components:[
+					{kind: "enyo.Image", src:r.thumbnail , classes:"item-img"},
+					{content: r.title || "Untitled", classes: "item-title"}
+				],
+				attributes: {draggable: false}
+			});
 		}
+		this.$.results.createComponent({
+				classes: "item-load",
+				ontap: "loadMore",
+				content: "Cargar más",
+				owner: this,
+				attributes: {draggable: false}
+			});
 		this.$.results.render();
 	},
 	//* @protected
@@ -133,6 +149,10 @@ enyo.kind({
 		this.selected = inSender;
 		this.showDetailView();
 		this.doSelect({data: inSender.data, related: inSender.related});
+	},
+
+	loadMore: function(inSender, inEvnet){
+		this.bubble("onLoadMore",this);
 	},
 	//* @public
 	//* display the given set of results in the related results view area.
