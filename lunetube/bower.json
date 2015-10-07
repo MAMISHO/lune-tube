@@ -1,0 +1,8 @@
+{
+	"name": "enyo-bootplate-project",
+	"version": "1.0.0",
+	"dependencies": {
+		"onyx": "enyojs/onyx#2.5.1.1",
+		"layout": "enyojs/layout#2.5.1.1"
+	}
+}
