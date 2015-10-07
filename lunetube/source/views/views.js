@@ -5,7 +5,7 @@
 */
 
 enyo.kind({
-	name: "myapp.MainView",
+	name: "App",
 	kind: "FittableRows",
 	fit: true,
 	components:[

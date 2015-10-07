@@ -5,6 +5,6 @@ enyo.depends(
 	"$lib/spotlight",
 	"style",
 	"data",
-	"views",
-	"app.js"
+	"views"
+	// "app.js"
 );
