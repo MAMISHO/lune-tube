@@ -1,0 +1,18 @@
+.menu{
+	padding: 0px;
+	margin: 0px;
+	background-color: red;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	flex-wrap: nowrap;
+	border: none;
+}
+.menu div{
+	flex-grow: 1;
+	flex-shrink: 0;
+	flex-basis: auto;
+	text-align: center;
+	/*shorthand*/
+	/*flex: 0 0 auto; */
+}

@@ -6,7 +6,7 @@
 
 enyo.kind({
 	name: "myapp.Application",
-	kind: "enyo.Application",
+	kind: "App",
 	view: "myapp.MainView"
 });
 

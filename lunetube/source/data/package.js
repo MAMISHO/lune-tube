@@ -1,3 +1,4 @@
 enyo.depends(
-	"data.js"
+	"data.js",
+	"youtube_api.js"
 );
