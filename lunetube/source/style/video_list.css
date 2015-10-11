@@ -4,12 +4,21 @@
 	/*background-color: #333;*/
 	height: 100%;
 	width: 100%;
+	display: -webkit-flex;
+	display: -ms-flexbox;
 	display: flex;
-	flex-wrap: wrap;
+	-webkit-flex-wrap: wrap;
+	    -ms-flex-wrap: wrap;
+	        flex-wrap: wrap;
 }
 .list-item{
+	position: relative;
+	display: -webkit-flex;
+	display: -ms-flexbox;
 	display: flex;
-	flex-wrap: nowrap;
+	-webkit-flex-wrap: nowrap;
+	    -ms-flex-wrap: nowrap;
+	        flex-wrap: nowrap;
 	margin-bottom: 10px;
 	padding: 5px;
 }
@@ -26,17 +35,85 @@
 	line-height: 1;
 	/*text-align: justify;*/
 }
-/*.list-titulo{
-	padding: 0;
-	margin: 0;
-}*/
+.list-load-more{
+	text-align: center;
+	width: 100%;
+	padding-bottom: 15px;
+	padding-top: 15px;
+	background-color: #333;
+	color: #fff;
+	font-size: 1.2em;
+	font-weight: bolder;
+}
 .list-description p,h3{
 	padding: 0;
 	margin: 0;	
+}
+.list-description p{
+	position: absolute;
+	bottom: 0;
 }
 .truncate {
   width: 250px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/*mobile*/
+@media screen and (min-width: 480px) {
+    .list-item {
+    	-webkit-flex-direction: column;
+    	    -ms-flex-direction: column;
+    	        flex-direction: column;
+    	max-width: 120px;
+    	position: relative;
+    	height: 160px;
+    	/*display: flex;*/
+    }
+    .list-description{
+    	padding-left: 0px;
+    }
+    .list-description h3{
+  		display: -webkit-box;
+  		/*line-height: 1.4;*/
+  		-webkit-line-clamp: 3;
+  		-webkit-box-orient: vertical;
+  		overflow: hidden;
+  		text-overflow: ellipsis;
+    }
+    .list-description p{
+    	position: absolute;
+    	bottom: 5px;
+    }
+}
+@media screen and (min-width: 800px) {
+    .list-item {
+    	width: 100%;
+    	max-width: 100%;
+    	height: 100%;
+    	-webkit-flex-direction: row;
+    	    -ms-flex-direction: row;
+    	        flex-direction: row;
+    }
+    .list-description{
+    	padding-left: 10px;
+		/*margin: 0;*/
+		/*font-size: 0.85em;*/
+		/*line-height: 1;*/
+		/*overflow: auto;*/
+		white-space: pre-wrap;
+    }
+    /*.list-container{
+	padding: 0;
+	background-color: rgba(211,211,211, 0.9);
+	height: 100%;
+	width: 100%;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-wrap: wrap;
+	    -ms-flex-wrap: wrap;
+	        flex-wrap: wrap;
+	}*/
 }

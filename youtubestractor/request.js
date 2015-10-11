@@ -3,7 +3,8 @@ function getData(){
 	var video_id = $("#video_id").val();
 	// console.log(video_id);
 	$.ajax({
-	  url: "http://www.youtube.com/get_video_info?video_id=" + video_id,
+	  // url: "http://www.youtube.com/get_video_info?video_id=" + video_id,
+	  url: "http://www.youtube.com/get_video_info?video_id="+ video_id + "&el=vevo&el=embedded",
 	  cache: false
 	})
 	  .done(function( data ) {
@@ -47,6 +48,7 @@ function customData(videoInfo){
 	}
 
 	streamsSplit = newSplit;
+	console.log(streamsSplit);
 				
 	var url, sig, itag;
 	var found = false;
@@ -67,11 +69,11 @@ function customData(videoInfo){
 		}
 		my_array.push(obj);
 
-		/*if ((i + 1) % 6 === 0 && itag === "18") { // 6 parameters per video; itag 18 is "MP4 360p", see http://userscripts.org/scripts/review/25105
+		if ((i + 1) % 6 === 0 && itag === "18") { // 6 parameters per video; itag 18 is "MP4 360p", see http://userscripts.org/scripts/review/25105
 			found = true;
 			url += "&signature=" + sig;
 			break;
-		}*/
+		}
 	}
 	console.log(my_array);
 	if (found) {

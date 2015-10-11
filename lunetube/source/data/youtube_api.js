@@ -2,7 +2,7 @@ enyo.kind({
 	name: "YoutubeApi",
 	kind: enyo.Component,
 	published: {
-
+		nextPage:"",
 	},
 	components: [
 
@@ -34,20 +34,67 @@ enyo.kind({
 	},
 
 	processResponse: function(inSender, inResponse) {
-			console.log(inResponse);
+			if(!inResponse) return [];
+			// return inResponse;
+			// console.log(inResponse);
 			this.nextPage = inResponse.nextPageToken;
-			// console.log("nextPage" + this.nextPage);
 			var videos = [];
 			var data = inResponse.items;
 
 			for (var i = 0; i < data.length; i++) {
 				var v = {};
-				v.id = data[i].id.videoId;
+				v.video_id = data[i].id.videoId;
+				v.channel_id = data[i].snippet.channelId;
+				v.image = data[i].snippet.thumbnails.default.url;
 				v.title = data[i].snippet.title;
-				v.thumbnail = data[i].snippet.thumbnails.default.url;
-				videos.push(v);
+				v.chanel = data[i].snippet.channelTitle;
+				v.views = "",
+				v.time = data[i].snippet.publishedAt.split("T")[0];
+				var vevo = v.chanel.search("VEVO");
+				if(vevo === -1){
+					videos.push(v);
+				}
 			}
 			return videos;
+	},
+
+	searchVideosList: function(query){
+		var params={
+			maxResults: 15,
+			chart: "mostPopular",
+			q: query,
+			part: "snippet",
+			// type: "video",
+			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
+		};
+
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var method = "videos";
+
+			return new enyo.JsonpRequest({
+				url: url_base + method
+			}).go(params).response(this, "processResponseSearchVideoList");
+	},
+
+	processResponseSearchVideoList: function(inSender, inResponse){
+		if(!inResponse) return [];
+		return inResponse;
+	},
+
+	searchNext: function(inSearchText){
+			var url_base = "https://content.googleapis.com/youtube/v3/";
+			var method = "search";
+			var params={
+				order: "relevance",
+				part: "snippet",
+				type: "video",
+				pageToken: this.nextPage,
+				q: inSearchText,
+				key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
+			};
+			return new enyo.JsonpRequest({
+				url: url_base + method
+			}).go(params).response(this, "processResponse");
 	}
 
-	});
+});
