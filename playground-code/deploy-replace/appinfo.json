@@ -1,0 +1,16 @@
+{
+	"id":			"com.emsoft.lunetube",
+	"version":		"0.0.6",
+	"vendor":		"mamisho",
+	"type":			"ipk",
+	"main":			"index.html",
+	"title":		"LuneTube",
+	"icon":			"icon.png",
+	"uiRevision":	2,
+	"noWindow":		false,
+	"requiredMemory": 120,
+	"mimeTypes": 	[
+						{ "urlPattern": "^youtube:" }
+					],
+	"keywords": 	["youtube", "video", "play"]
+}
