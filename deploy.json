@@ -4,10 +4,14 @@
 	"assets": [
 		"./icon.png",
 		"./index.html",
-		"./assets"
+		"./assets",
+		"./resources",
+		"./appinfo.json"
 	],
 	"libs": [
 		"./lib/onyx",
-		"./lib/layout"
+		"./lib/layout",
+		"./lib/enyo-ilib",
+		"./lib/moonstone"
 	]
 }

@@ -58,11 +58,6 @@ enyo.kind({
 		{name: "loginPopup", classes: "onyx-sample-popup", kind: "onyx.Popup", centered: true, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
 			{kind: "onyx.InputDecorator", components: [
 				{content:"paste the token", name:"token_message"},
-				
-				// login
-				{kind: "Preview", name:"iframe"},
-
-
 				{tag:"br"},
 				{tag:"br"},
 				{kind: "onyx.Input", name:"token", style:"background-color:white"}
@@ -177,7 +172,11 @@ enyo.kind({
 	},
 
 	backToList: function(inSender, inEvent){
-		this.$.panel.setIndex(0);
+		if(this.$.panel.getIndex() === 0){
+			this.$.panel.setIndex(1);
+		}else{
+			this.$.panel.setIndex(0);
+		}
 		return true;
 	},
 
@@ -186,12 +185,12 @@ enyo.kind({
 		console.log("Inicia el Login con el siguiente data");
 		// console.log(myApiKey);
 		var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
-		// this.$.iframe.setAttribute("src", "assets/login.html");
-		// window.open(url, '_blank');
+		// this.$.iframe.setAttribute("src", "assets/page.html");
+		window.open(url, '_blank');
 		// this.$.iframe.setUrl("http://forums.enyojs.com");
-		this.$.iframe.setUrl("http://forums.enyojs.com");
-		this.$.iframe.render();
-		this.$.iframe.reload();
+		// this.$.iframe.setUrl("http://forums.enyojs.com");
+		// this.$.iframe.render();
+		// this.$.iframe.reload();
 		var p = this.$[inSender.popup];
 		if (p) {
 			p.show();
@@ -204,7 +203,7 @@ enyo.kind({
 	},
 
 	cancelLogin: function(inSender, inEvent){
-		this.$.modalPopup.hide();
+		this.$.loginPopup.hide();
 		this.$.token_message.setContent("Paste the token");
 	},
 
@@ -231,10 +230,15 @@ enyo.kind({
 		var ajax = new enyo.Ajax({
             url: "https://accounts.google.com/o/oauth2/token",
             method: "POST",
-            postBody: formData
+            postBody: formData,
+            cacheBust: false,
+            callbackName: null,
+            overrideCallback: null
         });
 
         ajax.response(enyo.bind(this, "authorizationTokenResponse"));
+        ajax.error(enyo.bind(this, "authorizationTokenError"));
+        console.log(ajax);
 		ajax.go();
 	},
 
@@ -258,6 +262,10 @@ enyo.kind({
 		this.$.status.setContent("Estas Logado");
 		this.showMenuOption();
 		this.loadHomeFeeds();
+	},
+	authorizationTokenError: function(){
+		console.log(inSender);
+		console.log(inEvent);
 	},
 
 	homeRequest: function(inSender, inEvent){

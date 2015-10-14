@@ -5,7 +5,5 @@ enyo.depends(
 	"search.js",
 	"views.js",
 	"video_list.js",
-	"video_list_item.js",
-	"iFrame.js",
-	"Preview.js"
+	"video_list_item.js"
 );
