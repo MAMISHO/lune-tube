@@ -77,9 +77,9 @@ enyo.kind({
 		this.$.player.setSources(this.sources);
 	},
 */	videoIdChanged: function(inSender, inEvent) {
-
+	
+		this.$.player.unload();
 		// Set source by sources array
-		this.$.player.setAutoplay(true);
 		// console.log(this.videoId);
 		this.sources = [];
 		this.sd = null;
@@ -87,6 +87,13 @@ enyo.kind({
 		this.currentTime=0;
 
 		for (var i = 0; i < this.videoId.length; i++) {
+
+			if(this.videoId[i].restricted){
+				this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].restricted);
+				this.$.player.showFSControls();
+				// break;
+				return;
+			}
 
 			if(this.videoId[i].resolution === "SD-MP4"){
 				// this.sources.push({src: this.videoId[i].url, type: this.videoId[i].type});
@@ -102,6 +109,8 @@ enyo.kind({
 				this.$.videoInfoHeader.setSubSubTitle(this.videoId[0].title);
 			}
 		}
+
+		this.$.player.setAutoplay(true);
 
 		if(this.sd){
 			// console.log("load SD");

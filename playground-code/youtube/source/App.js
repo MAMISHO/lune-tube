@@ -17,7 +17,7 @@ enyo.kind({
 	fit:true,
 	classes: "enyo-fit",
 	components: [
-		{kind: "onyx.Toolbar",fit:true, classes: "enyo-fit", components: [
+		{kind: "onyx.Toolbar", components: [
 				{kind: "onyx.Grabber"},
 				{kind: "onyx.Button", content: "Login", ontap:"youtubeLogin", name:"loginButton"},
 				{kind: "onyx.Button", content: "Logout", ontap: "youtubeLogout"},
@@ -37,9 +37,9 @@ enyo.kind({
 						{kind: "onyx.Button", content: "Confirmar Login", ontap: "confirmLogin"}
 					]},
 			]},
-		{kind: "Viewer", classes: "enyo-fit", searchQuery:"", onSearch: "search", onSelect: "select", onLoadMore:"loadMoreVideos", components: [
-			{kind: "YouTube",name:"youTube", classes: "enyo-fit", showing: false},
-		]}
+		// {kind: "Viewer", classes: "enyo-fit", searchQuery:"", onSearch: "search", onSelect: "select", onLoadMore:"loadMoreVideos", components: [
+		// 	{kind: "YouTube",name:"youTube", classes: "enyo-fit", showing: false},
+		// ]}
 	],
 	videos:[],
 	create:function(){

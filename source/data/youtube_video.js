@@ -10,11 +10,14 @@ enyo.kind({
     components: [
         
     ],
+    // numberOfTries:0,
+    video_id_try:"",
     create:function() {
         this.inherited(arguments);
     },
 
     startVideo: function(video_id){
+      this.video_id_try = video_id;
     	var url = "http://www.youtube.com/get_video_info";
 	    var ajax = new enyo.Ajax({
 	    	url: url,
@@ -29,9 +32,26 @@ enyo.kind({
 	    return ajax.go({video_id:video_id});
     },
 
+    getVideoRestricted: function(){
+
+      var url = "https://www.youtube.com/get_video_info";
+      var ajax = new enyo.Ajax({
+        url: url,
+        method: "GET",
+        cache: false,
+        cacheBust: false,
+            callbackName: null,
+            overrideCallback: null
+      });
+
+      ajax.response(enyo.bind(this, "startVideoResponse"));
+      return ajax.go({video_id:this.video_id_try, el:"detailpage", ps:"default", eurl:"",gl:"US",hl:"en"});
+    },
+
     startVideoResponse: function(inRequest, inResponse){
     	if(!inResponse) return;
     	// console.log(inResponse);
+      // console.log(inRequest);
     	// console.log();
     	return this.parseYoutubeVideoInfo(inResponse);
     	// return this.decodeVideo(inResponse);
@@ -39,86 +59,88 @@ enyo.kind({
     	// console.log(inResponse);
     },
 
+
     decodeVideo: function(videoInfo){
     	console.log(videoInfo.responseText);
     	var params={};
     	var videoInfoSplit = videoInfo.split("&");
-		var streams;
-		var i=0;
-		for (i = 0; i < videoInfo.length; i++) {
-			var paramPair = videoInfoSplit[i].split("=");
-			if (paramPair[0] === "url_encoded_fmt_stream_map") {
-				streams = decodeURIComponent(paramPair[1]);
-				break;
-			}
-		}
+  		var streams;
+  		var i=0;
+  		for (i = 0; i < videoInfo.length; i++) {
+  			var paramPair = videoInfoSplit[i].split("=");
+  			if (paramPair[0] === "url_encoded_fmt_stream_map") {
+  				streams = decodeURIComponent(paramPair[1]);
+  				break;
+  			}
+  		}
 
-		if (!streams) {
-			var msg = "YouTube videoInfo parsing: url_encoded_fmt_stream_map not found";
-			console.log(msg);
-			return;
-		}
+  		if (!streams) {
+  			var msg = "YouTube videoInfo parsing: url_encoded_fmt_stream_map not found";
+  			console.log(msg);
+  			return;
+  		}
 
-		streamsSplit = streams.split("&");
-		console.log(streamsSplit);
+  		streamsSplit = streams.split("&");
+  		console.log(streamsSplit);
 
 		/*Algunas lineas contienen dos valores separados por comas*/
-	var newSplit = [];
-	for (i = 0; i < streamsSplit.length; i++) {
-		var secondSplit = streamsSplit[i].split(",");
-		newSplit.push.apply(newSplit, secondSplit);
-	}
+    	var newSplit = [];
+    	for (i = 0; i < streamsSplit.length; i++) {
+    		var secondSplit = streamsSplit[i].split(",");
+    		newSplit.push.apply(newSplit, secondSplit);
+    	}
 
-	streamsSplit = newSplit;
-	// console.log(streamsSplit);
-				
-	var url, sig, itag;
-	var found = false;
+    	streamsSplit = newSplit;
+    	// console.log(streamsSplit);
+    				
+    	var url, sig, itag;
+    	var found = false;
 	
-	var my_array = [];
-	for (i = 0; i < streamsSplit.length; i++) {
-			var paramPair = streamsSplit[i].split("=");
-			var obj = {};
-			if (paramPair[0] === "url") {
-				url = decodeURIComponent(paramPair[1]);
-				obj.url = url;
-			} else if (paramPair[0] === "sig") {
-				sig = paramPair[1]; // do not decode, as we would have to encode it later (although decoding/encoding has currently no effect for the signature)
-				obj.sig = sig;
-			} else if (paramPair[0] === "itag") {
-				itag = paramPair[1];
-				obj.itag = itag;
-			}
-			my_array.push(obj);
+	     var my_array = [];
+  	   for (i = 0; i < streamsSplit.length; i++) {
+    			var paramPair = streamsSplit[i].split("=");
+    			var obj = {};
+    			if (paramPair[0] === "url") {
+    				url = decodeURIComponent(paramPair[1]);
+    				obj.url = url;
+    			} else if (paramPair[0] === "sig") {
+    				sig = paramPair[1]; // do not decode, as we would have to encode it later (although decoding/encoding has currently no effect for the signature)
+    				obj.sig = sig;
+    			} else if (paramPair[0] === "itag") {
+    				itag = paramPair[1];
+    				obj.itag = itag;
+    			}
+    			my_array.push(obj);
 
-			if ((i + 1) % 6 === 0 && itag === "18") { // 6 parameters per video; itag 18 is "MP4 360p", see http://userscripts.org/scripts/review/25105
-				found = true;
-				url += "&signature=" + sig;
-				break;
-			}
-		}
-		// console.log(my_array);
-		if (found) {
-			// console.log("video direct URL found: " + url);
-			params.target = url;
-			// console.log(params);
-			return params.target;
-			// $( "#results" ).append(JSON.stringify(params));
-			// this.foundVideo(params);
-		} else {
-			var msg = "Couldn't find video in MP4 360p";
-			console.log(msg);
-			return;
-		}
+    			if ((i + 1) % 6 === 0 && itag === "18") { // 6 parameters per video; itag 18 is "MP4 360p", see http://userscripts.org/scripts/review/25105
+    				found = true;
+    				url += "&signature=" + sig;
+    				break;
+    			}
+  		  }
+    		// console.log(my_array);
+    		if (found) {
+    			// console.log("video direct URL found: " + url);
+    			params.target = url;
+    			// console.log(params);
+    			return params.target;
+    			// $( "#results" ).append(JSON.stringify(params));
+    			// this.foundVideo(params);
+    		} else {
+    			var msg = "Couldn't find video in MP4 360p";
+    			console.log(msg);
+    			return;
+    		}
     },
 
     parseYoutubeVideoInfo: function(response) {
     // Splits parameters in a query string.
-
+    // this.numberOfTries++;
     var params = this.extractParameters(response);
 
     // If the request failed, return an object with an error code
     // and an error message
+    // if (params.status === 'fail' && this.numberOfTries==2) {
     if (params.status === 'fail') {
       //
       // Hopefully this error message will be properly localized.
@@ -130,16 +152,24 @@ enyo.kind({
       // view activity handler to display the error message from youtube,
       // and those parameters are required.
       //
+      // this.numberOfTries = 0;
+      // this.video_id_try = "";
       return {
         status: params.status,
         errorcode: params.errorcode,
         reason: (params.reason || '').replace(/\+/g, ' ')
       };
     }
+    
+   /* if(params.status === 'fail' && this.numberOfTries == 1){
+      console.log("se realiza un segundo intento");
+      console.log(params);
+      return this.getVideoRestricted();
+    }*/
 
     // Otherwise, the query was successful
     
-
+    // console.log(params);
     // Now parse the available streams
     var streamsText = params.url_encoded_fmt_stream_map;
     if (!streamsText)
@@ -190,10 +220,10 @@ enyo.kind({
     	var bestStream = streams[i];
 
 	    // If the best stream is a format we don't support give up.
-	    if (formats.indexOf(bestStream.itag) === -1){
+	    if (formats.indexOf(bestStream.itag) !== -1){
 	      // throw Error('No supported video formats');
-	      console.log('No supported video formats');
-	    }else{
+	      // console.log('No supported video formats');
+	    // }else{
         
         // send resolution
         if(bestStream.itag === '22'){
@@ -217,17 +247,25 @@ enyo.kind({
 		    if (params.title) {
 		      result.title = params.title.replace(/\+/g, ' ');
 		    }
+
 		    if (params.length_seconds) {
 		      result.duration = params.length_seconds;
 		    }
+
 		    if (params.thumbnail_url) {
 		      result.poster = params.thumbnail_url;
 		    }
+
+        if (bestStream.s){
+          result.restricted = "This video is restricted by youtube. Soon we will support these videos.";
+        }
 		    var r = result;
 		    results.push(r);
-		}
+		  }
     }
 
+    // this.numberOfTries = 0;
+    this.video_id_try = "";
     return results;
   },
 

@@ -10,6 +10,7 @@ enyo.kind({
     components: [
         {classes:"header",components:[
             // {kind:"FittableColumns",components:[
+                {kind: "Image", src: "assets/menu.png", ontap:"showMenu", style:"width: 25px;vertical-align: middle;"},
                 {kind: "Image", src: "assets/yt_icon_1.png", ontap:"showMenu", style:"width: 48px;vertical-align: middle;"},
             // ]},
             {content:"Home", classes:"header-loc"}
