@@ -37,15 +37,15 @@ enyo.kind({
 						{kind: "onyx.Button", content: "Confirmar Login", ontap: "confirmLogin"}
 					]},
 			]},
-		// {kind: "Viewer", classes: "enyo-fit", searchQuery:"", onSearch: "search", onSelect: "select", onLoadMore:"loadMoreVideos", components: [
-		// 	{kind: "YouTube",name:"youTube", classes: "enyo-fit", showing: false},
-		// ]}
+		{kind: "Viewer", classes: "enyo-fit", searchQuery:"", onSearch: "search", onSelect: "select", onLoadMore:"loadMoreVideos", components: [
+			{kind: "YouTube",name:"youTube", classes: "enyo-fit", showing: false},
+		]}
 	],
 	videos:[],
 	create:function(){
 		this.inherited(arguments);
-		enyo.loader.loadScript("https://apis.google.com/js/client.js");
-		enyo.loader.loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js");
+		// enyo.loader.loadScript("https://apis.google.com/js/client.js");
+		// enyo.loader.loadScript("https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js");
 		var cookie = document.cookie;
 		cookie = cookie.split("=");
 		if(cookie[0] === "session_youtube"){
@@ -60,6 +60,7 @@ enyo.kind({
 				console.log(this.refresh_token);
 			}
 		}
+		// console.log(this.$.youTube);
 	},
 
 	search: function(inSender, inEvent) {

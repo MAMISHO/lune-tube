@@ -30,6 +30,12 @@
 	background-color: #fff;
 	color:#333;
 	font-weight: bolder;
+	padding: 5px;
+}
+.menu-option-item{
+	font-size: 20px;
+	padding: 10px 0;
+	margin: 0;
 }
 
 .onyx-menu-item:hover{

@@ -17,14 +17,14 @@ enyo.kind({
         /*El siguiente código es necesario para la compatibilidad con webos*/
         //descomentar antes de desplegar 
 
-        /*var platform = navigator.userAgent.split("(")[1].split(";")[0];
+        var platform = navigator.userAgent.split("(")[1].split(";")[0];
         if(platform === "LuneOS"){
             this.platformStyle = "list-item";
         }else{
             this.platformStyle = "list-item-webos";
-        }*/
+        }
 
-        this.platformStyle = "list-item"; //comentar esta linea antes de desplegar
+        // this.platformStyle = "list-item"; //comentar esta linea antes de desplegar
         this.videoListChanged();
     },
 

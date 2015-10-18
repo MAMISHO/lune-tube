@@ -181,8 +181,8 @@ enyo.kind({
 	getActivitiesResponse: function(inRequest, inResponse){
 		if(!inResponse) return [];
 			// return inResponse;
-			console.log(inRequest);
-			console.log(inResponse);
+			// console.log(inRequest);
+			// console.log(inResponse);
 			this.nextPage = inResponse.nextPageToken;
 			var videos = [];
 			var data = inResponse.items;
@@ -254,6 +254,123 @@ enyo.kind({
 	processErrorRefreshToken: function(inRequest, inResponse){
 		if(!inResponse) return;
 		console.log("no se puede refrescar el token, es necesario logarse otra vez.");
+	},
+
+	getMyChannelInfo: function(){
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var method = "channels";
+		var params={
+			part: "id, snippet, contentDetails",
+			mine: true,
+			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
+		};
+
+		var request = new enyo.Ajax({
+            url: url_base + method,
+            method: "GET",
+            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+            cacheBust: false,
+            callbackName: null,
+            overrideCallback: null
+        });
+
+        request.response(enyo.bind(this, "getMyChannelInfoResponse"));
+        request.error(enyo.bind(this, "processError"));
+        return request.go(params);
+	},
+
+	getMyChannelInfoResponse: function(inRequest, inResponse){
+		if(!inResponse) return;
+		return inResponse;
+	},
+
+	getMyPlaylist: function(){
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var method = "playlists";
+		var params={
+			part: "id,snippet,status",
+			mine: true,
+			maxResults: 50,
+			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
+		};
+
+		var request = new enyo.Ajax({
+            url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=50&mine=true",
+            method: "GET",
+            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+            cacheBust: false,
+            callbackName: null,
+            overrideCallback: null
+        });
+
+        request.response(enyo.bind(this, "getMyPlaylistResponse"));
+        request.error(enyo.bind(this, "getMyPlaylistResponseError"));
+        return request.go();
+	},
+
+	getMyPlaylistResponse: function(inRequest, inResponse){
+		if(!inResponse) return;
+		return inResponse;
+	},
+
+	getMyPlaylistResponseError: function(inRequest, inResponse){
+		if(!inResponse) return;
+		if(inResponse==404){
+			return {items:[]};
+		}
+	},
+
+	getPlaylistFromId: function(id){
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var method = "playlistItems";
+		var params={
+			part: "id,snippet, status",
+			playlistId: id,
+			maxResults: 50,
+		};
+
+		var request = new enyo.Ajax({
+            url: url_base + method,
+            method: "GET",
+            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+            cacheBust: false,
+            callbackName: null,
+            overrideCallback: null
+        });
+
+        request.response(enyo.bind(this, "getPlaylistFromIdResponse"));
+        request.error(enyo.bind(this, "getMyPlaylistResponseError"));
+        return request.go(params);
+	},
+
+	getPlaylistFromIdResponse: function(inRequest, inResponse){
+		if(!inResponse) return [];
+			// return inResponse;
+			// console.log(inResponse);
+			this.nextPage = inResponse.nextPageToken;
+			var videos = [];
+			var data = inResponse.items;
+
+			for (var i = 0; i < data.length; i++) {
+				if(data[i].snippet.thumbnails){
+					var v = {};
+					v.video_id = data[i].snippet.resourceId.videoId;
+					v.channel_id = data[i].snippet.channelId;
+					v.image = data[i].snippet.thumbnails.default.url;
+					v.title = data[i].snippet.title;
+					v.chanel = data[i].snippet.channelTitle;
+					v.views = "",
+					v.time = data[i].snippet.publishedAt.split("T")[0];
+					
+					/*var vevo = v.chanel.search("VEVO");
+					if(vevo === -1){
+						videos.push(v);
+					}*/
+					videos.push(v);
+				}
+			}
+			return videos;
+			// console.log(videos);
 	}
 
 });

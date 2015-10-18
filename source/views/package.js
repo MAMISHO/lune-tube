@@ -1,7 +1,8 @@
 enyo.depends(
-	"app.js",
+	// "app.js",
 	"menu.js",
 	"player.js",
+	"playlist.js",
 	"search.js",
 	"views.js",
 	"video_list.js",

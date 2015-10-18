@@ -36,9 +36,9 @@ enyo.kind({
 		},
 
 		processResponse: function(inSender, inResponse) {
-			console.log(inResponse);
+			// console.log(inResponse);
 			this.nextPage = inResponse.nextPageToken;
-			console.log("nextPage" + this.nextPage);
+			// console.log("nextPage" + this.nextPage);
 			var videos = [];
 			var data = inResponse.items;
 
@@ -96,15 +96,25 @@ enyo.kind({
 			// console.log(this.player);
 			// positioning hack
 			var iframe = this.$.video.hasNode().firstChild;
-			/*console.log(this.$.video.hasNode());
-			console.log(iframe);*/
+			var ifr = this.$.video.hasNode();
+			// console.log(ifr);
+		
 			if (iframe) {
 				iframe.style.position = "absolute";
 				this.reflow();
+				console.log(iframe);
 			}
 		}
 	},
 	playerReady: function(inEvent) {
+		/*var data = document.getElementById('app_youTube_video').contentWindow.document.body.innerHTML;
+		var aux = JSON.stringify(data).split("data-version=");
+		var aux1 = aux[1].split(".js");
+		console.log(aux1[0]);*/
+		var d = document.getElementById('app_youTube_video').contentWindow.document;
+		var s = d.getElementsByTagName('script');
+		console.log(s.children[0]);
+		
 		this.setPlayerShowing(true);
 		this.play();
 	},

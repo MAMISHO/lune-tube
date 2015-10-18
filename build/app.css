@@ -6598,6 +6598,51 @@
 	background-color:rgba(100,100,255,0.9);
 }
 
+/* lib/webos-lib/source/ProgressOrb.css */
+
+.pie {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
+.pie-background {
+	background: #7d7e7d;
+	background: -webkit-radial-gradient(center, ellipse cover, #7d7e7d 30%,#0e0e0e 70%);
+}
+
+.pie-foreground {
+	background: #d0e4f7;
+	background: -webkit-radial-gradient(center, ellipse cover, #d0e4f7 30%,#73b1e7 50%,#0a77d5 70%);
+}
+
+
+/* lib/webos-lib/source/AppMenu.css */
+
+/* portions of this code were obtained/inspired by the Enyo 1 AppInfo CSS */
+
+.enyo-appmenu {
+  z-index: 120;
+  position: fixed;
+  font-size: 18px;
+  color: white;
+  top: -2px;
+  left: 0px;
+  min-width: 210px;
+}
+.enyo-appmenu .enyo-item {
+  padding: 5px 10px 5px 10px;
+}
+
+/* lib/webos-lib/source/PortsHeader.css */
+
+.ports-header {
+	height: 54px;
+	padding: 4px !important;
+}
+
+
 /* source/style/app.css */
 
 .panels-sample-flickr-panels {
@@ -6806,6 +6851,12 @@
 	background-color: #fff;
 	color:#333;
 	font-weight: bolder;
+	padding: 5px;
+}
+.menu-option-item{
+	font-size: 20px;
+	padding: 10px 0;
+	margin: 0;
 }
 
 .onyx-menu-item:hover{
@@ -6931,6 +6982,17 @@ input{
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.playlist-item{
+  	width: 155px;
+  	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	font-size: 16px;
+	padding: 5px 0;
+	border-bottom: 1px solid #333;
+	font-weight: normal;
+}
+
 .item-selected{
 	background-color: rgba(211,211,211, 0.9);
 }

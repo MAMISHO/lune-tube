@@ -58,6 +58,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.playlist-item{
+  	width: 155px;
+  	white-space: nowrap;
+  	overflow: hidden;
+  	text-overflow: ellipsis;
+  	font-size: 16px;
+	padding: 5px 0;
+	border-bottom: 1px solid #333;
+	font-weight: normal;
+}
+
 .item-selected{
 	background-color: rgba(211,211,211, 0.9);
 }

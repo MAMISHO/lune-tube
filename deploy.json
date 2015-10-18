@@ -12,6 +12,7 @@
 		"./lib/onyx",
 		"./lib/layout",
 		"./lib/enyo-ilib",
-		"./lib/moonstone"
+		"./lib/moonstone",
+		"./lib/enyo-webos"
 	]
 }
