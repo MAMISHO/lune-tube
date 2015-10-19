@@ -6598,51 +6598,6 @@
 	background-color:rgba(100,100,255,0.9);
 }
 
-/* lib/webos-lib/source/ProgressOrb.css */
-
-.pie {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	border-radius: 50%;
-}
-
-.pie-background {
-	background: #7d7e7d;
-	background: -webkit-radial-gradient(center, ellipse cover, #7d7e7d 30%,#0e0e0e 70%);
-}
-
-.pie-foreground {
-	background: #d0e4f7;
-	background: -webkit-radial-gradient(center, ellipse cover, #d0e4f7 30%,#73b1e7 50%,#0a77d5 70%);
-}
-
-
-/* lib/webos-lib/source/AppMenu.css */
-
-/* portions of this code were obtained/inspired by the Enyo 1 AppInfo CSS */
-
-.enyo-appmenu {
-  z-index: 120;
-  position: fixed;
-  font-size: 18px;
-  color: white;
-  top: -2px;
-  left: 0px;
-  min-width: 210px;
-}
-.enyo-appmenu .enyo-item {
-  padding: 5px 10px 5px 10px;
-}
-
-/* lib/webos-lib/source/PortsHeader.css */
-
-.ports-header {
-	height: 54px;
-	padding: 4px !important;
-}
-
-
 /* source/style/app.css */
 
 .panels-sample-flickr-panels {
@@ -6741,8 +6696,8 @@
 
 /*ainPanel*/
 .menu-panel{
-	width: 175px !important;
-	max-width: 175px;
+	width: 200px !important;
+	max-width: 200px;
 	background-color: #fff !important;
 	box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
 	z-index: 999;
@@ -6775,7 +6730,7 @@
 }
 .spinner-webos{
 	position: relative;
-	top: 45%;
+	top: 50%;
 	left: 45%;
 	background-color: #000;
 	border-radius: 999px;
@@ -6817,10 +6772,33 @@
 	border-color: #cf0652 !important;
 }
 
+/*Buttons*/
+.moon-video-player-controls{
+	margin-bottom: 0px;
+}
+.moon-video-player-premium-placeholder-left{
+	width: auto;
+	padding-left: 0;
+}
+/*.moon-video-fullscreen-control .moon-icon-button{
+	border-radius: 0;
+	border: 0px;
+	background-color: transparent;
+	background-position: 0px 0px;
+	color: #ffffff;
+	line-height: 85px;
+}*/
+/*.moon-icon-button.small{
+	background-size: 50px 120px;
+}
+.moon-video-fullscreen-control .moon-icon-button{
+	line-height: 70px;
+}*/
+
 /* source/style/menu.css */
 
 .menu{
-	padding: 2px 0;
+	padding: 2px 1px 2px 1px;
 	margin: 0;
 	background-color: #cf0652;
 	display: -webkit-flex;
@@ -6857,6 +6835,23 @@
 	font-size: 20px;
 	padding: 10px 0;
 	margin: 0;
+	width: 100%;
+}
+.menu-option-item img{
+	width: 23px;
+	display: inline-block;
+	padding-right: 5px;
+}
+.menu-login{
+	width: 100%;
+	text-align: center;
+}
+.menu-login-img{
+	height: 100%;
+	min-height: 90px;
+	background-image: url('https://yt3.ggpht.com/-TdKjRigYjl8/AAAAAAAAAAI/AAAAAAAAAAA/4_ygBS08lNQ/s88-c-k-no/photo.jpg');
+	width: 100% !important;
+	background-position: center;
 }
 
 .onyx-menu-item:hover{
@@ -6866,7 +6861,7 @@
 
 .header {
 	width: 100%;
-	padding: 2px 4px;
+	/*padding: 2px 4px;*/
 	margin: 0;
 	background-color: #cf0652;
 	/*display: -webkit-flex;
@@ -6894,8 +6889,12 @@
 	font-size: 28px;
 	font-weight: bolder;
 }
-input{
-	width: 280px;
+.menu > label{
+	width: 98%;
+}
+label > input{
+	min-width: 270px;
+	width: 97%;
 	font-size: 16px;
 	font-weight: bold;
 }
@@ -6918,6 +6917,18 @@ input{
 
 .search-button {
 	cursor: pointer;
+}
+
+@media screen and (min-width: 800px) {
+	.menu > label{
+		width: 94%;
+	}
+	label > input{
+		min-width: 265px;
+		width: 92%;
+		font-size: 16px;
+		font-weight: bold;
+	}
 }
 
 /* source/style/video_list.css */
@@ -6960,13 +6971,14 @@ input{
 }
 .list-load-more{
 	text-align: center;
-	width: 100%;
+	width: 70%;
 	padding-bottom: 15px;
 	padding-top: 15px;
 	background-color: #333;
 	color: #fff;
 	font-size: 1.2em;
 	font-weight: bolder;
+	display: inline-block;
 }
 .list-description p,h3{
 	padding: 0;
@@ -6983,14 +6995,21 @@ input{
   text-overflow: ellipsis;
 }
 .playlist-item{
-  	width: 155px;
+  	width: 100%;
   	white-space: nowrap;
   	overflow: hidden;
   	text-overflow: ellipsis;
   	font-size: 16px;
-	padding: 5px 0;
+	padding: 5px 5px;
 	border-bottom: 1px solid #333;
 	font-weight: normal;
+}
+
+.playlist-item img{
+	width: 16px;
+	padding-right: 5px;
+	display: inline-block;
+	vertical-align: middle;
 }
 
 .item-selected{
@@ -7021,6 +7040,10 @@ input{
     	position: absolute;
     	bottom: 5px;
     }
+    
+   /* .list-item-webos{
+    	width: 100%;
+    }*/
 }
 @media screen and (min-width: 800px) {
     .list-item {
@@ -7035,18 +7058,27 @@ input{
     	padding-left: 10px;
 		white-space: pre-wrap;
     }
+    /*.list-item-webos{
+    	width: auto;
+    }*/
+    .list-item-webos{
+		position: relative !important;
+		width: 100% !important;
+		/*display: inline-block;*/
+	}
 }
 
 
 /*webos 3.5 compatibility*/
 .list-item-webos{
-	width: 100%;
 	position: relative;
-	padding: 5px;
+	width: 50%;
+	display: inline-block;
 }
 .list-item-webos > img{
 	width: 120px;
 	display: inline-block;
+	padding: 5px;
 }
 .list-item-webos > span{
 	width: 180px;

@@ -22,6 +22,7 @@ enyo.kind({
     	onBackToList: "backToList",
     	onShowMenuOption: "showMenuOption",
     	onLoadPlaylist: "loadPlaylist",
+    	onRefreshTokenFinish:"refreshTokenFinish"
 	},
 	components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
@@ -32,13 +33,37 @@ enyo.kind({
 		            	{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"width: 25px;vertical-align: middle;"},
 		        	]},
 		        	{name:"menuOption",classes:"menu-option", components: [
-	                	{content: "Home", ontap:"homeRequest", classes:"menu-option-item"},
-	                	{name: "playlistUser", kind: "Playlist", ontap: "expand"},
-	                    {content: "Favorites", classes:"menu-option-item"},
-	                    {name:"status", content: "No User", classes:"menu-option-item"},
+	                	{ontap:"homeRequest", classes:"menu-option-item", components:[
+	                		{kind:"Image", src:"assets/home-icon.png"},
+	                		{content: "Home", style:"display: inline-block"}
+	                	]},
+	                	{classes:"menu-option-item", ontap: "expand", components:[
+	                		{kind:"Image", src:"assets/playlist-icon.png"},
+	                		{name: "playlistUser",kind: "Playlist", style:"display: inline-block"}
+	                	]},
+	                    {classes:"menu-option-item", ontap:"loadHistory", components:[
+	                    	{kind:"Image", src:"assets/history-icon.png"},
+	                		{content: "History", style:"display: inline-block"}
+	                    ]},
+	                    {classes:"menu-option-item", ontap:"loadFavorites", components:[
+	                    	{kind:"Image", src:"assets/favorites-icon.png"},
+	                		{content: "Favorites", style:"display: inline-block"}
+	                    ]},
+	                    {classes:"menu-option-item",ontap:"loadLikes", components:[
+	                    	{kind:"Image", src:"assets/likes-icon.png"},
+	                		{content: "Likes", style:"display: inline-block"}
+	                    ]},
+	                    {classes:"menu-option-item", ontap:"loadWatchLater", components:[
+	                    	{kind:"Image", src:"assets/later-icon.png"},
+	                		{content: "Watch Later", style:"display: inline-block"}
+	                    ]},
+	                    {name:"status", content: "", classes:"menu-option-item"},
 	                    {classes: "onyx-menu-divider"},
-	                    {kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px"},
-	                    {content: "Login", name:"loginButton", ontap:"youtubeLogin", popup: "loginPopup", classes:"menu-option-item"}
+	                    {kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},
+	                    {ontap:"youtubeLogin", popup: "loginPopup", classes:"menu-option-item menu-login", components:[
+	                    	{name:"loginIcon",kind:"Image", src:"assets/login-icon.png"},
+	                    	{name:"loginButton", content: "Login", style:"display: inline-block"}
+	                    ]}
 	                ]}
 	            ]}
 			]},
@@ -68,7 +93,8 @@ enyo.kind({
 			{tag: "br"},
 			{tag:"br"},
 			{kind: "onyx.Button", content: "Cancel", ontap: "cancelLogin"},
-			{kind: "onyx.Button", content: "Confirm Login", ontap: "confirmLogin"}
+			{kind: "onyx.Button", content: "Confirm Login", ontap: "confirmLogin"},
+			{kind: "onyx.Button", content:"Paste", ontap:"pasteTokenHold"}
 		]},
 
 		// Componentes que no se ven
@@ -87,15 +113,20 @@ enyo.kind({
 	],
 	videos:[],
 	numberOfTries:0,
+	_myChannel:null,
 	create:function() {
         this.inherited(arguments);
         this.$.mainPanel.setIndex(1);
         var cookie = document.cookie;
-		cookie = cookie.split("=");
+        // console.log(myApiKey);
+        var cookie_aux = cookie.split(";");
+		cookie = cookie_aux[0].split("=");
+		
 		if(cookie[0] === "session_youtube"){
 			if(cookie[1]){
+				// console.log(cookie[1]);
 				var token = JSON.parse(cookie[1]);
-
+				// console.log(token);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
 
@@ -111,6 +142,13 @@ enyo.kind({
 		}else{
 			this.queryChanged();
 		}
+    },
+
+    refreshTokenFinish: function(inSender, inEvent){
+    	this.loadHomeFeeds();
+		this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
+		this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+		return true;
     },
 
     loadHomeFeeds: function(){
@@ -210,7 +248,6 @@ enyo.kind({
 			/*Start hack*/
 				var platform = navigator.userAgent.split("(")[1].split(";")[0];
 		        if(platform === "LuneOS"){
-		        	this.$.webView.setUrl(url);
 		            this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
 
 		        }else{
@@ -219,6 +256,7 @@ enyo.kind({
 			/*End Hack*/
 			var p = this.$[inSender.popup];
 			if (p) {
+				this.$.mainPanel.setIndex(1);
 				p.show();
 			}
 		}else{
@@ -277,20 +315,25 @@ enyo.kind({
 		if(!inResponse) return;
 		// console.log("Response ok");
 		// console.log(inResponse);
-		
+
 		var ck = {
 			access_token: inResponse.access_token,
 			token_type: inResponse.token_type,
 			expires_in: inResponse.expires_in,
 			refresh_token: inResponse.refresh_token
 		};
+		var now = new Date();
+		var time = now.getTime();
+		time += (1*24*60*60*1000);
+		now.setTime(time);
 
 		//guardamos en las cookies
-		document.cookie="session_youtube=" + JSON.stringify(ck);
+		document.cookie="session_youtube=" + JSON.stringify(ck) +'; expires=' + now.toUTCString() + '; path=/';
 		myApiKey.access_token = ck.access_token;
 		myApiKey.refresh_token = ck.refresh_token;
 		myApiKey.login = true;
 		console.log("cookie almacenada");
+		// console.log(document.cookie);
 		
 		if(myApiKey.login){
 			this.$.menu.setSearching(true);
@@ -336,6 +379,8 @@ enyo.kind({
 		if(!inResponse) return;
 		// console.log("llega a views");
 		// console.log(inResponse);
+		// relatedPlaylists
+		this._myChannel = inResponse.items[0].contentDetails;
 		var dataChannel = inResponse.items[0].snippet;
 		this.$.imageUser.setSrc(dataChannel.thumbnails.default.url);
 		this.$.status.setContent(dataChannel.title);
@@ -358,6 +403,32 @@ enyo.kind({
 		return true;
 	},
 
+	loadAllPlaylist: function(){
+		
+	},
+
+	loadHistory: function(inSender, inevent){
+		this.loadPlaylistById(this._myChannel.relatedPlaylists.watchHistory);
+	},
+	loadFavorites: function(inSender, inevent){
+		this.loadPlaylistById(this._myChannel.relatedPlaylists.favorites);
+	},
+	loadLikes: function(inSender, inevent){
+		this.loadPlaylistById(this._myChannel.relatedPlaylists.likes);
+	},
+	loadWatchLater: function(inSender, inevent){
+		this.loadPlaylistById(this._myChannel.relatedPlaylists.watchLater);
+	},
+
+	loadPlaylistById: function(playlist_id){
+		if(myApiKey.login){
+			this.$.menu.setSearching(true);
+			this.query_history = playlist_id;
+			this.$.youtube.getPlaylistFromId(playlist_id).response(this, "receiveResults");
+			this.showMenuOption();
+			return true;
+		}
+	},
 
 	// Experimental
 	launchFinished: function(inSender, inResponse) {

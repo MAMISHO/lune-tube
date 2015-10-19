@@ -12,7 +12,7 @@ enyo.kind({
 	},
 	search: function(inSearchText, inRelated) {
 		var params={
-			maxResults: 15,
+			maxResults: 50,
 			order: "relevance",
 			part: "snippet",
 			type: "video",
@@ -63,7 +63,7 @@ enyo.kind({
 
 	searchVideosList: function(query){
 		var params={
-			maxResults: 20,
+			maxResults: 50,
 			chart: "mostPopular",
 			q: query,
 			part: "snippet",
@@ -117,7 +117,7 @@ enyo.kind({
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "search";
 		var params={
-			maxResults: 15,
+			maxResults: 50,
 			chart: "mostPopular",
 			q: inSearchText,
 			part: "snippet",
@@ -156,7 +156,7 @@ enyo.kind({
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "activities";
 		var params={
-			maxResults: 30,
+			maxResults: 50,
 			regionCode: localeInfo.info.locale,
 			part: "snippet, contentDetails",
 			home: true,
@@ -237,7 +237,7 @@ enyo.kind({
 
 	refreshTokenResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log(inResponse);
+		// console.log(inResponse);
 		if(inResponse.access_token){
 			myApiKey.access_token = inResponse.access_token;
 			var ck = {
@@ -246,7 +246,9 @@ enyo.kind({
 				expires_in: inResponse.expires_in,
 				refresh_token: myApiKey.refresh_token
 			};
+			document.cookie="session_youtube=";
 			document.cookie="session_youtube=" + JSON.stringify(ck);
+			return this.bubble("onRefreshTokenFinish",this);
 		}
 		return;
 	},
@@ -281,6 +283,7 @@ enyo.kind({
 
 	getMyChannelInfoResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
+		// console.log(inResponse);
 		return inResponse;
 	},
 
@@ -310,6 +313,7 @@ enyo.kind({
 
 	getMyPlaylistResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
+		// console.log(inResponse);
 		return inResponse;
 	},
 
@@ -317,6 +321,12 @@ enyo.kind({
 		if(!inResponse) return;
 		if(inResponse==404){
 			return {items:[]};
+		}
+
+		if(inResponse == 401){
+			this.refreshToken();
+			// return a.go();
+			return;
 		}
 	},
 

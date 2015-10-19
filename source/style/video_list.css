@@ -36,13 +36,14 @@
 }
 .list-load-more{
 	text-align: center;
-	width: 100%;
+	width: 70%;
 	padding-bottom: 15px;
 	padding-top: 15px;
 	background-color: #333;
 	color: #fff;
 	font-size: 1.2em;
 	font-weight: bolder;
+	display: inline-block;
 }
 .list-description p,h3{
 	padding: 0;
@@ -59,14 +60,21 @@
   text-overflow: ellipsis;
 }
 .playlist-item{
-  	width: 155px;
+  	width: 100%;
   	white-space: nowrap;
   	overflow: hidden;
   	text-overflow: ellipsis;
   	font-size: 16px;
-	padding: 5px 0;
+	padding: 5px 5px;
 	border-bottom: 1px solid #333;
 	font-weight: normal;
+}
+
+.playlist-item img{
+	width: 16px;
+	padding-right: 5px;
+	display: inline-block;
+	vertical-align: middle;
 }
 
 .item-selected{
@@ -97,6 +105,10 @@
     	position: absolute;
     	bottom: 5px;
     }
+    
+   /* .list-item-webos{
+    	width: 100%;
+    }*/
 }
 @media screen and (min-width: 800px) {
     .list-item {
@@ -111,18 +123,27 @@
     	padding-left: 10px;
 		white-space: pre-wrap;
     }
+    /*.list-item-webos{
+    	width: auto;
+    }*/
+    .list-item-webos{
+		position: relative !important;
+		width: 100% !important;
+		/*display: inline-block;*/
+	}
 }
 
 
 /*webos 3.5 compatibility*/
 .list-item-webos{
-	width: 100%;
 	position: relative;
-	padding: 5px;
+	width: 50%;
+	display: inline-block;
 }
 .list-item-webos > img{
 	width: 120px;
 	display: inline-block;
+	padding: 5px;
 }
 .list-item-webos > span{
 	width: 180px;

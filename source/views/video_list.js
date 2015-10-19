@@ -34,10 +34,11 @@ enyo.kind({
     	enyo.forEach(this.videoList, this.addVideoItem, this);
         this.createComponent({
             container: this.$.list_container,
-            style:"width:100%;display: flex;background-color:#333",
+            style:"width:100%;background-color:#333;position: relative",
+            ontap: "loadMore",
             components:[
-                {content:"Load More +", classes:"list-load-more", ontap: "loadMore"},
-                {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", showing: false}
+                {content:"Load More +", classes:"list-load-more"},
+                {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", showing: false, style:"display: inline-block; position: absolute;bottom: 0"}
             ]
         });
     	this.$.list_container.render();

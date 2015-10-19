@@ -19,8 +19,8 @@
 
 /*ainPanel*/
 .menu-panel{
-	width: 175px !important;
-	max-width: 175px;
+	width: 200px !important;
+	max-width: 200px;
 	background-color: #fff !important;
 	box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
 	z-index: 999;
@@ -94,3 +94,26 @@
 .quality-option-selected{
 	border-color: #cf0652 !important;
 }
+
+/*Buttons*/
+.moon-video-player-controls{
+	margin-bottom: 0px;
+}
+.moon-video-player-premium-placeholder-left{
+	width: auto;
+	padding-left: 0;
+}
+/*.moon-video-fullscreen-control .moon-icon-button{
+	border-radius: 0;
+	border: 0px;
+	background-color: transparent;
+	background-position: 0px 0px;
+	color: #ffffff;
+	line-height: 85px;
+}*/
+/*.moon-icon-button.small{
+	background-size: 50px 120px;
+}
+.moon-video-fullscreen-control .moon-icon-button{
+	line-height: 70px;
+}*/
