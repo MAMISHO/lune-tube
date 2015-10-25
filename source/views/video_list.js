@@ -61,12 +61,14 @@ enyo.kind({
     },
 
     selectedVideo: function(inSender, inEvent){
+        // console.log(inSender);
+        // console.log(inEvent);
         if (this.selected) {
             this.selected.removeClass("item-selected");
         }
         inSender.addClass("item-selected");
         this.selected = inSender;
-        this.bubble("onStartVideo",inEvent.originator.owner.getVideoId());
+        this.bubble("onStartVideo",inSender.getVideoId());
     },
 
     loadMore: function(inSender, inEvent){

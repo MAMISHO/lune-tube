@@ -22,7 +22,8 @@ enyo.kind({
     	onBackToList: "backToList",
     	onShowMenuOption: "showMenuOption",
     	onLoadPlaylist: "loadPlaylist",
-    	onRefreshTokenFinish:"refreshTokenFinish"
+    	onRefreshTokenFinish:"refreshTokenFinish",
+    	onRefreshTokenError: "refreshTokenError"
 	},
 	components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
@@ -33,13 +34,17 @@ enyo.kind({
 		            	{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"width: 25px;vertical-align: middle;"},
 		        	]},
 		        	{name:"menuOption",classes:"menu-option", components: [
+		        		{ontap:"aboutTap", classes:"menu-option-item", components:[
+	                		// {kind:"Image", src:"assets/home-icon.png"},
+	                		{content: "About", style:"display: inline-block"}
+	                	]},
 	                	{ontap:"homeRequest", classes:"menu-option-item", components:[
 	                		{kind:"Image", src:"assets/home-icon.png"},
 	                		{content: "Home", style:"display: inline-block"}
 	                	]},
 	                	{classes:"menu-option-item", ontap: "expand", components:[
 	                		{kind:"Image", src:"assets/playlist-icon.png"},
-	                		{name: "playlistUser",kind: "Playlist", style:"display: inline-block"}
+	                		{name: "playlistUser",kind: "Playlist", style:"display: inline-block;width: 85%"}
 	                	]},
 	                    {classes:"menu-option-item", ontap:"loadHistory", components:[
 	                    	{kind:"Image", src:"assets/history-icon.png"},
@@ -86,15 +91,15 @@ enyo.kind({
 		{name: "loginPopup", classes: "onyx-sample-popup", kind: "onyx.Popup", centered: true, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
 			{content:"paste the token", name:"token_message"},
 			{kind: "onyx.InputDecorator", components: [
-				// {tag:"br"},
-				// {tag:"br"},
 				{kind: "onyx.Input", name:"token", style:"background-color:white"}
 			]},
 			{tag: "br"},
 			{tag:"br"},
 			{kind: "onyx.Button", content: "Cancel", ontap: "cancelLogin"},
-			{kind: "onyx.Button", content: "Confirm Login", ontap: "confirmLogin"},
-			{kind: "onyx.Button", content:"Paste", ontap:"pasteTokenHold"}
+			{kind: "onyx.Button", content: "Confirm Login", ontap: "confirmLogin"}
+		]},
+		{name: "messagePopup", classes: "onyx-sample-popup", kind: "onyx.Popup", centered: true, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
+			{name:"boxNotification", content:"", allowHtml:true}
 		]},
 
 		// Componentes que no se ven
@@ -114,32 +119,44 @@ enyo.kind({
 	videos:[],
 	numberOfTries:0,
 	_myChannel:null,
+	_videoIdCurrent:null,
 	create:function() {
         this.inherited(arguments);
         this.$.mainPanel.setIndex(1);
-        var cookie = document.cookie;
-        // console.log(myApiKey);
-        var cookie_aux = cookie.split(";");
-		cookie = cookie_aux[0].split("=");
-		
-		if(cookie[0] === "session_youtube"){
-			if(cookie[1]){
-				// console.log(cookie[1]);
-				var token = JSON.parse(cookie[1]);
-				// console.log(token);
+		var cookie = enyo.getCookie("session_youtube");
+
+		var youtube_token = enyo.getCookie("youtube_token");
+		var youtube_refresh = enyo.getCookie("youtube_refresh");
+		console.log(cookie);
+		console.log(youtube_token);
+		console.log(youtube_refresh);
+
+
+		if(youtube_token && youtube_refresh){
+			console.log("token vigente");
+			var token = JSON.parse(cookie);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
 
 				myApiKey.login = true;
 				this.$.status.setContent("Estas Logado");
-			}
 
 			if(myApiKey.login){
 				this.loadHomeFeeds();
 				this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
 				this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
 			}
+
+		}else if(!youtube_token && youtube_refresh){
+			console.log("token expirado, se refresaca el token");
+			var token = JSON.parse(cookie);
+				myApiKey.access_token = token.access_token;
+				myApiKey.refresh_token = token.refresh_token;
+				myApiKey.login = false;
+
+			this.$.youtube.refreshToken();
 		}else{
+			console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
 		}
     },
@@ -149,6 +166,13 @@ enyo.kind({
 		this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
 		this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
 		return true;
+    },
+
+    refreshTokenError: function(inSender, inEvent){
+    	this.queryChanged();
+    	this.$.boxNotification.setContent("Error <br/><br/>Your session has expired. Please login again");
+    	this.$.messagePopup.show();
+    	return true;
     },
 
     loadHomeFeeds: function(){
@@ -184,9 +208,14 @@ enyo.kind({
 		return true;
 	},
 
+	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
+	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video_id){
-		this.numberOfTries++;
-		this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
+		if(this._videoIdCurrent !== video_id){
+			this._videoIdCurrent = video_id;
+			this.numberOfTries++;//numero de intentos de reproducir
+			this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
+		}
 		return true;
 	},
 
@@ -313,27 +342,20 @@ enyo.kind({
 
 	authorizationTokenResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
-		// console.log("Response ok");
-		// console.log(inResponse);
-
 		var ck = {
 			access_token: inResponse.access_token,
 			token_type: inResponse.token_type,
 			expires_in: inResponse.expires_in,
 			refresh_token: inResponse.refresh_token
 		};
-		var now = new Date();
-		var time = now.getTime();
-		time += (1*24*60*60*1000);
-		now.setTime(time);
 
-		//guardamos en las cookies
-		document.cookie="session_youtube=" + JSON.stringify(ck) +'; expires=' + now.toUTCString() + '; path=/';
+		enyo.setCookie("youtube_token", ck.access_token, {"Max-Age":ck.expires_in});
+		enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":60});
+		enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":60});
 		myApiKey.access_token = ck.access_token;
 		myApiKey.refresh_token = ck.refresh_token;
 		myApiKey.login = true;
 		console.log("cookie almacenada");
-		// console.log(document.cookie);
 		
 		if(myApiKey.login){
 			this.$.menu.setSearching(true);
@@ -342,29 +364,34 @@ enyo.kind({
 			this.query_history = "home";
 			this.loadHomeFeeds();
 			this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
-			this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults");
+			this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
 		}
 	},
+
 	authorizationTokenError: function(inRequest, inResponse){
 		console.log("error");
 		console.log(JSON.stringify(inRequest));
 		console.log(JSON.stringify(inResponse));
-		this.showMenuOption();
-		this.$.loginPopup.hide();
+		this.$.token_message.setContent("error, try one more time");
+		this.$.token.setValue("");
+		// this.showMenuOption();
+		// this.$.loginPopup.hide();
 	},
 
 	homeRequest: function(inSender, inEvent){
 		if(myApiKey.login){
 			this.$.menu.setSearching(true);
-			this.showMenuOption();
 			this.query_history = "home";
 			this.loadHomeFeeds();
+			this.showMenuOption();
 		}
 	},
 
 	logout: function(inSender, inEvent){
 		if(myApiKey.login){
-			document.cookie = "session_youtube" + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+			enyo.setCookie("youtube_token", "", {"Max-Age":0});
+			enyo.setCookie("youtube_refresh","", {"Max-Age":0});
+			enyo.setCookie("session_youtube", "", {"Max-Age":0});
 			myApiKey.access_token = "";
 			myApiKey.refresh_token = "";
 			myApiKey.login = false;
@@ -372,14 +399,12 @@ enyo.kind({
 			this.$.imageUser.setSrc("");
 			this.$.status.setContent("No User");
 			this.search(this.query);
+			this.showMenuOption();
 		}
 	},
 
 	getMychannelresults: function(inRequest, inResponse){
 		if(!inResponse) return;
-		// console.log("llega a views");
-		// console.log(inResponse);
-		// relatedPlaylists
 		this._myChannel = inResponse.items[0].contentDetails;
 		var dataChannel = inResponse.items[0].snippet;
 		this.$.imageUser.setSrc(dataChannel.thumbnails.default.url);
@@ -389,13 +414,11 @@ enyo.kind({
 
 	getMyPlaylistResults: function(inRequest, inResponse){
 		if(!inResponse) return;
-		// console.log("llega playlist a views");
-		// console.log(inResponse);
 		this.$.playlistUser.setData(inResponse);
+		return;
 	},
 
 	loadPlaylist:function(inSender, playlistInfo){
-		// console.log(playlistInfo);
 		this.$.menu.setSearching(true);
 		this.query_history = playlistInfo.id;
 		this.$.youtube.getPlaylistFromId(playlistInfo.id).response(this, "receiveResults");
@@ -424,10 +447,17 @@ enyo.kind({
 		if(myApiKey.login){
 			this.$.menu.setSearching(true);
 			this.query_history = playlist_id;
-			this.$.youtube.getPlaylistFromId(playlist_id).response(this, "receiveResults");
+			this.$.youtube.getPlaylistFromId(playlist_id).response(this, "receiveResults").error(this, "receiveResults");
 			this.showMenuOption();
 			return true;
 		}
+	},
+
+	aboutTap: function(inSender, inEvent){
+
+		this.$.messagePopup.show();
+		this.$.boxNotification.setContent("LuneTube v0.0.9<br/>This is a alpha version <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info</a> all versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a>");
+		this.showMenuOption();
 	},
 
 	// Experimental

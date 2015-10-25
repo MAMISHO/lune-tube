@@ -3,5 +3,6 @@ enyo.depends(
 	"app.css",
 	"main.css",
 	"menu.css",
-	"video_list.css"
+	"video_list.css",
+	"player.css"
 );

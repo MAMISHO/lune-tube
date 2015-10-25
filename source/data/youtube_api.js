@@ -90,9 +90,9 @@ enyo.kind({
 		if(b == 401){
 			this.refreshToken();
 			// return a.go();
-			this.getActivities();
+			// this.getActivities();
 		}
-		// return a;
+		return;
 	},
 
 	searchNext: function(inSearchText){
@@ -246,8 +246,16 @@ enyo.kind({
 				expires_in: inResponse.expires_in,
 				refresh_token: myApiKey.refresh_token
 			};
-			document.cookie="session_youtube=";
-			document.cookie="session_youtube=" + JSON.stringify(ck);
+			// document.cookie="session_youtube=";
+			// document.cookie="session_youtube=" + JSON.stringify(ck);
+			// var time = (ck.expires_in) / (24*60*60*1000);
+			enyo.setCookie("youtube_token", ck.access_token, {"Max-Age":ck.expires_in});
+			enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":60});
+			enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":60});
+			myApiKey.access_token = ck.access_token;
+			myApiKey.refresh_token = ck.refresh_token;
+			myApiKey.login = true;
+			console.log("cookie refrescada");
 			return this.bubble("onRefreshTokenFinish",this);
 		}
 		return;
@@ -256,6 +264,7 @@ enyo.kind({
 	processErrorRefreshToken: function(inRequest, inResponse){
 		if(!inResponse) return;
 		console.log("no se puede refrescar el token, es necesario logarse otra vez.");
+		return this.bubble("onRefreshTokenError",this);
 	},
 
 	getMyChannelInfo: function(){
@@ -320,7 +329,7 @@ enyo.kind({
 	getMyPlaylistResponseError: function(inRequest, inResponse){
 		if(!inResponse) return;
 		if(inResponse==404){
-			return {items:[]};
+			return [];
 		}
 
 		if(inResponse == 401){

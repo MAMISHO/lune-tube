@@ -32,21 +32,22 @@ enyo.kind({
 			infoComponents: [
 				{kind: "moon.VideoInfoBackground", orient: "left", background: true, fit: true, components: [
 					{kind: "moon.VideoInfoHeader",subSubTitle: "Lunetube >>"}
-				]}
+				]},
 				/*{kind: "moon.VideoInfoBackground", orient: "right", background: true, components: [
 					{kind:"moon.Clock"}
 				]}*/
-			],
-			components: [
-				{kind: "moon.IconButton", classes:"moon-icon-video-round-controls-style", ontap:"backtoList", components:[
-					{kind:"Image", src:"assets/back-icon.png",
-					// style:"position: absolute;left: 5px;top: 7px"
-					}
-				]},
 				{tag:"div", classes:"quality-option", components:[
+				{name:"backButton",kind: "moon.IconButton", classes:"moon-icon-video-round-controls-style", ontap:"backtoList", components:[
+					{kind:"Image", src:"assets/back-icon.png"}
+				]},
 					{content:"SD", name:"sdButton", classes:"quality-option-selected", ontap:"loadSD"},
 					{content:"HD", name:"hdButton", ontap:"loadHD"}
 				]}
+			],
+			components: [
+				/*{name:"backButton",kind: "moon.IconButton", classes:"moon-icon-video-round-controls-style", ontap:"backtoList", components:[
+					{kind:"Image", src:"assets/back-icon.png"}
+				]}*/
 			]
 		},
 		{kind:"moon.Dialog", name:"tapDialog", title:"The controls were tapped.", message:"Press OK to dismiss", components: [
@@ -130,10 +131,19 @@ enyo.kind({
 
 		this.$.player.setSources(this.sources);
 	},
+	
 	showControlsPlayer: function(inSender, inEvent){
+
+		var control = inEvent.originator.name;
+		if(control != "tapArea" && control != "sdButton" && control != "hdButton"){
+			if(this.$.player.isOverlayShowing()){
+				this.$.player.playPause();
+				return;
+			}
+		}
 		this.$.player.showFSControls();
-		// this.$.player.disablePlaybackControls=false;
 	},
+
 	loadHD: function(inSender, inEvent){
 		
 		if((this.quality === "SD-MP4") && this.hd){
@@ -165,6 +175,7 @@ enyo.kind({
 	},
 
 	backtoList: function(inSender, inEvent){
+		inEvent.preventDefault();
 		this.bubble("onBackToList",this);
 	}
 });

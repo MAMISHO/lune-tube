@@ -1,6 +1,6 @@
 {
 	"id":			"com.emsoft.lunetube",
-	"version":		"0.0.8",
+	"version":		"0.0.9",
 	"vendor":		"mamisho",
 	"type":			"ipk",
 	"main":			"index.html",
@@ -9,6 +9,6 @@
 	"uiRevision":	2,
 	"noWindow":		false,
 	"mimeTypes": [
-			{ "urlPattern": "^macaw:" }
+			{ "urlPattern": "^youtube:" }
 		],
 }

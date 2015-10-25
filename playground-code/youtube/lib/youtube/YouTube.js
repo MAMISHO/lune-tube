@@ -3,7 +3,8 @@ enyo.kind({
 	kind: "Control",
 	published: {
 		videoId: "",
-		nextPage: ""
+		nextPage: "",
+		playerVersion: null,
 	},
 	statics: {
 		isApiReady: false,
@@ -113,8 +114,15 @@ enyo.kind({
 		console.log(aux1[0]);*/
 		var d = document.getElementById('app_youTube_video').contentWindow.document;
 		var s = d.getElementsByTagName('script');
-		console.log(s.children[0]);
-		
+		var url = null;
+		for (var i = 0; i < s.length; i++) {
+			var aux = s[i];
+			if(aux.src.match("html5player")){
+				console.log("encontrado");
+				url = aux.src;
+			}
+		}
+		this.setPlayerVersion(url);
 		this.setPlayerShowing(true);
 		this.play();
 	},
@@ -148,6 +156,23 @@ enyo.kind({
 		if (this.player) {
 			this.player.pauseVideo();
 		}
+	},
+	
+	playerVersionChanged: function(){
+		console.log("cambió");
+		console.log(this.playerVersion);
+		var ajax = new enyo.Ajax({
+				url: this.playerVersion
+			}).go().response(this, "getPlayerVersion");
+	},
+
+	getPlayerVersion: function(inRequest, inResponse){
+		
+		if(!inResponse) return;
+		console.log("llega");
+		console.log(inResponse);
+		var aux = inResponse.match("\.sig\|\|([a-zA-Z0-9$]+)\(");
+		console.log(aux);
 	}
 });
 
