@@ -77,9 +77,10 @@ enyo.kind({
 					{layoutKind: "FittableRowsLayout", components: [
 						{kind: "Menu", name:"menu"},
 						{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
-							{kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
-								{kind:"VideoList", name:"videoList"},
-							]}
+							// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
+								// {kind:"VideoList", name:"videoList"},
+								{kind:"VideoGridList", name:"videoList"},
+							// ]}
 						]}
 					]},
 					{name: 'content_player',fit: true, doubleTapEnabled: true, ondoubletap: "doubleTap", components: [

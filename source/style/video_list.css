@@ -164,7 +164,7 @@
 /*webos 3.5 compatibility*/
 .list-item-webos{
 	position: relative;
-	width: 50%;
+	/*width: 50%;*/
 	display: inline-block;
 	user-drag: none; 
 	-moz-user-select: none;
@@ -186,4 +186,5 @@
 .list-item-webos > span > h3{
 	position: absolute;
 	top: 5px;
+	/*height: 100%;*/
 }

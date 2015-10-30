@@ -23,8 +23,6 @@ enyo.kind({
 			jumpForwardIcon: "icon_skipforward.png",
 			sources: [
 				{src: "http://media.w3.org/2010/05/bunny/movie.mp4", type: "video/mp4"},
-				{src: "http://media.w3.org/2010/05/bunny/movie.ogg", type: "video/ogg"},
-				{src: "http://media.w3.org/2010/05/bunny/movie.webm", type: "video/webm"}
 			],
 			poster: "assets/video-poster.png",
 			// autoplay:true,
@@ -130,6 +128,7 @@ enyo.kind({
 		}
 
 		this.$.player.setSources(this.sources);
+		console.log(this.sources);
 	},
 	
 	showControlsPlayer: function(inSender, inEvent){

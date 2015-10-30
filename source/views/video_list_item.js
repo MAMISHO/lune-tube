@@ -1,8 +1,12 @@
 enyo.kind({
     name: "VideoListItem",
-    kind: "Control",
-    // classes:"list-item-webos",
+    kind: "FittableColumns",
+    classes:"list-item-webos",
     // classes: "list-item",
+    style:"height:103px",
+    handlers:{
+        ontap:"itemTap"
+    },
     published: {
         videoId:"",
         channelId:"",
@@ -13,12 +17,12 @@ enyo.kind({
       	time:""  
     },
     components: [
-        {tag:"img",name:"image", attributes:{src:"https://i.ytimg.com/vi/w1oM3kQpXRo/default.jpg"}},
+        {tag:"img",name:"image", attributes:{src:""}},
         {tag:"span", classes:"list-description", components:[
-        	{tag:"h3", name:"title", classes:"list-titulo", content:"loremPhysical 3D-printed sub-orbital cartel range-rover"},
-        	{tag:"p", name:"channel", content:"canal dueño del video"},
-        	{tag:"p", name:"views", content:"numero de views"},
-        	{tag:"p", name:"time", content:"hace 2 años Tiempo"}
+        	{tag:"h3", name:"title", classes:"", content:""},
+        	{tag:"p", name:"channel", content:""},
+        	{tag:"p", name:"views", content:""},
+        	{tag:"p", name:"time", content:""}
         ]}
 
     ],
@@ -45,5 +49,10 @@ enyo.kind({
 	},
 	timeChanged: function(){
 		this.$.time.setContent(this.time);
-	}
+	},
+    itemTap: function(inSender, inEvent){
+        console.log("me tap");
+        console.log(inSender);
+        console.log(inEvent);
+    }
 });

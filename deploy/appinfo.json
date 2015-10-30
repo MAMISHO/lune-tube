@@ -1,10 +1,10 @@
 {
-	"id":			"com.emsoft.lunetube",
-	"version":		"0.0.9",
+	"id":			"com.emsoft.lunetubebeta",
+	"version":		"0.1.0",
 	"vendor":		"mamisho",
 	"type":			"ipk",
 	"main":			"index.html",
-	"title":		"LuneTube",
+	"title":		"LuneTubeBeta",
 	"icon":			"icon.png",
 	"uiRevision":	2,
 	"noWindow":		false,

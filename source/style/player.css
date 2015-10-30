@@ -58,6 +58,10 @@ img#app_player_image.enyo-image{
 .moon-toggle-button{
 	min-width: 40px;
 }
+/*.moon-icon-button:active{
+	background-color: #000 !important;
+}*/
+
 .quality-option{
 	width: 100%;
 	display: -webkit-inline-flex;
