@@ -15,13 +15,13 @@ enyo.kind({
             // ]},
             {content:"Home", classes:"header-loc"}
         ]},*/
-        {kind: "onyx.Toolbar", classes:"menu",  components:[
-                {kind: "Image", src: "assets/menu.png", ontap:"showMenu", style:"width: 32px;height:25px;vertical-align: middle;margin:0;padding:0"},
-                {kind: "Image", src: "assets/yt_icon_1.png", ontap:"showMenu", style:"width: 48px;height:32px;vertical-align: middle;margin:0;padding:0"},
-                    {name:"searchText", kind: "onyx.InputDecorator", classes:"search", components: [
-                        {kind: "onyx.Input",name:"searchQuery", placeholder: "Just Type...", onchange: "inputChanged", selectOnFocus:true,
+        {kind: "onyx.Toolbar", classes:"topbar",  components:[
+                {kind: "Image", src: "assets/menu.png", ontap:"showMenu"},// style:"width: 32px;height:25px;vertical-align: middle;margin:0;padding:0"},
+                {kind: "Image", src: "assets/yt_icon_1.png", ontap:"showMenu"},// style:"width: 48px;height:32px;vertical-align: middle;margin:0;padding:0"},
+                    {name:"searchText", kind: "onyx.InputDecorator",layoutKind:"FittableColumnsLayout", components: [
+                        {kind: "onyx.Input",fit:true, name:"searchQuery", placeholder: "Just Type...", onchange: "inputChanged", selectOnFocus:true,
                         onkeypress: "inputKeypress"},
-                        {name:"searchButton",kind: "Image", src: "assets/search-input-search.png", ontap:"searchAction", showing: true},
+                        {name:"searchButton",kind: "Image", src: "assets/search-input-search.png", ontap:"searchAction", showing: true, style:"width:20px"},
                         {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", showing: false, style:"width:20px"}
                     ]},
         ]}

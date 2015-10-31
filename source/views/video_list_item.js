@@ -1,7 +1,7 @@
 enyo.kind({
     name: "VideoListItem",
     kind: "FittableColumns",
-    classes:"list-item-webos",
+    // classes:"list-item-webos",
     // classes: "list-item",
     style:"height:103px",
     handlers:{

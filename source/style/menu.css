@@ -1,3 +1,9 @@
+.topbar{
+	background-color: #cf0652;
+	border: none;
+	padding: 1px 2px;
+}
+
 .menu{
 	/*padding: 2px 1px 2px 1px;*/
 	/*padding: 0 1px 0 0;*/
@@ -93,13 +99,12 @@
 	font-weight: bolder;
 }
 .menu > label{
-	/*width: 98%;*/
 }
 label > input{
-	/*min-width: 270px;
-	width: 97%;*/
 	font-size: 16px;
 	font-weight: bold;
+}
+label{
 }
 .search-input{
 	margin: 0;
@@ -123,17 +128,34 @@ label > input{
 }
 
 @media screen and (min-width: 800px) {
-	.menu > label{
-		/*width: 94%;*/
-	}
-	label > input{
-		/*min-width: 265px;
-		width: 92%;*/
-		font-size: 16px;
-		font-weight: bold;
+
+}
+@media screen and (min-width: 1024px) {
+	label{
+		width: 208px;
 	}
 }
-
+@media screen and (width: 768px) {
+	label{
+		width: 87%;
+	}
+	input{
+	}
+}
+@media screen and (width: 480px) {
+	label{
+		width: 80%;
+	}
+	input{
+	}
+}
+@media screen and (width: 320px) {
+	input{
+	}
+	label{
+		width: 68%;
+	}
+}
 /*Tab buttons*/
 .onyx-radiobutton{
 	width: 33.33%;
@@ -142,16 +164,11 @@ label > input{
 	padding-right: 0 !important;
 	background-color: #cf0652;
 	color: #fff;
+	padding-top: 3px !important;
+	padding-bottom: 3px !important;
 }
 .onyx-radiobutton.active{
 	background-color: transparent;
 	color: #000;
 	border-bottom: none;
-}
-.item{
-	/*background-color: blue;*/
-	/*top: 0px !important;*/
-	/*left: 0px !important;*/
-	/*width: 100% !important;*/
-	/*height: auto !important;*/
 }

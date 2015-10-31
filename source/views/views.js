@@ -30,8 +30,8 @@ enyo.kind({
 			{name:"menuPanel", components:[
 				{kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
 					{classes:"header", style:"text-align:right",components:[
-		            	{name:"aboutAPP", content:"", classes:"header-loc"},		            	
-		            	{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"width: 25px;vertical-align: middle;"},
+		            	{name:"aboutAPP", content:"", classes:"header-loc", style:"vertical-align: middle"},		            	
+		            	{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"vertical-align: middle"},
 		        	]},
 		        	{name:"menuOption",classes:"menu-option", components: [
 		        		{ontap:"aboutTap", classes:"menu-option-item", components:[
