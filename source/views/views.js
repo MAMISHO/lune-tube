@@ -79,7 +79,17 @@ enyo.kind({
 						{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
 							// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
 								// {kind:"VideoList", name:"videoList"},
-								{kind:"VideoGridList", name:"videoList"},
+							{kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", ontap:"radioGroupTap", components: [
+								{content: "Results", active: true, index:1},
+								{content: "Related", index:2},
+								{content: "Comments", index:3}
+							]},
+							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
+								// {kind:"VideoGridList", name:"videoList"},
+								{kind:"VideoList", name:"videoList"},
+								{content:"Related"},
+								{content:"Comentarios"},
+							]}	
 							// ]}
 						]}
 					]},
@@ -124,6 +134,7 @@ enyo.kind({
 	create:function() {
         this.inherited(arguments);
         this.$.mainPanel.setIndex(1);
+        this.$.listPanels.setIndex(0);
 		var cookie = enyo.getCookie("session_youtube");
 
 		var youtube_token = enyo.getCookie("youtube_token");
@@ -459,6 +470,16 @@ enyo.kind({
 		this.$.messagePopup.show();
 		this.$.boxNotification.setContent("LuneTube v0.0.9<br/>This is a alpha version <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info</a> all versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a>");
 		this.showMenuOption();
+	},
+
+	radioGroupTap: function(inSender, inEvent){
+		// console.log(inSender);
+		// console.log(inEvent);
+		if(inSender.active){
+			if(inSender.active.index){
+				this.$.listPanels.setIndex(inSender.active.index-1);
+			}
+		}
 	},
 
 	// Experimental

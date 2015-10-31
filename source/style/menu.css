@@ -1,5 +1,7 @@
 .menu{
-	padding: 2px 1px 2px 1px;
+	/*padding: 2px 1px 2px 1px;*/
+	/*padding: 0 1px 0 0;*/
+	padding: 4px 0 4px 0;
 	margin: 0;
 	background-color: #cf0652;
 	display: -webkit-flex;
@@ -91,11 +93,11 @@
 	font-weight: bolder;
 }
 .menu > label{
-	width: 98%;
+	/*width: 98%;*/
 }
 label > input{
-	min-width: 270px;
-	width: 97%;
+	/*min-width: 270px;
+	width: 97%;*/
 	font-size: 16px;
 	font-weight: bold;
 }
@@ -122,12 +124,34 @@ label > input{
 
 @media screen and (min-width: 800px) {
 	.menu > label{
-		width: 94%;
+		/*width: 94%;*/
 	}
 	label > input{
-		min-width: 265px;
-		width: 92%;
+		/*min-width: 265px;
+		width: 92%;*/
 		font-size: 16px;
 		font-weight: bold;
 	}
+}
+
+/*Tab buttons*/
+.onyx-radiobutton{
+	width: 33.33%;
+	border-radius: 0px !important;
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	background-color: #cf0652;
+	color: #fff;
+}
+.onyx-radiobutton.active{
+	background-color: transparent;
+	color: #000;
+	border-bottom: none;
+}
+.item{
+	/*background-color: blue;*/
+	/*top: 0px !important;*/
+	/*left: 0px !important;*/
+	/*width: 100% !important;*/
+	/*height: auto !important;*/
 }
