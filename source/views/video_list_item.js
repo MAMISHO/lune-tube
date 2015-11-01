@@ -5,7 +5,7 @@ enyo.kind({
     // classes: "list-item",
     style:"height:103px",
     handlers:{
-        ontap:"itemTap"
+        // ontap:"itemTap"
     },
     published: {
         videoId:"",

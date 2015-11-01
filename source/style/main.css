@@ -19,8 +19,8 @@
 
 /*MainPanel*/
 .menu-panel{
-	width: 200px !important;
-	max-width: 200px;
+	width: 260px !important;
+	max-width: 260px;
 	background-color: #fff !important;
 	box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
 	z-index: 999;

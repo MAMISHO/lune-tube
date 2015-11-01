@@ -3,6 +3,10 @@
 	border: none;
 	padding: 1px 2px;
 }
+.topbar > img{
+	margin: 0;
+	padding: 0;
+}
 
 .menu{
 	/*padding: 2px 1px 2px 1px;*/
@@ -38,7 +42,7 @@
 	background-color: #fff;
 	color:#333;
 	font-weight: bolder;
-	padding: 5px;
+	padding: 0 0 0 5px;
 }
 .menu-option-item{
 	font-size: 20px;
@@ -132,28 +136,34 @@ label{
 }
 @media screen and (min-width: 1024px) {
 	label{
-		width: 208px;
+		width: 238px;
+	}
+	input{
+		width: 95%;
 	}
 }
 @media screen and (width: 768px) {
 	label{
-		width: 87%;
+		width: 88%;
 	}
 	input{
+		width: 97%;
 	}
 }
 @media screen and (width: 480px) {
 	label{
-		width: 80%;
+		width: 85%;
 	}
 	input{
+		width: 94%;
 	}
 }
 @media screen and (width: 320px) {
 	input{
+		width: 94%;
 	}
 	label{
-		width: 68%;
+		width: 75%;
 	}
 }
 /*Tab buttons*/

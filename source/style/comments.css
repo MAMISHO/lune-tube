@@ -1,0 +1,14 @@
+.comment{
+	padding: 0;
+	margin: 5px 0;
+}
+.comment > img{
+	width: 20%;
+	padding: 4px;
+	border: 5px solid #fff;
+	border-radius: 999px;
+}
+.comment > p{
+	width: 70%;
+	margin-left: 5%;
+}

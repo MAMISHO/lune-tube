@@ -3,7 +3,8 @@ enyo.kind({
     kind: "Control",
     published: {
         videoList:[],
-        searching: false
+        searching: false,
+        showMore:true
     },
     handlers: {
     },
@@ -12,10 +13,10 @@ enyo.kind({
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"VideoListItem", name:"videoItem"}    
             ]},
-            {name: "more", style:"width:100%;background-color:#333;position: relative",ontap: "loadMore", components: [
+            {name: "more", style:"width:100%;background-color:#333;position: relative;height: 80px",ontap: "loadMore", components: [
                 {kind:"onyx.Button", content:"Load More +", classes:"list-load-more", components:[
                     {content:"Load More + "},
-                    {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;bottom: 0"}
+                    {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;top: 0"}
                 ]},
             ]}
         ]}
@@ -56,6 +57,7 @@ enyo.kind({
         this.$.searchSpinner.hide();
         this.$.list.setCount(this.videoList.length);
         // this.$.list.reset();
+        // console.log(this.videoList);
         this.$.list.refresh();
     },
 
@@ -76,16 +78,7 @@ enyo.kind({
     },
 
     selectedVideo: function(inSender, inEvent){
-        console.log(inSender);
-        console.log(inEvent);
-        var item = this.videoList[inEvent.index];
-        console.log(item);
-        if (this.selected) {
-            this.selected.removeClass("item-selected");
-        }
-        inSender.addClass("item-selected");
-        this.selected = inSender;
-        this.bubble("onStartVideo",item.video_id);
+        this.bubble("onStartVideo",this.videoList[inEvent.index].video_id);
     },
 
     loadMore: function(inSender, inEvent){
@@ -113,7 +106,7 @@ enyo.kind({
     setupItem: function(inSender, inEvent) {
         var i = inEvent.index;
         var item = this.videoList[i];
-        // this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
+        this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
         this.$.videoItem.addClass(this.platformStyle);
         this.$.videoItem.setVideoId(item.video_id);
         this.$.videoItem.setChannelId(item.channel_id);
@@ -123,7 +116,10 @@ enyo.kind({
         this.$.videoItem.setViews(item.views);
         this.$.videoItem.setTime(item.time);
         // this.$.it.setContent("hola <br/> adios <br/> ya nada" + i);
-        this.$.more.canGenerate = !this.videoList[i+1];
+        // console.log("showmre " + this.showMore);
+        // console.log("cangenerate " + !this.videoList[i+1]);
+        this.$.more.canGenerate = !this.videoList[i+1] && this.showMore;
+        // this.$.more.canGenerate = !this.videoList[i+1];
         return true;
     },
      /*dragstart: function(inSender, inEvent){

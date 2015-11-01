@@ -11,8 +11,7 @@ enyo.kind({
 	published:{
 		query_history: "",
 		query:"",
-		// login:false
-		// query:"defqon1 power hour"
+		queryType:"keyword" //[ keyword | playlist | home ]
 	},
 	handlers: {
     	onLoadMore: "loadMore",
@@ -79,16 +78,18 @@ enyo.kind({
 						{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
 							// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
 								// {kind:"VideoList", name:"videoList"},
-							{kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", ontap:"radioGroupTap", components: [
+							{name:"videoDetailGroup", kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", ontap:"radioGroupTap", components: [
 								{content: "Results", active: true, index:1},
 								{content: "Related", index:2},
 								{content: "Comments", index:3}
-							]},
+							],
+							style:"height:32px"
+							},
 							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
 								// {kind:"VideoGridList", name:"videoList"},
 								{kind:"VideoList", name:"videoList"},
-								{content:"Related"},
-								{content:"Comentarios"},
+								{kind:"VideoList", name:"videoListRelated"},
+								{kind:"CommentList", name:"commentList"}
 							]}	
 							// ]}
 						]}
@@ -188,10 +189,20 @@ enyo.kind({
     },
 
     loadHomeFeeds: function(){
+    	this.$.videoDetailGroup.hide();
+    	this.$.listPanels.setIndex(0);
+    	this.$.videoDetailGroup.setActive(false);
+
+    	this.queryType = "home";
     	this.$.youtube.getActivities().response(this, "receiveResults");
     },
 
     search: function(q) {
+    	this.$.videoDetailGroup.hide();
+    	this.$.listPanels.setIndex(0);
+    	this.$.videoDetailGroup.setActive(false);
+
+    	this.queryType = "keyword";
     	if(myApiKey.login){
     		this.$.youtube.searchAuth(q).response(this, "receiveResults");
     	}else{
@@ -202,10 +213,21 @@ enyo.kind({
 	receiveResults: function(inRequest, inResponse){
 		if(!inResponse) return;
 		
+		// console.log(inResponse);
+		
+		if(inResponse.error){
+			console.log(inResponse.error);
+			this.$.videoList.setShowMore(false);
+			inResponse = [];
+		}else{
+			this.$.videoList.setShowMore(true);
+		}
+
 		if(this.getQuery() !== this.query_history){
 			this.query_history = this.getQuery();
 			this.videos = inResponse;
 		}else{
+			// console.log(inResponse);
 			this.videos = this.videos.concat(inResponse);
 		}
 
@@ -215,8 +237,27 @@ enyo.kind({
 		this.$.videoList.setSearching(false);
 	},
 
+	receiveResultsRelated: function(inRequest, inResponse){
+		if(!inResponse) return;
+		console.log(inResponse);
+		this.$.videoListRelated.setShowMore(false);
+		this.$.videoListRelated.setVideoList(inResponse);
+	},
+
+	receiveComments: function(inRequest, inResponse){
+		if(!inResponse) return;
+		console.log(inResponse);
+		this.$.commentList.setComments(inResponse.items);
+	},
+
 	loadMore: function(inSender, inEvent){
-		this.$.youtube.searchNext(this.query).response(this, "receiveResults");
+		if(this.queryType === "playlist"){
+			this.$.youtube.getPlaylistFromIdNextPage().response(this, "receiveResults");
+		}else if(this.queryType === "home"){
+			this.$.youtube.getActivities().response(this, "receiveResults");
+		}else{
+			this.$.youtube.searchNext(this.query).response(this, "receiveResults");
+		}
 		return true;
 	},
 
@@ -227,6 +268,9 @@ enyo.kind({
 			this._videoIdCurrent = video_id;
 			this.numberOfTries++;//numero de intentos de reproducir
 			this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
+			this.$.youtube.search("", video_id).response(this, "receiveResultsRelated");
+			this.$.youtube.getComments(video_id).response(this, "receiveComments");
+			this.$.videoDetailGroup.show();
 		}
 		return true;
 	},
@@ -394,6 +438,7 @@ enyo.kind({
 		if(myApiKey.login){
 			this.$.menu.setSearching(true);
 			this.query_history = "home";
+			this.$.youtube.setNextPage(null);
 			this.loadHomeFeeds();
 			this.showMenuOption();
 		}
@@ -431,6 +476,11 @@ enyo.kind({
 	},
 
 	loadPlaylist:function(inSender, playlistInfo){
+		this.$.videoDetailGroup.hide();
+		this.$.listPanels.setIndex(0);
+		this.$.videoDetailGroup.setActive(false);
+
+		this.queryType = "playlist";
 		this.$.menu.setSearching(true);
 		this.query_history = playlistInfo.id;
 		this.$.youtube.getPlaylistFromId(playlistInfo.id).response(this, "receiveResults");
@@ -456,6 +506,11 @@ enyo.kind({
 	},
 
 	loadPlaylistById: function(playlist_id){
+		this.$.videoDetailGroup.hide();
+		this.$.listPanels.setIndex(0);
+		this.$.videoDetailGroup.setActive(false);
+
+		this.queryType = "playlist";
 		if(myApiKey.login){
 			this.$.menu.setSearching(true);
 			this.query_history = playlist_id;

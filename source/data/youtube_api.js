@@ -2,7 +2,9 @@ enyo.kind({
 	name: "YoutubeApi",
 	kind: enyo.Component,
 	published: {
+		prevPage:"",
 		nextPage:"",
+		currentPlaylist:"",
 	},
 	components: [
 
@@ -12,7 +14,7 @@ enyo.kind({
 	},
 	search: function(inSearchText, inRelated) {
 		var params={
-			maxResults: 50,
+			maxResults: 15,
 			order: "relevance",
 			part: "snippet",
 			type: "video",
@@ -22,7 +24,8 @@ enyo.kind({
 			if(inRelated == null){		// sin videos relacionados				
 				params.q = inSearchText;
 			}else{						//peticion de videos relacionados
-				params.relatedToVideoId = inSearchText;
+				params.relatedToVideoId = inRelated;
+				params.maxResults = 15;
 			}
 
 			var url_base = "https://content.googleapis.com/youtube/v3/";
@@ -36,7 +39,7 @@ enyo.kind({
 	processResponse: function(inRequest, inResponse) {
 			if(!inResponse) return [];
 			// return inResponse;
-			console.log(inResponse);
+			// console.log(inResponse);
 			this.nextPage = inResponse.nextPageToken;
 			var videos = [];
 			var data = inResponse.items;
@@ -63,7 +66,7 @@ enyo.kind({
 
 	searchVideosList: function(query){
 		var params={
-			maxResults: 50,
+			maxResults: 15,
 			chart: "mostPopular",
 			q: query,
 			part: "snippet",
@@ -117,7 +120,7 @@ enyo.kind({
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "search";
 		var params={
-			maxResults: 50,
+			maxResults: 15,
 			chart: "mostPopular",
 			q: inSearchText,
 			part: "snippet",
@@ -156,12 +159,17 @@ enyo.kind({
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "activities";
 		var params={
-			maxResults: 50,
+			maxResults: 15,
 			regionCode: localeInfo.info.locale,
 			part: "snippet, contentDetails",
 			home: true,
 			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
 		};
+
+		if(this.nextPage){
+			params.pageToken = this.nextPage;
+			params.maxResults = 50;
+		}
 
 		var request = new enyo.Ajax({
             url: url_base + method,
@@ -182,16 +190,21 @@ enyo.kind({
 		if(!inResponse) return [];
 			// return inResponse;
 			// console.log(inRequest);
-			// console.log(inResponse);
+			console.log(inResponse);
 			this.nextPage = inResponse.nextPageToken;
 			var videos = [];
 			var data = inResponse.items;
-
+			var ant = null;
 			for (var i = 0; i < data.length; i++) {
 				var v = {};
 				if(inRequest.headers.Authorization){
 					var aux = data[i].snippet.type;
-					v.video_id = data[i].contentDetails[aux].videoId;
+					// if(aux === "recommendation" || aux === "like" || aux === "bulletin" || "playlistItem"){
+					if(data[i].contentDetails[aux].resourceId){
+						v.video_id = data[i].contentDetails[aux].resourceId.videoId;
+					}else{
+						v.video_id = data[i].contentDetails[aux].videoId;
+					}
 					// console.log(v.video_id);
 				}else{
 					v.video_id = data[i].id.videoId;
@@ -203,12 +216,14 @@ enyo.kind({
 				v.views = "",
 				v.time = data[i].snippet.publishedAt.split("T")[0];
 				
-				var vevo = v.chanel.search("VEVO");
+				/*var vevo = v.chanel.search("VEVO");
 				if(vevo === -1){
 					videos.push(v);
-				}
-				
-				// videos.push(v);
+				}*/
+
+				if(data[i].snippet.type !== "subscription" && data[i].snippet.type !== "playlistItem" && ant !== v.video_id)
+					videos.push(v);
+				ant = v.video_id;
 			}
 			return videos;
 	},
@@ -293,6 +308,7 @@ enyo.kind({
 	getMyChannelInfoResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
 		// console.log(inResponse);
+		this.myChannel = inResponse;
 		return inResponse;
 	},
 
@@ -340,12 +356,15 @@ enyo.kind({
 	},
 
 	getPlaylistFromId: function(id){
+		/*this.totalResults = 0;
+		this.resultsItem = 0;*/
+		this.currentPlaylist = id;
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "playlistItems";
 		var params={
 			part: "id,snippet, status",
 			playlistId: id,
-			maxResults: 50,
+			maxResults: 15,
 		};
 
 		var request = new enyo.Ajax({
@@ -366,6 +385,10 @@ enyo.kind({
 		if(!inResponse) return [];
 			// return inResponse;
 			// console.log(inResponse);
+			// console.log();
+			if( typeof inResponse === "string"){
+				return {error:"maxResults"};
+			}
 			this.nextPage = inResponse.nextPageToken;
 			var videos = [];
 			var data = inResponse.items;
@@ -388,8 +411,83 @@ enyo.kind({
 					videos.push(v);
 				}
 			}
+			/*this.resultsItem += data.length;
+			this.totalResults = inResponse.pageInfo.totalResults;
+			console.log(this.resultsItem);
+			console.log(this.totalResults);
+			if(typeof this.nextPage !== "undefined"){
+				console.log(this.nextPage);
+			}*/
 			return videos;
 			// console.log(videos);
-	}
+	},
 
+	getPlaylistFromIdNextPage: function(){
+		if(typeof this.nextPage !== "undefined"){
+			var url_base = "https://www.googleapis.com/youtube/v3/";
+			var method = "playlistItems";
+			var params={
+				part: "id,snippet, status",
+				playlistId: this.currentPlaylist,
+				pageToken: this.nextPage,
+				maxResults: 50,
+			};
+
+			var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "GET",
+	            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "getPlaylistFromIdResponse"));
+	        request.error(enyo.bind(this, "getMyPlaylistResponseError"));
+	        return request.go(params);
+    	}else{
+    		console.log("va al response");
+    		var ajaxMock = new enyo.Ajax({});
+    		ajaxMock.response(enyo.bind(this, "getPlaylistFromIdResponse"));
+        	ajaxMock.error(enyo.bind(this, "getMyPlaylistResponseError"));
+    		return ajaxMock.go();
+    	}
+	},
+
+	getComments: function(id){
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+			var method = "commentThreads";
+			var params={
+				// part: "id, replies, snippet",
+				part: "id, snippet",
+				maxResults: 15,
+				order: "relevance",
+				videoId: id,
+				key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+				fields: "etag,eventId,items,kind,nextPageToken,pageInfo,tokenPagination,visitorId"
+			};
+
+			if(this.myChannel){
+				console.log(this.myChannel);
+			}
+
+			var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "GET",
+	            // headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "getCommentsResults"));
+	        // request.error(enyo.bind(this, "getMyPlaylistResponseError"));
+	        return request.go(params);
+	},
+	getCommentsResults: function(inSender, inResponse){
+		console.log(inResponse);
+		if(!inResponse) return;
+
+		return;
+	}
 });
