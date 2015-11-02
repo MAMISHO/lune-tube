@@ -10,7 +10,9 @@ enyo.kind({
         
     },
     components: [
-        {tag:"img",name:"image", attributes:{src:""}},
+        // {tag:"div", components:[
+            {tag:"img",name:"image", attributes:{src:""}},
+        // ]},
         {tag:"p", name:"comment", content:"", allowHtml:true},
     ],
     create:function() {

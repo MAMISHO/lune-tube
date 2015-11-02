@@ -13,14 +13,15 @@ enyo.kind({
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"VideoListItem", name:"videoItem"}    
             ]},
-            {name: "more", style:"width:100%;background-color:#333;position: relative;height: 80px",ontap: "loadMore", components: [
+            {name: "more", style:"width:100%;background-color:#333;position: relative;height: 58px",ontap: "loadMore", components: [
                 {kind:"onyx.Button", content:"Load More +", classes:"list-load-more", components:[
                     {content:"Load More + "},
                     {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;top: 0"}
-                ]},
+                ]}
             ]}
         ]}
     ],
+    _isNewList:null,
     platformStyle:"",
     create:function() {
         this.inherited(arguments);
@@ -56,9 +57,19 @@ enyo.kind({
     	this.$.list_container.render();*/
         this.$.searchSpinner.hide();
         this.$.list.setCount(this.videoList.length);
-        // this.$.list.reset();
+        if(this.videoList[0]){
+            if(this.videoList[0] === this._isNewList){
+                this.$.list.refresh();
+            }else{
+                this.$.list.reset();    
+            }
+            this._isNewList = this.videoList[0];
+        }else{
+            this.$.list.reset();
+        }
+
         // console.log(this.videoList);
-        this.$.list.refresh();
+        // this.$.list.refresh();
     },
 
     addVideoItem: function(item, index){

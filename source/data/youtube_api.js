@@ -190,7 +190,7 @@ enyo.kind({
 		if(!inResponse) return [];
 			// return inResponse;
 			// console.log(inRequest);
-			console.log(inResponse);
+			// console.log(inResponse);
 			this.nextPage = inResponse.nextPageToken;
 			var videos = [];
 			var data = inResponse.items;
@@ -467,9 +467,9 @@ enyo.kind({
 				fields: "etag,eventId,items,kind,nextPageToken,pageInfo,tokenPagination,visitorId"
 			};
 
-			if(this.myChannel){
-				console.log(this.myChannel);
-			}
+			// if(this.myChannel){
+			//	 console.log(this.myChannel);
+			// }
 
 			var request = new enyo.Ajax({
 	            url: url_base + method,
@@ -485,9 +485,8 @@ enyo.kind({
 	        return request.go(params);
 	},
 	getCommentsResults: function(inSender, inResponse){
-		console.log(inResponse);
+		// console.log(inResponse);
 		if(!inResponse) return;
-
-		return;
+		return inResponse;
 	}
 });

@@ -77,7 +77,7 @@ enyo.kind({
 	},
 */	videoIdChanged: function(inSender, inEvent) {
 	
-		this.$.player.unload();
+		// this.$.player.unload();
 		// Set source by sources array
 		// console.log(this.videoId);
 		this.sources = [];
@@ -86,14 +86,24 @@ enyo.kind({
 		this.currentTime=0;
 
 		for (var i = 0; i < this.videoId.length; i++) {
+			var poster = this.videoId[i].poster.split("default");
+			if(poster[0]){
+				this.$.player.setPoster(poster[0] + "hqdefault" + poster[1]);
+			}else{
+				this.$.player.setPoster("assets/video-poster.png");
+			}
 
 			if(this.videoId[i].restricted){
-				this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].restricted);
+				this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].title + " " + this.videoId[i].restricted);
 				this.$.player.showFSControls();
+				// enyo.job('nexVideo', this.bubble("onVideoFinished",this), 4000);
+				// enyo.job('nexVideo', this.noPlayVideoRestrcited(), 4000);
+				this.startJob("cargarPagina", function() { this.bubble("onVideoFinished",this); }, 3000);
 				// break;
 				return;
 			}
-
+			
+			
 			if(this.videoId[i].resolution === "SD-MP4"){
 				// this.sources.push({src: this.videoId[i].url, type: this.videoId[i].type});
 				// this.quality = this.videoId[i].resolution;
@@ -126,9 +136,9 @@ enyo.kind({
 				this.quality = "HD-MP4";	
 			}
 		}
-
+		this.$.player.unload();
 		this.$.player.setSources(this.sources);
-		console.log(this.sources);
+		
 	},
 	
 	showControlsPlayer: function(inSender, inEvent){
@@ -176,5 +186,9 @@ enyo.kind({
 	backtoList: function(inSender, inEvent){
 		inEvent.preventDefault();
 		this.bubble("onBackToList",this);
+	},
+
+	noPlayVideoRestrcited: function(inSender, inEvent){
+		console.log("no de puede reprodcucir");
 	}
 });

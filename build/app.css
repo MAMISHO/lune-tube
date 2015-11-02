@@ -6677,17 +6677,21 @@
 
 .comment{
 	padding: 0;
-	margin: 5px 0;
+	margin: 15px 0;
 }
 .comment > img{
 	width: 20%;
-	padding: 4px;
-	border: 5px solid #fff;
-	border-radius: 999px;
+	max-height: 50px;
+	max-width: 50px;
+	border-radius: 66px;
+	-webkit-border-radius: 66px;
 }
 .comment > p{
-	width: 70%;
+	width: 75%;
 	margin-left: 5%;
+	padding: 0;
+	margin-top: 0;
+	margin-bottom: 0;
 }
 
 /* source/style/main.css */
@@ -6732,7 +6736,7 @@
 .topbar{
 	background-color: #cf0652;
 	border: none;
-	padding: 1px 2px;
+	padding: 4px 2px;
 }
 .topbar > img{
 	margin: 0;

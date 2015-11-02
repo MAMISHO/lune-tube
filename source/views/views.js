@@ -22,7 +22,8 @@ enyo.kind({
     	onShowMenuOption: "showMenuOption",
     	onLoadPlaylist: "loadPlaylist",
     	onRefreshTokenFinish:"refreshTokenFinish",
-    	onRefreshTokenError: "refreshTokenError"
+    	onRefreshTokenError: "refreshTokenError",
+    	onVideoFinished:"videoFinished"
 	},
 	components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
@@ -75,16 +76,14 @@ enyo.kind({
 				{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, components: [
 					{layoutKind: "FittableRowsLayout", components: [
 						{kind: "Menu", name:"menu"},
-						{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
-							// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
-								// {kind:"VideoList", name:"videoList"},
-							{name:"videoDetailGroup", kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", ontap:"radioGroupTap", components: [
+						/*{name:"videoDetailGroup", kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", ontap:"radioGroupTap", components: [
 								{content: "Results", active: true, index:1},
 								{content: "Related", index:2},
 								{content: "Comments", index:3}
-							],
-							style:"height:32px"
-							},
+						]},*/
+						{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
+							// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
+								// {kind:"VideoList", name:"videoList"},
 							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
 								// {kind:"VideoGridList", name:"videoList"},
 								{kind:"VideoList", name:"videoList"},
@@ -92,6 +91,16 @@ enyo.kind({
 								{kind:"CommentList", name:"commentList"}
 							]}	
 							// ]}
+						]},
+						{kind: "onyx.Toolbar", classes:"menu", defaultKind: "onyx.IconButton", components:[
+							/*{src: "assets/icon_results.png", ontap:"iconTapped"},
+							{src: "assets/icon_related.png", ontap:"iconTapped"},
+							{src: "assets/icon_comments.png", ontap:"iconTapped"},*/
+							{name:"videoDetailGroup", kind: "Group", tag: null, onActivate:"tabActivated", ontap:"radioGroupTap", defaultKind: "onyx.IconButton", components: [
+								{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1},
+								{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2},
+								{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3}
+							]}
 						]}
 					]},
 					{name: 'content_player',fit: true, doubleTapEnabled: true, ondoubletap: "doubleTap", components: [
@@ -100,7 +109,7 @@ enyo.kind({
 				]}
 			]}
 		]},
-		{name: "loginPopup", classes: "onyx-sample-popup", kind: "onyx.Popup", centered: true, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
+		{name: "loginPopup", classes: "onyx-sample-popup", kind: "onyx.Popup",autoDismiss:false, centered: true, modal: true, floating: true, scrim:true, onShow: "popupShown", onHide: "popupHidden",style:"top: 0px;", components: [
 			{content:"paste the token", name:"token_message"},
 			{kind: "onyx.InputDecorator", components: [
 				{kind: "onyx.Input", name:"token", style:"background-color:white"}
@@ -110,7 +119,7 @@ enyo.kind({
 			{kind: "onyx.Button", content: "Cancel", ontap: "cancelLogin"},
 			{kind: "onyx.Button", content: "Confirm Login", ontap: "confirmLogin"}
 		]},
-		{name: "messagePopup", classes: "onyx-sample-popup", kind: "onyx.Popup", centered: true, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
+		{name: "messagePopup", classes: "onyx-sample-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
 			{name:"boxNotification", content:"", allowHtml:true}
 		]},
 
@@ -140,13 +149,13 @@ enyo.kind({
 
 		var youtube_token = enyo.getCookie("youtube_token");
 		var youtube_refresh = enyo.getCookie("youtube_refresh");
-		console.log(cookie);
-		console.log(youtube_token);
-		console.log(youtube_refresh);
+		// console.log(cookie);
+		// console.log(youtube_token);
+		// console.log(youtube_refresh);
 
 
 		if(youtube_token && youtube_refresh){
-			console.log("token vigente");
+			// console.log("token vigente");
 			var token = JSON.parse(cookie);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
@@ -161,7 +170,7 @@ enyo.kind({
 			}
 
 		}else if(!youtube_token && youtube_refresh){
-			console.log("token expirado, se refresaca el token");
+			// console.log("token expirado, se refresaca el token");
 			var token = JSON.parse(cookie);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
@@ -169,7 +178,7 @@ enyo.kind({
 
 			this.$.youtube.refreshToken();
 		}else{
-			console.log("no hay token, necesita iniciar sesion");
+			// console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
 		}
     },
@@ -189,18 +198,19 @@ enyo.kind({
     },
 
     loadHomeFeeds: function(){
-    	this.$.videoDetailGroup.hide();
+    	// this.$.videoDetailGroup.hide();
     	this.$.listPanels.setIndex(0);
-    	this.$.videoDetailGroup.setActive(false);
+    	// this.$.videoDetailGroup.setActive(false);
 
     	this.queryType = "home";
     	this.$.youtube.getActivities().response(this, "receiveResults");
+    	this.videoDetailGroupReset(true);
     },
 
     search: function(q) {
-    	this.$.videoDetailGroup.hide();
+    	// this.$.videoDetailGroup.hide();
     	this.$.listPanels.setIndex(0);
-    	this.$.videoDetailGroup.setActive(false);
+    	// this.$.videoDetailGroup.setActive(false);
 
     	this.queryType = "keyword";
     	if(myApiKey.login){
@@ -208,6 +218,7 @@ enyo.kind({
     	}else{
     		this.$.youtube.search(q).response(this, "receiveResults");
     	}
+    	this.videoDetailGroupReset(true);
 	},
 
 	receiveResults: function(inRequest, inResponse){
@@ -239,14 +250,14 @@ enyo.kind({
 
 	receiveResultsRelated: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log(inResponse);
+		// console.log(inResponse);
 		this.$.videoListRelated.setShowMore(false);
 		this.$.videoListRelated.setVideoList(inResponse);
 	},
 
 	receiveComments: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log(inResponse);
+		// console.log(inResponse);
 		this.$.commentList.setComments(inResponse.items);
 	},
 
@@ -268,9 +279,6 @@ enyo.kind({
 			this._videoIdCurrent = video_id;
 			this.numberOfTries++;//numero de intentos de reproducir
 			this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
-			this.$.youtube.search("", video_id).response(this, "receiveResultsRelated");
-			this.$.youtube.getComments(video_id).response(this, "receiveComments");
-			this.$.videoDetailGroup.show();
 		}
 		return true;
 	},
@@ -278,9 +286,18 @@ enyo.kind({
 	startPlayVideo: function(inResponse, video){
 		if(video.status === "fail" && this.numberOfTries > 0){
 			// second try
-			console.log("seccond try");
+			// console.log("seccond try");
 			this.numberOfTries=0,
 			this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
+			return;
+		}
+		// console.log(video);
+		
+		if(!video[0].restricted){
+			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
+			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
+			// this.$.videoDetailGroup.show();
+			this.videoDetailGroupReset(false);
 		}
 		this.$.player.setVideoId(video);
 		this.$.panel.setIndex(1);
@@ -342,7 +359,10 @@ enyo.kind({
 			var p = this.$[inSender.popup];
 			if (p) {
 				this.$.mainPanel.setIndex(1);
-				p.show();
+				// p.show();
+				p.showAtPosition({top: 0});
+				p.setShowing(p.getShowing());
+				
 			}
 		}else{
 			this.logout();
@@ -476,15 +496,16 @@ enyo.kind({
 	},
 
 	loadPlaylist:function(inSender, playlistInfo){
-		this.$.videoDetailGroup.hide();
+		// this.$.videoDetailGroup.hide();
 		this.$.listPanels.setIndex(0);
-		this.$.videoDetailGroup.setActive(false);
+		// this.$.videoDetailGroup.setActive(false);
 
 		this.queryType = "playlist";
 		this.$.menu.setSearching(true);
 		this.query_history = playlistInfo.id;
 		this.$.youtube.getPlaylistFromId(playlistInfo.id).response(this, "receiveResults");
 		this.showMenuOption();
+		this.videoDetailGroupReset(true);
 		return true;
 	},
 
@@ -506,9 +527,10 @@ enyo.kind({
 	},
 
 	loadPlaylistById: function(playlist_id){
-		this.$.videoDetailGroup.hide();
+		// this.$.videoDetailGroup.hide();
 		this.$.listPanels.setIndex(0);
-		this.$.videoDetailGroup.setActive(false);
+		// this.$.videoDetailGroup.setActive(false);
+		this.videoDetailGroupReset(true);
 
 		this.queryType = "playlist";
 		if(myApiKey.login){
@@ -523,7 +545,7 @@ enyo.kind({
 	aboutTap: function(inSender, inEvent){
 
 		this.$.messagePopup.show();
-		this.$.boxNotification.setContent("LuneTube v0.0.9<br/>This is a alpha version <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info</a> all versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a>");
+		this.$.boxNotification.setContent("LuneTube v0.1.1<br/>This is a Beta version <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info</a> all versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a>");
 		this.showMenuOption();
 	},
 
@@ -535,6 +557,34 @@ enyo.kind({
 				this.$.listPanels.setIndex(inSender.active.index-1);
 			}
 		}
+	},
+
+	videoFinished: function(inSender, inEvent){
+		// console.log("el video finaliza y va el siguiente");
+		// console.log(this._videoIdCurrent);
+		// console.log(this.videos);
+		// console.log(this.videos['video_id']);
+		var nextId = null;
+		// var indexNextId = null;
+		for (var i = 0; i < this.videos.length; i++) {
+			if(this.videos[i].video_id === this._videoIdCurrent){
+				if(this.videos[i+1]){
+					nextId = this.videos[i+1];
+				}
+				break;
+			}
+		}
+		if(nextId){
+			this.startVideo(inSender, nextId.video_id);
+		}else{
+			return true;
+		}
+	},
+
+	videoDetailGroupReset: function(option){
+		this.$.resultsButton.setDisabled(false);
+		this.$.relatedButton.setDisabled(option);
+		this.$.commentButton.setDisabled(option);
 	},
 
 	// Experimental
