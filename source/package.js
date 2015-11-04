@@ -8,6 +8,6 @@ enyo.depends(
 	// "$lib/webos-lib/",
 	"style",
 	"data",
-	"views"
-	// "app.js"
+	"views",
+	"app.js"
 );

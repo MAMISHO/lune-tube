@@ -11,7 +11,7 @@
 	"libs": [
 		"./lib/onyx",
 		"./lib/layout",
-		"./lib/enyo-ilib",
+		"./playground-code/enyo-ilib",
 		"./lib/moonstone",
 		"./lib/enyo-webos"
 	]

@@ -4,6 +4,9 @@ enyo.kind({
 	fit: true,
 	handlers: {
     	// onRequestTimeChange: "testTime"
+    	onStart:"startVideo",
+    	// onloadedmetadata:"loadedMetaData",
+    	// onloadeddata: "loadedData"
 	},
 	published: {
         videoId: "",
@@ -16,13 +19,15 @@ enyo.kind({
 		{
 			name: "player",
 			kind: "moon.VideoPlayer",
+			preload: "auto",
+			fitToWindow:true,
 			ontap:"showControlsPlayer",
 			pauseIcon: "icon_pause.png",
 			jumpBackIcon: "icon_skipbackward.png",
 			playIcon:"icon_play.png",
 			jumpForwardIcon: "icon_skipforward.png",
 			sources: [
-				{src: "http://media.w3.org/2010/05/bunny/movie.mp4", type: "video/mp4"},
+				{src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4", type: "video/mp4"},
 			],
 			poster: "assets/video-poster.png",
 			// autoplay:true,
@@ -84,14 +89,16 @@ enyo.kind({
 		this.sd = null;
 		this.hd = null;
 		this.currentTime=0;
+		this.$.player.setPoster("assets/video-poster.png");
 
 		for (var i = 0; i < this.videoId.length; i++) {
-			var poster = this.videoId[i].poster.split("default");
+			/*var poster = this.videoId[i].poster.split("default");
+			
 			if(poster[0]){
 				this.$.player.setPoster(poster[0] + "hqdefault" + poster[1]);
 			}else{
 				this.$.player.setPoster("assets/video-poster.png");
-			}
+			}*/
 
 			if(this.videoId[i].restricted){
 				this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].title + " " + this.videoId[i].restricted);
@@ -157,14 +164,14 @@ enyo.kind({
 		
 		if((this.quality === "SD-MP4") && this.hd){
 			this.currentTime = this.$.player.getVideo().getCurrentTime();
-			this.$.player.unload();
+			
 			this.sources = [];
 			this.sources.push(this.hd);
 			this.quality = "HD-MP4";
-			this.$.player.setSources(this.sources);
 			this.$.sdButton.removeClass("quality-option-selected");
 			this.$.hdButton.addClass("quality-option-selected");
-			this.$.player.setCurrentTime(this.currentTime);
+			this.$.player.unload();//comementar para dispositivos mas potentes
+			this.$.player.setSources(this.sources);
 		}
 	},
 
@@ -172,14 +179,13 @@ enyo.kind({
 
 		if(this.sd && this.quality === "HD-MP4"){
 			this.currentTime = this.$.player.getVideo().getCurrentTime();
-			this.$.player.unload();
 			this.sources = [];
 			this.sources.push(this.sd);
 			this.quality = "SD-MP4";
-			this.$.player.setSources(this.sources);
 			this.$.hdButton.removeClass("quality-option-selected");
 			this.$.sdButton.addClass("quality-option-selected");
-			this.$.player.setCurrentTime(this.currentTime);
+			this.$.player.unload();//comementar para dispositivos mas potentes
+			this.$.player.setSources(this.sources);
 		}
 	},
 
@@ -189,6 +195,26 @@ enyo.kind({
 	},
 
 	noPlayVideoRestrcited: function(inSender, inEvent){
-		console.log("no de puede reprodcucir");
-	}
+		console.log("no de puede reproducir");
+	},
+
+	/*Cuando el video esta cargado y ha sido llamado al cambio de resolución de un
+	mismo recurso se ejecuta el siguiente método*/
+	startVideo: function(inSender, inEvent){
+		if(this.currentTime > 0){
+			this.$.player.setCurrentTime(this.currentTime);
+			this.$.player.setPoster("");
+		}
+		return true;
+	},
+
+	/*// Se lanza cuando los datos informativos del video son cargados
+	loadedMetaData: function(inSender, inEvent){
+		return true;
+	},*/
+
+	/*//se lanza cuando los datos del video son cargados
+	loadedData: function(inSender, inEvent){
+		return true;
+	}*/
 });

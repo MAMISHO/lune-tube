@@ -64,7 +64,7 @@ enyo.kind({
 	                    ]},
 	                    {name:"status", content: "", classes:"menu-option-item"},
 	                    {classes: "onyx-menu-divider"},
-	                    {kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},
+	                    {kind: "onyx.Icon", name:"imageUser", src: "assets/icon_user.png", style:"width:48px; height:48px", classes:"menu-login-img"},
 	                    {ontap:"youtubeLogin", popup: "loginPopup", classes:"menu-option-item menu-login", components:[
 	                    	{name:"loginIcon",kind:"Image", src:"assets/login-icon.png"},
 	                    	{name:"loginButton", content: "Login", style:"display: inline-block"}
@@ -92,14 +92,14 @@ enyo.kind({
 							]}	
 							// ]}
 						]},
-						{kind: "onyx.Toolbar", classes:"menu", defaultKind: "onyx.IconButton", components:[
+						{kind: "onyx.Toolbar", classes:"menu", components:[
 							/*{src: "assets/icon_results.png", ontap:"iconTapped"},
 							{src: "assets/icon_related.png", ontap:"iconTapped"},
 							{src: "assets/icon_comments.png", ontap:"iconTapped"},*/
 							{name:"videoDetailGroup", kind: "Group", tag: null, onActivate:"tabActivated", ontap:"radioGroupTap", defaultKind: "onyx.IconButton", components: [
-								{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1},
-								{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2},
-								{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3}
+								{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1, style:"margin: 0 12%"},
+								{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2, style:"margin: 0 12%"},
+								{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3, style:"margin: 0 12%"}
 							]}
 						]}
 					]},
@@ -545,7 +545,7 @@ enyo.kind({
 	aboutTap: function(inSender, inEvent){
 
 		this.$.messagePopup.show();
-		this.$.boxNotification.setContent("LuneTube v0.1.1<br/>This is a Beta version <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info</a> all versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a>");
+		this.$.boxNotification.setContent("LuneTube v0.1.2<br/>This is a Beta version <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info</a><br/> all versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a>");
 		this.showMenuOption();
 	},
 
@@ -603,4 +603,19 @@ enyo.kind({
 	doubleTap: function(inSender, inEvent){
 		console.log("Ha legado el evento doble");
 	}
+});
+
+
+/*Pruebas para permitir oiritación en dispositivos anteriores*/
+enyo.kind({
+    name: "WebosApp",
+    kind: "VFlexBox",
+    fit:true,
+    classes:"enyo-fit",
+    components: [
+        {kind:"App", name:"myApp", fit:true,classes:"enyo-fit"}
+    ],
+    create:function() {
+        this.inherited(arguments);
+    }
 });
