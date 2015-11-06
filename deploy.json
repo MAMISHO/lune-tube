@@ -6,13 +6,15 @@
 		"./index.html",
 		"./assets",
 		"./resources",
-		"./appinfo.json"
+		"./appinfo.json",
+		"./framework_config.json"
 	],
 	"libs": [
 		"./lib/onyx",
 		"./lib/layout",
 		"./playground-code/enyo-ilib",
 		"./lib/moonstone",
-		"./lib/enyo-webos"
+		"./lib/enyo-webos",
+		"./lib/webos-lib"
 	]
 }

@@ -122,6 +122,16 @@ img#app_player_image.enyo-image{
 	line-height: 32px;
 }
 
+.fullscreen-button{
+	padding: 6px;
+}
+
+.fullscreen-button > img{
+	width: 33px;
+	padding: 0;
+	margin: 0;
+}
+
 /*Eventos con los controles*/
 .moon-video-fullscreen-control .moon-icon.moon-icon-button.active, .moon-video-fullscreen-control .moon-icon.moon-icon-button:active, .moon-video-fullscreen-control .moon-icon.moon-icon-button.pressed, .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight, .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight.pressed, .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight:active{
 	background-position: 0 -32px;
@@ -147,3 +157,4 @@ img#app_player_image.enyo-image{
 .moon-video-transport-slider-indicator-text{
 	left:auto;
 }
+

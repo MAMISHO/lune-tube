@@ -5,6 +5,7 @@ enyo.kind({
 	handlers: {
     	// onRequestTimeChange: "testTime"
     	onStart:"startVideo",
+    	onPlay:"statusPlay"
     	// onloadedmetadata:"loadedMetaData",
     	// onloadeddata: "loadedData"
 	},
@@ -26,9 +27,9 @@ enyo.kind({
 			jumpBackIcon: "icon_skipbackward.png",
 			playIcon:"icon_play.png",
 			jumpForwardIcon: "icon_skipforward.png",
-			sources: [
-				{src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4", type: "video/mp4"},
-			],
+			// sources: [
+			// 	{src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4", type: "video/mp4"},
+			// ],
 			poster: "assets/video-poster.png",
 			// autoplay:true,
 			onPlaybackControlsTapped: "controlsTapped",
@@ -40,12 +41,15 @@ enyo.kind({
 					{kind:"moon.Clock"}
 				]}*/
 				{tag:"div", classes:"quality-option", components:[
-				{name:"backButton",kind: "moon.IconButton", classes:"moon-icon-video-round-controls-style", ontap:"backtoList", components:[
-					{kind:"Image", src:"assets/back-icon.png"}
-				]},
+					{name:"backButton",kind: "moon.IconButton", classes:"moon-icon-video-round-controls-style", ontap:"backtoList", components:[
+						{kind:"Image", src:"assets/back-icon.png"}
+					]},
 					{content:"SD", name:"sdButton", classes:"quality-option-selected", ontap:"loadSD"},
-					{content:"HD", name:"hdButton", ontap:"loadHD"}
-				]}
+					{content:"HD", name:"hdButton", ontap:"loadHD"},
+					{name:"fullScreen",kind: "moon.IconButton", classes:"", ontap:"fullScreen", components:[
+						{kind:"Image", src:"assets/video-player/icon_fullscreen.png"}
+					]}
+				]},
 			],
 			components: [
 				/*{name:"backButton",kind: "moon.IconButton", classes:"moon-icon-video-round-controls-style", ontap:"backtoList", components:[
@@ -61,6 +65,8 @@ enyo.kind({
 		{from:".$.player.disablePlaybackControls", to:".$.controlsToggleButton.value", oneWay:false},
 		{from:".$.player.showFFRewindControls", to:".$.ffrewToggleButton.value", oneWay:false}
 	],
+	status:false, //false when is paused | true when is playing
+	isFullScreen:false,
 	controlsTapped: function() {
 		// this.$.tapDialog.show();
 	},
@@ -82,30 +88,32 @@ enyo.kind({
 	},
 */	videoIdChanged: function(inSender, inEvent) {
 	
-		// this.$.player.unload();
+		this.$.player.unload();
 		// Set source by sources array
 		// console.log(this.videoId);
+		this.$.player.setPoster("assets/video-poster.png");
 		this.sources = [];
 		this.sd = null;
 		this.hd = null;
 		this.currentTime=0;
-		this.$.player.setPoster("assets/video-poster.png");
 
 		for (var i = 0; i < this.videoId.length; i++) {
-			/*var poster = this.videoId[i].poster.split("default");
-			
-			if(poster[0]){
-				this.$.player.setPoster(poster[0] + "hqdefault" + poster[1]);
-			}else{
-				this.$.player.setPoster("assets/video-poster.png");
-			}*/
 
 			if(this.videoId[i].restricted){
+				var poster = this.videoId[i].poster.split("default");
+			
+				if(poster[0]){
+					this.$.player.setPoster(poster[0] + "hqdefault" + poster[1]);
+				}
+				// else{
+					
+				// }
+
 				this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].title + " " + this.videoId[i].restricted);
 				this.$.player.showFSControls();
 				// enyo.job('nexVideo', this.bubble("onVideoFinished",this), 4000);
 				// enyo.job('nexVideo', this.noPlayVideoRestrcited(), 4000);
-				this.startJob("cargarPagina", function() { this.bubble("onVideoFinished",this); }, 3000);
+				this.startJob("videoRestricted", function() { this.bubble("onVideoFinished",this); }, 3000);
 				// break;
 				return;
 			}
@@ -143,9 +151,8 @@ enyo.kind({
 				this.quality = "HD-MP4";	
 			}
 		}
-		this.$.player.unload();
+		// this.$.player.unload();
 		this.$.player.setSources(this.sources);
-		
 	},
 	
 	showControlsPlayer: function(inSender, inEvent){
@@ -163,8 +170,8 @@ enyo.kind({
 	loadHD: function(inSender, inEvent){
 		
 		if((this.quality === "SD-MP4") && this.hd){
+			this.$.player.setPoster("");
 			this.currentTime = this.$.player.getVideo().getCurrentTime();
-			
 			this.sources = [];
 			this.sources.push(this.hd);
 			this.quality = "HD-MP4";
@@ -178,6 +185,7 @@ enyo.kind({
 	loadSD: function(inSender, inEvent){
 
 		if(this.sd && this.quality === "HD-MP4"){
+			this.$.player.setPoster("");
 			this.currentTime = this.$.player.getVideo().getCurrentTime();
 			this.sources = [];
 			this.sources.push(this.sd);
@@ -202,11 +210,36 @@ enyo.kind({
 	mismo recurso se ejecuta el siguiente método*/
 	startVideo: function(inSender, inEvent){
 		if(this.currentTime > 0){
-			this.$.player.setCurrentTime(this.currentTime);
 			this.$.player.setPoster("");
+			this.$.player.setCurrentTime(this.currentTime);
 		}
 		return true;
 	},
+
+	playVideo: function(inSender, inEvent){
+		if(this.status){
+			// this.$.player.setPoster("");
+			this.$.player.play();
+		}
+	},
+
+	pauseVideo: function(inSender, inEvent){
+		// this.$.player.setPoster("");
+		this.status = !this.$.player.getVideo().isPaused();
+		this.$.player.pause();
+	},
+
+	statusPlay: function(inSender, inEvent){
+		this.status = true;
+		// this.$.player.setPoster("");
+	},
+
+	fullScreen: function(inSender, inEvent){
+		// inEvent.preventDefault();
+		this.isFullScreen = !this.isFullScreen;
+		webos.setFullScreen(this.isFullScreen);
+		// this.$.player.play();
+	}
 
 	/*// Se lanza cuando los datos informativos del video son cargados
 	loadedMetaData: function(inSender, inEvent){

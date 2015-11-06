@@ -6598,8 +6598,59 @@
 	background-color:rgba(100,100,255,0.9);
 }
 
+/* lib/webos-lib/source/ProgressOrb.css */
+
+.pie {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	border-radius: 50%;
+}
+
+.pie-background {
+	background: #7d7e7d;
+	background: -webkit-radial-gradient(center, ellipse cover, #7d7e7d 30%,#0e0e0e 70%);
+}
+
+.pie-foreground {
+	background: #d0e4f7;
+	background: -webkit-radial-gradient(center, ellipse cover, #d0e4f7 30%,#73b1e7 50%,#0a77d5 70%);
+}
+
+
+/* lib/webos-lib/source/AppMenu.css */
+
+/* portions of this code were obtained/inspired by the Enyo 1 AppInfo CSS */
+
+.enyo-appmenu {
+  z-index: 120;
+  position: fixed;
+  font-size: 18px;
+  color: white;
+  top: -2px;
+  left: 0px;
+  min-width: 210px;
+}
+.enyo-appmenu .enyo-item {
+  padding: 5px 10px 5px 10px;
+}
+
+/* lib/webos-lib/source/PortsHeader.css */
+
+.ports-header {
+	height: 54px;
+	padding: 4px !important;
+}
+
+
 /* source/style/app.css */
 
+/*body{
+	padding: 0;
+	margin: 0;
+	height: 100%;
+	width: 100%
+}*/
 .panels-sample-flickr-panels {
 	color: white;
 	background: #555;
@@ -6721,9 +6772,8 @@
 	max-width: 260px;
 	background-color: #fff !important;
 	box-shadow: 4px 0 4px rgba(0, 0, 0, 0.3);
-	z-index: 999;
-	-webkit-transition: width 0.2s; /* Safari */
-    transition: width 0.2s;
+	z-index: 999; /* Safari */
+ transition: width 0.2s;
 }
 .panels-sliding-menu > *{
 	width: 20px;
@@ -6756,17 +6806,19 @@
 	    -ms-flex-wrap: nowrap;
 	        flex-wrap: nowrap;
 	border: none;
-
+	max-height: 40px;
+	position: relative;
+	bottom: 0px;
 }
 .menu div{
 	-webkit-flex-grow: 1;
 	    -ms-flex-positive: 1;
 	        flex-grow: 1;
 	-ms-flex-negative: 0;
-	    -webkit-flex-shrink: 0;
+	        -webkit-flex-shrink: 0;
 	        flex-shrink: 0;
 	-ms-flex-preferred-size: auto;
-	    -webkit-flex-basis: auto;
+	        -webkit-flex-basis: auto;
 	        flex-basis: auto;
 	text-align: center;
 	/*shorthand*/
@@ -6797,7 +6849,7 @@
 .menu-login-img{
 	height: 100%;
 	min-height: 90px;
-	background-image: url('https://yt3.ggpht.com/-TdKjRigYjl8/AAAAAAAAAAI/AAAAAAAAAAA/4_ygBS08lNQ/s88-c-k-no/photo.jpg');
+	/*background-image: url();*/
 	width: 100% !important;
 	background-position: center;
 }
@@ -6840,7 +6892,7 @@
 .menu > label{
 }
 label > input{
-	font-size: 16px;
+	font-size: 16px !important;
 	font-weight: bold;
 }
 label{
@@ -6867,14 +6919,20 @@ label{
 }
 
 @media screen and (min-width: 800px) {
+	input{
+		width: 96%;
+	}
+	label{
+		width: 88%;
+	}
 
 }
 @media screen and (min-width: 1024px) {
 	label{
-		width: 238px;
+		width: 228px;
 	}
 	input{
-		width: 95%;
+		width: 93%;
 	}
 }
 @media screen and (width: 768px) {
@@ -6887,10 +6945,10 @@ label{
 }
 @media screen and (width: 480px) {
 	label{
-		width: 85%;
+		width: 82%;
 	}
 	input{
-		width: 94%;
+		width: 93%;
 	}
 }
 @media screen and (width: 320px) {
@@ -7238,6 +7296,16 @@ img#app_player_image.enyo-image{
 	line-height: 32px;
 }
 
+.fullscreen-button{
+	padding: 6px;
+}
+
+.fullscreen-button > img{
+	width: 33px;
+	padding: 0;
+	margin: 0;
+}
+
 /*Eventos con los controles*/
 .moon-video-fullscreen-control .moon-icon.moon-icon-button.active, .moon-video-fullscreen-control .moon-icon.moon-icon-button:active, .moon-video-fullscreen-control .moon-icon.moon-icon-button.pressed, .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight, .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight.pressed, .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight:active{
 	background-position: 0 -32px;
@@ -7263,4 +7331,5 @@ img#app_player_image.enyo-image{
 .moon-video-transport-slider-indicator-text{
 	left:auto;
 }
+
 

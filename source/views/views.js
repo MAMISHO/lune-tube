@@ -23,7 +23,8 @@ enyo.kind({
     	onLoadPlaylist: "loadPlaylist",
     	onRefreshTokenFinish:"refreshTokenFinish",
     	onRefreshTokenError: "refreshTokenError",
-    	onVideoFinished:"videoFinished"
+    	onVideoFinished:"videoFinished",
+    	// onWindowRotated: "windowRotated"
 	},
 	components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
@@ -73,7 +74,7 @@ enyo.kind({
 	            ]}
 			]},
 			{fit:true,classes:"enyo-fit", components:[
-				{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, components: [
+				{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false, realtimeFit:true, onTransitionFinish: "panelChanged", components: [
 					{layoutKind: "FittableRowsLayout", components: [
 						{kind: "Menu", name:"menu"},
 						/*{name:"videoDetailGroup", kind: "onyx.RadioGroup", onActivate:"tabActivated", controlClasses: "onyx-tabbutton", ontap:"radioGroupTap", components: [
@@ -93,13 +94,12 @@ enyo.kind({
 							// ]}
 						]},
 						{kind: "onyx.Toolbar", classes:"menu", components:[
-							/*{src: "assets/icon_results.png", ontap:"iconTapped"},
-							{src: "assets/icon_related.png", ontap:"iconTapped"},
-							{src: "assets/icon_comments.png", ontap:"iconTapped"},*/
-							{name:"videoDetailGroup", kind: "Group", tag: null, onActivate:"tabActivated", ontap:"radioGroupTap", defaultKind: "onyx.IconButton", components: [
+							{name:"videoDetailGroup", kind: "Group", tag: null, onActivate:"tabActivated__", ontap:"radioGroupTap", defaultKind: "onyx.IconButton", components: [
+								// {src: "assets/icon_results.png", ontap:"deactivate"},
+								// {src: "assets/icon_related.png", ontap:"activate"},
 								{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1, style:"margin: 0 12%"},
 								{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2, style:"margin: 0 12%"},
-								{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3, style:"margin: 0 12%"}
+								{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3, style:"margin: 0 12%"},
 							]}
 						]}
 					]},
@@ -114,21 +114,21 @@ enyo.kind({
 			{kind: "onyx.InputDecorator", components: [
 				{kind: "onyx.Input", name:"token", style:"background-color:white"}
 			]},
-			{tag: "br"},
+			// {tag: "br"},
 			{tag:"br"},
 			{kind: "onyx.Button", content: "Cancel", ontap: "cancelLogin"},
+			{kind: "onyx.Button", content: "Paste", ontap: "doPasteText"},
 			{kind: "onyx.Button", content: "Confirm Login", ontap: "confirmLogin"}
 		]},
 		{name: "messagePopup", classes: "onyx-sample-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
 			{name:"boxNotification", content:"", allowHtml:true}
 		]},
-
+		{kind:"AppMenu", onSelect: "appMenuItemSelected", components: [{content:"Paste", ontap: "doPasteText"}]},
 		// Componentes que no se ven
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
-		{
-		     name: "launchBrowserCall",
-		     kind: "LunaService",
+		{kind: "LunaService",
+			 name: "launchBrowserCall",
 		     service: "palm://com.palm.applicationManager/",
 		     method: "launch",
 		     onSuccess: "launchFinished",
@@ -136,11 +136,13 @@ enyo.kind({
 		     onResponse: "gotResponse",
 		     subscribe: true
 		},
+		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate"}
 	],
 	videos:[],
 	numberOfTries:0,
 	_myChannel:null,
 	_videoIdCurrent:null,
+	_platform: "WebOS",
 	create:function() {
         this.inherited(arguments);
         this.$.mainPanel.setIndex(1);
@@ -181,6 +183,9 @@ enyo.kind({
 			// console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
 		}
+		console.log("started Lunetube");
+		this._platform = navigator.userAgent.split("(")[1].split(";")[0]; // default webos
+		webos.setWindowOrientation("free");
     },
 
     refreshTokenFinish: function(inSender, inEvent){
@@ -587,6 +592,48 @@ enyo.kind({
 		this.$.commentButton.setDisabled(option);
 	},
 
+	panelChanged: function(){
+		/*if(this.$.panel.getIndex()>0){
+			webos.setFullScreen(true);
+		}else{
+			webos.setFullScreen(false);
+		}*/
+	},
+
+	//otros items del menu
+	appMenuItemSelected: function(inSender, inEvent){
+		return;
+	},
+
+	doPasteText: function(inSender, inEvent){
+		webos.getClipboard(enyo.bind(this, "pasteToken"));
+	},
+
+	pasteToken: function(text){
+		this.$.token.setValue(text);
+		return;
+	},
+
+	activate: function(a, b){
+		console.log("\n***ventana activa***");
+		// console.log(a);
+		// console.log(b);
+		if(this._platform !== "LuneOS"){
+			this.$.player.playVideo();
+		}
+		return true;
+	},
+
+	deactivate: function(a, b){
+		console.log("\n***ventana desactiva***");
+		// console.log(a);
+		// console.log(b);
+		if(this._platform !== "LuneOS"){
+			this.$.player.pauseVideo();
+		}
+		return true;
+	},
+
 	// Experimental
 	launchFinished: function(inSender, inResponse) {
 		console.log(inSender);
@@ -602,20 +649,10 @@ enyo.kind({
 	},
 	doubleTap: function(inSender, inEvent){
 		console.log("Ha legado el evento doble");
-	}
-});
+	},
 
-
-/*Pruebas para permitir oiritación en dispositivos anteriores*/
-enyo.kind({
-    name: "WebosApp",
-    kind: "VFlexBox",
-    fit:true,
-    classes:"enyo-fit",
-    components: [
-        {kind:"App", name:"myApp", fit:true,classes:"enyo-fit"}
-    ],
-    create:function() {
-        this.inherited(arguments);
-    }
+	/*windowRotated: function(inSender, inEvent){
+		console.log("se ha rotado el dispositivo");
+		return true;
+	}*/
 });

@@ -21,17 +21,19 @@
 	    -ms-flex-wrap: nowrap;
 	        flex-wrap: nowrap;
 	border: none;
-
+	max-height: 40px;
+	position: relative;
+	bottom: 0px;
 }
 .menu div{
 	-webkit-flex-grow: 1;
 	    -ms-flex-positive: 1;
 	        flex-grow: 1;
 	-ms-flex-negative: 0;
-	    -webkit-flex-shrink: 0;
+	        -webkit-flex-shrink: 0;
 	        flex-shrink: 0;
 	-ms-flex-preferred-size: auto;
-	    -webkit-flex-basis: auto;
+	        -webkit-flex-basis: auto;
 	        flex-basis: auto;
 	text-align: center;
 	/*shorthand*/
@@ -105,7 +107,7 @@
 .menu > label{
 }
 label > input{
-	font-size: 16px;
+	font-size: 16px !important;
 	font-weight: bold;
 }
 label{
@@ -132,14 +134,20 @@ label{
 }
 
 @media screen and (min-width: 800px) {
+	input{
+		width: 96%;
+	}
+	label{
+		width: 88%;
+	}
 
 }
 @media screen and (min-width: 1024px) {
 	label{
-		width: 238px;
+		width: 228px;
 	}
 	input{
-		width: 95%;
+		width: 93%;
 	}
 }
 @media screen and (width: 768px) {
@@ -152,10 +160,10 @@ label{
 }
 @media screen and (width: 480px) {
 	label{
-		width: 85%;
+		width: 82%;
 	}
 	input{
-		width: 94%;
+		width: 93%;
 	}
 }
 @media screen and (width: 320px) {
