@@ -5,30 +5,12 @@ enyo.kind({
       comments:[]  
     },
     components: [
-        /*{name: "filter", kind: "Control", title: "Playlist", icon: "filter", ontap: "toggleDrawer", components: [
-			{content: "Playlist", style:"font-size: 20px"}
-		]},
-		{name: "drawer", kind: onyx.Drawer, open: false, components: [
-			// {content: "Item", classes:"playlist-item", ontap: "tapItemPlaylist"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"},
-			{kind:"CommentItem", image:this._image, comment:"Este es un comentario de prueba"}
-		]}*/
 		{kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", classes:"enyo-fit", components: [
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"CommentItem", name:"commentItem"}    
             ]}
         ]}
     ],
-    _image: "https://yt3.ggpht.com/-TdKjRigYjl8/AAAAAAAAAAI/AAAAAAAAAAA/4_ygBS08lNQ/s88-c-k-no/photo.jpg",
     create:function() {
         this.inherited(arguments);
         // this.commentsChanged();

@@ -18,14 +18,16 @@ enyo.kind({
 			order: "relevance",
 			part: "snippet",
 			type: "video",
+			regionCode: localeInfo.info.locale,
 			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
 		};
-
-			if(inRelated == null){		// sin videos relacionados				
-				params.q = inSearchText;
-			}else{						//peticion de videos relacionados
-				params.relatedToVideoId = inRelated;
-				params.maxResults = 15;
+			if(typeof inSearchText === "string"){
+				if(inRelated == null){		// sin videos relacionados				
+					params.q = inSearchText;
+				}else{						//peticion de videos relacionados
+					params.relatedToVideoId = inRelated;
+					params.maxResults = 15;
+				}
 			}
 
 			var url_base = "https://content.googleapis.com/youtube/v3/";
@@ -125,6 +127,7 @@ enyo.kind({
 			q: inSearchText,
 			part: "snippet",
 			type: "video",
+			regionCode: localeInfo.info.locale
 		};
 
 		if(inRelated == null){		// sin videos relacionados				
