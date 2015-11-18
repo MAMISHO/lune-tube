@@ -6,7 +6,8 @@ enyo.kind({
         imageUser:"assets/icon_user.png",
         playlistUser:[],
         loginButton: "Login",
-        login:false
+        login:false,
+        token:""
     },
     events: {
         
@@ -90,7 +91,7 @@ enyo.kind({
 	                    {ontap:"aboutTap", classes:"menu-option-item", components:[
 	                		// {kind:"Image", src:"assets/home-icon.png"},
 	                		{name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
-			                	{allowHtml:true, content:"LuneTube v0.1.2<br/>This is a Beta version <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info</a><br/> all versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a>"}
+			                	{allowHtml:true, content:"<b>LuneTube v0.1.2<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
 			                ]},
 	                		{content: "About APP", style:"display: inline-block"}
 	                	]},
@@ -161,6 +162,29 @@ enyo.kind({
 	loadWatchLater: function(inSender, inEvent){
 
 		this.bubble("onLoadWatchLater", "watchLater");
+	},
+	tokenChanged: function(){
+		this.$.token.setValue(this.token);
+	},
+
+	doPasteText: function(inSender, inEvent){
+		webos.getClipboard(enyo.bind(this, "pasteToken"));
+	},
+
+	pasteToken: function(text){
+		this.$.token.setValue(text);
+		// this.$.menuPanel.setToken(text);
+		return;
+	},
+
+	doCopyText: function(inSender, inEvet){
+		// console.log("doCopyText -> ");
+		// var c = document.getElementsByName("code");
+		// console.log(c);
+		// console.log(c.value);
+
+		// webos.setClipboard(c.value);
+		return;
 	},
 
 	/*youtubeLogin: function(inSender, inEvent){

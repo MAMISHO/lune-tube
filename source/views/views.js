@@ -45,8 +45,8 @@ enyo.kind({
 							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
 								// {kind:"VideoGridList", name:"videoList"},
 								{kind:"VideoList", name:"videoList"},
-								// {kind:"VideoList", name:"videoListRelated"},
-								// {kind:"CommentList", name:"commentList"}
+								{kind:"VideoList", name:"videoListRelated"},
+								{kind:"CommentList", name:"commentList"}
 							]}	
 							// ]}
 						]},
@@ -418,25 +418,6 @@ enyo.kind({
 
 	//otros items del menu APP de webos
 	appMenuItemSelected: function(inSender, inEvent){
-		return;
-	},
-
-	doPasteText: function(inSender, inEvent){
-		webos.getClipboard(enyo.bind(this, "pasteToken"));
-	},
-
-	pasteToken: function(text){
-		this.$.token.setValue(text);
-		return;
-	},
-
-	doCopyText: function(inSender, inEvet){
-		// console.log("doCopyText -> ");
-		// var c = document.getElementsByName("code");
-		// console.log(c);
-		// console.log(c.value);
-
-		// webos.setClipboard(c.value);
 		return;
 	},
 

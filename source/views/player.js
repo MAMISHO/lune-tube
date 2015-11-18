@@ -91,7 +91,8 @@ enyo.kind({
 		this.$.player.unload();
 		// Set source by sources array
 		// console.log(this.videoId);
-		this.$.player.setPoster("assets/video-poster.png");
+		// this.$.player.setPoster("assets/video-poster.png");
+		this.$.player.setPoster("");
 		this.sources = [];
 		this.sd = null;
 		this.hd = null;
@@ -210,7 +211,6 @@ enyo.kind({
 	mismo recurso se ejecuta el siguiente método*/
 	startVideo: function(inSender, inEvent){
 		if(this.currentTime > 0){
-			this.$.player.setPoster("");
 			this.$.player.setCurrentTime(this.currentTime);
 		}
 		return true;
@@ -239,15 +239,17 @@ enyo.kind({
 		this.isFullScreen = !this.isFullScreen;
 		webos.setFullScreen(this.isFullScreen);
 		// this.$.player.play();
-	}
+	},
 
-	/*// Se lanza cuando los datos informativos del video son cargados
-	loadedMetaData: function(inSender, inEvent){
+	// Se lanza cuando los datos informativos del video son cargados
+	/*loadedMetaData: function(inSender, inEvent){
+		this.$.player.setPoster("");
 		return true;
-	},*/
+	},
 
-	/*//se lanza cuando los datos del video son cargados
+	//se lanza cuando los datos del video son cargados
 	loadedData: function(inSender, inEvent){
+		this.$.player.setPoster("");
 		return true;
 	}*/
 });
