@@ -38,11 +38,26 @@ enyo.kind({
     },
 
     videoListChanged: function(){
+        // console.log(this.videoList);
+        // console.log(this._isNewList[0].video_id);
+        // console.log(this._isNewList);
+        /*if(this._isNewList){
+            console.log(this._isNewList.video_id);
+        }*/
         this.$.searchSpinner.hide();
         this.$.list.setCount(this.videoList.length);
         if(this.videoList[0]){
-            if(this.videoList[0] === this._isNewList){
-                this.$.list.refresh();
+
+            if(this._isNewList){ //entra en la segunda petición 
+                if(this._isNewList.video_id === this.videoList[0].video_id){
+                    this.$.list.refresh();
+                }else{
+                    this.selected = null;
+                    this.$.list.reset();    
+                }
+            // }
+            /*else if(this.videoList[0] === this._isNewList){
+                this.$.list.refresh();*/
             }else{
                 this.selected = null;
                 this.$.list.reset();    
@@ -76,14 +91,20 @@ enyo.kind({
     setupItem: function(inSender, inEvent) {
         var i = inEvent.index;
         var item = this.videoList[i];
+        // console.log(item);
         this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
         this.$.videoItem.addClass(this.platformStyle);
         this.$.videoItem.setVideoId(item.video_id);
         this.$.videoItem.setChannelId(item.channel_id);
+        this.$.videoItem.setChannel(item.chanel);
         this.$.videoItem.setImage(item.image);
         this.$.videoItem.setTitle(item.title);
         this.$.videoItem.setViews(item.views);
         this.$.videoItem.setTime(item.time);
+        if(item.statistics){
+            // console.log(item.statistics);
+            this.$.videoItem.setStatistics(item);
+        }
         this.$.more.canGenerate = !this.videoList[i+1] && this.showMore;
         // this.$.more.canGenerate = !this.videoList[i+1];
         return true;

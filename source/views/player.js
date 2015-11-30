@@ -48,6 +48,9 @@ enyo.kind({
 					{content:"HD", name:"hdButton", ontap:"loadHD"},
 					{name:"fullScreen",kind: "moon.IconButton", classes:"", ontap:"fullScreen", components:[
 						{kind:"Image", src:"assets/video-player/icon_fullscreen.png"}
+					]},
+					{name:"showInfo",kind: "moon.IconButton", classes:"", ontap:"showVideoInfo", components:[
+						{content: "i"}
 					]}
 				]},
 			],
@@ -240,6 +243,12 @@ enyo.kind({
 		webos.setFullScreen(this.isFullScreen);
 		// this.$.player.play();
 	},
+
+	showVideoInfo: function(inSender, inEvent){
+		// console.log("Mostrar la info");
+		inEvent.preventDefault();
+		this.bubble("onShowVideoInfo",this);
+	}
 
 	// Se lanza cuando los datos informativos del video son cargados
 	/*loadedMetaData: function(inSender, inEvent){

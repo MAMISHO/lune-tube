@@ -11,7 +11,7 @@ enyo.kind({
         {kind: "onyx.Toolbar", classes:"topbar",  components:[
                 {kind: "Image", src: "assets/menu.png", ontap:"showMenu"},
                 {kind: "Image", src: "assets/yt_icon_1.png", ontap:"showMenu"},
-                    {name:"searchText", kind: "onyx.InputDecorator", components: [
+                    {name:"searchText", kind: "onyx.InputDecorator", classes:"search-input-decorator", components: [
                         {kind: "onyx.Input",fit:true, name:"searchQuery", placeholder: "Just Type...", onchange: "inputChanged", selectOnFocus:true, onkeypress: "inputKeypress"},
                         {name:"searchButton",kind: "Image", src: "assets/search-input-search.png", ontap:"searchAction", showing: true, style:"width:20px"},
                         {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", showing: false, style:"width:20px"}

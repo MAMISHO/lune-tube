@@ -1,6 +1,7 @@
 enyo.kind({
     name:"LuneTube.Menu",
-    kind: "Control",
+    kind: "FittableRows",
+    classes:"enyo-fit",
     published: {
         status:"",
         imageUser:"assets/icon_user.png",
@@ -13,90 +14,79 @@ enyo.kind({
         
     },
     components: [
-				{kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
-					
-					{classes:"header", style:"text-align:right",components:[
-		            	{name:"aboutAPP", content:"LuneTube", classes:"header-loc", style:"vertical-align: middle"},		            	
-		            	{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"vertical-align: middle"},
-		        	]},
-
-		        	{name:"loginGroup", kind: "onyx.Groupbox", style:"margin: 10px 5px", components: [
-		        		{kind: "onyx.GroupboxHeader", content:"paste the token", name:"token_message"},
-						{classes:"", components:[
-							{kind: "onyx.InputDecorator", components: [
-								{kind: "onyx.Input", name:"token"},//, style:"background-color:white"}
-							]},
-
-							{tag:"br"},
-							{kind: "onyx.Button", ontap: "cancelLogin", components:[
-								{kind: "onyx.Icon", src: "assets/icon_cancel.png"}
-							]},
-							{kind: "onyx.Button", ontap: "doPasteText", components:[
-								{kind: "onyx.Icon", src: "assets/icon_paste.png"}
-							]},
-							{kind: "onyx.Button", ontap: "confirmLogin", components:[
-								{kind: "onyx.Icon", src: "assets/icon_confirm.png"}
-							]},
+    	{classes:"header", style:"text-align:right", components:[
+    		{name:"aboutAPP", content:"LuneTube", classes:"header-loc", style:"vertical-align: middle"},		            	
+			{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"vertical-align: middle"}
+		]},
+		{kind: 'Scroller',fit:true, horizontal:"hidden", touch: true, components: [
+			{name:"loginGroup", kind: "onyx.Groupbox", style:"margin: 10px 5px", components: [
+				{kind: "onyx.GroupboxHeader", classes:"lunetube-groupbox-header", content:"paste the token", name:"token_message"},
+				{classes:"menu-login-group", components:[
+					{kind: "onyx.InputDecorator", components: [
+						{kind: "onyx.Input", name:"token"},//, style:"background-color:white"}
+					]},
+					{tag:"br"},
+					{kind: "onyx.Button", ontap: "cancelLogin", components:[
+						{kind: "onyx.Icon", src: "assets/icon_cancel.png"}
+					]},
+					{kind: "onyx.Button", ontap: "doPasteText", components:[
+						{kind: "onyx.Icon", src: "assets/icon_paste.png"}
+					]},
+					{kind: "onyx.Button", ontap: "confirmLogin", components:[
+						{kind: "onyx.Icon", src: "assets/icon_confirm.png"}
+					]}
 							// {kind: "onyx.Button", content: "Paste", ontap: "doPasteText"},
 							// {kind: "onyx.Button", content: "Confirm", ontap: "confirmLogin"}
-						]}
-		        	]},
+				]}
+			]},
+			{name:"listChannel", kind: "onyx.Groupbox", style:"margin: 10px 5px", components: [
+				{kind: "onyx.GroupboxHeader",classes:"lunetube-groupbox-header", name:"status", content: "Channel"},
+				{ontap:"homeRequest", classes:"menu-option-item", components:[
+					{kind:"Image", src:"assets/home-icon.png"},
+					{content: "Home", style:"display: inline-block"}
+				]},
+				{ontap: "expand", classes:"menu-option-item", components:[
+					{kind:"Image", src:"assets/playlist-icon.png"},
+					{name: "playlistUser", kind: "Playlist", style:"display: inline-block;width: 85%"}
+				]},
+	            {ontap:"loadHistory", classes:"menu-option-item", components:[
+	               	{kind:"Image", src:"assets/history-icon.png"},
+	            	{content: "History", style:"display: inline-block"}
+	            ]},
+				{ontap:"loadFavorites", classes:"menu-option-item", components:[
+	            	{kind:"Image", src:"assets/favorites-icon.png"},
+	            	{content: "Favorites", style:"display: inline-block"}
+	            ]},
+	            {ontap:"loadLikes", classes:"menu-option-item", components:[
+	                {kind:"Image", src:"assets/likes-icon.png"},
+	               	{content: "Likes", style:"display: inline-block"}
+	            ]},
+	            {ontap:"loadWatchLater", classes:"menu-option-item lunetube-option-item-after-bottom", components:[
+	               	{kind:"Image", src:"assets/later-icon.png"},
+	               	{content: "Watch Later", style:"display: inline-block"}
+	            ]},
+	            {classes:"menu-option-item lunetube-option-item-bottom", components:[
+	               	{kind:"Image", src:"assets/mochi-design/down.png", classes:"lunetube-option-item-down"},
+	            ]},
 
-	                {name:"listChannel", kind: "onyx.Groupbox", style:"margin: 10px 5px", components: [
-	                	{kind: "onyx.GroupboxHeader", name:"status", content: "Channel"},
-	                	
-	                	{ontap:"homeRequest", classes:"menu-option-item", components:[
-	                		{kind:"Image", src:"assets/home-icon.png"},
-	                		{content: "Home", style:"display: inline-block"}
-	                	]},
-
-	                	{ontap: "expand", classes:"menu-option-item", components:[
-	                		{kind:"Image", src:"assets/playlist-icon.png"},
-	                		{name: "playlistUser", kind: "Playlist", style:"display: inline-block;width: 85%"}
-	                	]},
-
-	                    {ontap:"loadHistory", classes:"menu-option-item", components:[
-	                    	{kind:"Image", src:"assets/history-icon.png"},
-	                		{content: "History", style:"display: inline-block"}
-	                    ]},
-
-	                    {ontap:"loadFavorites", classes:"menu-option-item", components:[
-	                    	{kind:"Image", src:"assets/favorites-icon.png"},
-	                		{content: "Favorites", style:"display: inline-block"}
-	                    ]},
-
-	                    {ontap:"loadLikes", classes:"menu-option-item", components:[
-	                    	{kind:"Image", src:"assets/likes-icon.png"},
-	                		{content: "Likes", style:"display: inline-block"}
-	                    ]},
-
-	                    {ontap:"loadWatchLater", classes:"menu-option-item", components:[
-	                    	{kind:"Image", src:"assets/later-icon.png"},
-	                		{content: "Watch Later", style:"display: inline-block"}
-	                    ]}
-	                ]},
-
-	                {name:"menuOption",classes:"menu-option-default", components: [
-	                	
-	                    // {name:"status", content: "", classes:"menu-option-item"},
-
-	                    {kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},
-	                    
-	                    {ontap:"youtubeLogin", popup: "loginPopup", classes:"menu-login", components:[
-	                    	{name:"loginIcon",kind:"Image", src:"assets/login-icon.png"},
-	                    	{name:"loginButton", content: "Login", style:"display: inline-block"}
-	                    ]},
-
-	                    {classes: "onyx-menu-divider"},
-	                    {ontap:"aboutTap", classes:"menu-option-item", components:[
-	                		// {kind:"Image", src:"assets/home-icon.png"},
-	                		{name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
-			                	{allowHtml:true, content:"<b>LuneTube v0.1.2<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
-			                ]},
-	                		{content: "About APP", style:"display: inline-block"}
-	                	]},
-	                ]},
-	            ]}
+	     	]},
+	        {name:"menuOption",classes:"menu-option-default", components: [
+				// {name:"status", content: "", classes:"menu-option-item"},
+				{kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},        
+				{ontap:"youtubeLogin", popup: "loginPopup", classes:"menu-login", components:[
+	                {name:"loginIcon",kind:"Image", src:"assets/login-icon.png"},
+	                {name:"loginButton", content: "Login", style:"display: inline-block"}
+	            ]},
+	            {classes: "onyx-menu-divider"},
+	            {ontap:"aboutTap", classes:"menu-option-item", components:[
+	              	// {kind:"Image", src:"assets/home-icon.png"},
+	               	{name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
+						{allowHtml:true, content:"<b>LuneTube v0.1.3<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
+			    	]},
+	            	{content: "( About APP )", style:"display: inline-block"}
+	            ]},
+	        ]},
+	    ]}
     ],
     create:function() {
         this.inherited(arguments);
@@ -196,8 +186,10 @@ enyo.kind({
 			console.log("esta logado");
 			this.$.listChannel.show();
 			this.$.loginGroup.hide();
+			this.$.loginButton.setContent("Logout");
 		}else{
 			this.$.listChannel.hide();
+			this.$.loginButton.setContent("Login");
 		}
 	},
 

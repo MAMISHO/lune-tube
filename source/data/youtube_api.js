@@ -55,6 +55,7 @@ enyo.kind({
 				v.chanel = data[i].snippet.channelTitle;
 				v.views = "",
 				v.time = data[i].snippet.publishedAt.split("T")[0];
+				v.description = data[i].snippet.description;
 				
 				var vevo = v.chanel.search("VEVO");
 				if(vevo === -1){
@@ -63,6 +64,8 @@ enyo.kind({
 				
 				// videos.push(v);
 			}
+			// console.log(videos);
+			this.getStatistics(videos);
 			return videos;
 	},
 
@@ -218,6 +221,7 @@ enyo.kind({
 				v.chanel = data[i].snippet.channelTitle;
 				v.views = "",
 				v.time = data[i].snippet.publishedAt.split("T")[0];
+				v.description = data[i].snippet.description;
 				
 				/*var vevo = v.chanel.search("VEVO");
 				if(vevo === -1){
@@ -228,6 +232,11 @@ enyo.kind({
 					videos.push(v);
 				ant = v.video_id;
 			}
+			// console.log(videos);
+			// var aux = this.getStatistics(videos);
+			// console.log("aux");
+			// console.log(aux);
+			this.getStatistics(videos);
 			return videos;
 	},
 
@@ -421,6 +430,7 @@ enyo.kind({
 			if(typeof this.nextPage !== "undefined"){
 				console.log(this.nextPage);
 			}*/
+			this.getStatistics(videos);
 			return videos;
 			// console.log(videos);
 	},
@@ -491,5 +501,105 @@ enyo.kind({
 		// console.log(inResponse);
 		if(!inResponse) return;
 		return inResponse;
-	}
+	},
+
+	getStatistics: function(v){
+		var videoIds = v.map(function(o){
+			return o.video_id;
+		});
+		// console.log(videoIds);
+		// return videoIds.toString();
+		// console.log(v[0].video_id);
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+			var method = "videos";
+			var params={
+				// part: "id, replies, snippet",
+				part: "snippet, statistics, contentDetails",
+				// maxResults: 50,
+				// order: "relevance",
+				id: videoIds.toString(),
+				// id: v[0].video_id,
+				key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+				// fields: "etag,eventId,items,kind,nextPageToken,pageInfo,tokenPagination,visitorId"
+			};
+
+			// if(this.myChannel){
+			//	 console.log(this.myChannel);
+			// }
+
+			var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "GET",
+	            // headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "getStatisticsResults"));
+	        // request.error(enyo.bind(this, "getMyPlaylistResponseError"));
+	        return request.go(params);
+	        // request.go(params);
+	},
+
+	getStatisticsResults: function(inRequest, inResponse){
+		// console.log(inRequest);
+		if(!inResponse) return [];
+
+
+		// console.log(inResponse);
+		/*var aux = inResponse.items[0].contentDetails.duration;
+		console.log(aux);
+		console.log(this.convert_time(aux));*/
+		// console.log(aux.toISOString());
+		// return "hola resulyadp";
+		return this.bubble("onGetStatistics",inResponse.items);
+		// return inResponse;
+	},
+
+	getStatisticsFromRelated: function(v){
+		var videoIds = v.map(function(o){
+			return o.video_id;
+		});
+		// console.log(videoIds);
+		// return videoIds.toString();
+		// console.log(v[0].video_id);
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+			var method = "videos";
+			var params={
+				// part: "id, replies, snippet",
+				part: "snippet, statistics, contentDetails",
+				// maxResults: 50,
+				// order: "relevance",
+				id: videoIds.toString(),
+				// id: v[0].video_id,
+				key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+				// fields: "etag,eventId,items,kind,nextPageToken,pageInfo,tokenPagination,visitorId"
+			};
+
+			// if(this.myChannel){
+			//	 console.log(this.myChannel);
+			// }
+
+			var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "GET",
+	            // headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "getStatisticsFromRelatedResults"));
+	        // request.error(enyo.bind(this, "getMyPlaylistResponseError"));
+	        return request.go(params);
+	        // request.go(params);
+	},
+
+	getStatisticsFromRelatedResults: function(inRequest, inResponse){
+		if(!inResponse) return [];
+		// return this.bubble("onGetStatisticsFromRelated",inResponse.items);
+		return inResponse.items;
+	},
+
 });

@@ -19,9 +19,12 @@ enyo.kind({
     	onSearchEvent:"searchEvent",
     	onShowMainMenu: "showMainMenu",
     	onBackToList: "backToList",
+    	onShowVideoInfo: "showVideoInfo",
     	onRefreshTokenFinish:"refreshTokenFinish",
     	onRefreshTokenError: "refreshTokenError",
     	onVideoFinished:"videoFinished",
+    	onGetStatistics: "receiveStatistics",
+    	// onGetStatisticsFromRelated: "receiveStatisticsFromRelated",
     	// events from menu
     	onShowMenuOption: "showMenuOption",
     	onLoadPlaylist: "loadPlaylist",
@@ -46,7 +49,11 @@ enyo.kind({
 								// {kind:"VideoGridList", name:"videoList"},
 								{kind:"VideoList", name:"videoList"},
 								{kind:"VideoList", name:"videoListRelated"},
-								{kind:"CommentList", name:"commentList"}
+								// {kind:"CommentList", name:"commentList"}
+								{tag:"div", components:[
+									{content:"titulo"},
+									{kind:"CommentList", name:"commentList", fit: true}
+								]}
 							]}	
 							// ]}
 						]},
@@ -91,6 +98,7 @@ enyo.kind({
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate"}
 	],
 	videos:[],
+	videosRelated:[],
 	numberOfTries:0,
 	_myChannel:null,
 	_videoIdCurrent:null,
@@ -115,14 +123,7 @@ enyo.kind({
 				myApiKey.refresh_token = token.refresh_token;
 
 				myApiKey.login = true;
-				this.$.menuPanel.setStatus("Estas Logado");
-
-			if(myApiKey.login){
-				this.loadHomeFeeds();
-				this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
-				this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
-				this.$.menuPanel.setLogin(myApiKey.login);
-			}
+				// this.$.menuPanel.setStatus("Estas Logado");
 
 		}else if(!youtube_token && youtube_refresh){
 			// console.log("token expirado, se refresaca el token");
@@ -136,15 +137,25 @@ enyo.kind({
 			// console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
 		}
+
+		if(myApiKey.login){
+				this.loadHomeFeeds();
+				this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
+				this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+				this.$.menuPanel.setLogin(myApiKey.login);
+		}
+		
 		console.log("Hi LuneOS & webOS --> starting debug");
 		this._platform = navigator.userAgent.split("(")[1].split(";")[0]; // default webos
 		webos.setWindowOrientation("free");
     },
 
     refreshTokenFinish: function(inSender, inEvent){
+    	myApiKey.login =  true;
     	this.loadHomeFeeds();
 		this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
 		this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+		this.$.menuPanel.setLogin(myApiKey.login);
 		return true;
     },
 
@@ -201,13 +212,43 @@ enyo.kind({
 
 	receiveResultsRelated: function(inRequest, inResponse){
 		if(!inResponse) return;
+		this.videosRelated = inResponse;
+		// console.log(inResponse);
 		this.$.videoListRelated.setShowMore(false);
 		this.$.videoListRelated.setVideoList(inResponse);
+		this.$.youtube.getStatisticsFromRelated(inResponse).response(this, "receiveStatisticsFromRelated");
 	},
 
 	receiveComments: function(inRequest, inResponse){
 		if(!inResponse) return;
 		this.$.commentList.setComments(inResponse.items);
+	},
+
+	// recive las estadisticas de los videos de la consulta actual y los actualiza en la lista de videos
+	receiveStatistics: function(inSender, statistics){
+		for (var i = 0; i < statistics.length;  i++) {
+			for (var j = 0; j < this.videos.length; j++) {
+				if(statistics[i].id === this.videos[j].video_id){
+					this.videos[j].statistics = statistics[i].statistics;
+					this.videos[j].contentDetails = statistics[i].contentDetails;
+					break;
+				}
+			}
+		}
+		this.$.videoList.setVideoList(JSON.parse(JSON.stringify(this.videos)));
+	},
+
+	receiveStatisticsFromRelated: function(inSender, statistics){
+		for (var i = 0; i < statistics.length;  i++) {
+			for (var j = 0; j < this.videosRelated.length; j++) {
+				if(statistics[i].id === this.videosRelated[j].video_id){
+					this.videosRelated[j].statistics = statistics[i].statistics;
+					this.videosRelated[j].contentDetails = statistics[i].contentDetails;
+					break;
+				}
+			}
+		}
+		this.$.videoListRelated.setVideoList(JSON.parse(JSON.stringify(this.videosRelated)));
 	},
 
 	loadMore: function(inSender, inEvent){
@@ -292,6 +333,13 @@ enyo.kind({
 		}else{
 			this.$.panel.setIndex(0);
 		}
+		return true;
+	},
+
+	showVideoInfo: function(inSender, inEvent){
+		this.$.panel.setIndex(0);
+		this.$.videoDetailGroup.setActive(this.$.videoDetailGroup.children[2]);
+		this.$.listPanels.setIndex(this.$.videoDetailGroup.active.index-1);
 		return true;
 	},
 

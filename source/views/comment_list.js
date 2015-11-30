@@ -1,6 +1,7 @@
 enyo.kind({
     name: "CommentList",
     kind: "Control",
+    style: "height:100%;",
     published: {
       comments:[]  
     },
@@ -26,6 +27,7 @@ enyo.kind({
         return true;
     },
     commentsChanged: function(){
+        // console.log(this.comments);
     	this.$.list.setCount(this.comments.length);
     	this.$.list.reset();
     }

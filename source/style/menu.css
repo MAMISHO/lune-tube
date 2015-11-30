@@ -62,12 +62,23 @@
 	padding: 10px 5px;
 	margin: 0;
 	/*width: 100%;*/
+	border-color: rgb(124, 124, 124);
+	border-bottom-color: rgb(211,211,211);
 }
 .menu-option-item img{
 	width: 23px;
 	display: inline-block;
 	padding-right: 5px;
 }
+.menu-login-group{
+	text-align:center;
+	padding-bottom: 5px;
+	border-bottom-left-radius: 15px !important;
+	border-bottom-right-radius: 15px !important;
+}
+/*.menu-login-group > button{
+	margin-right: 5%;;
+}*/
 .menu-login{
 	width: 100%;
 	text-align: center;
@@ -134,6 +145,10 @@ label{
 	font-size: 13px;
 	color: #1a1a1a;
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+.search-input-decorator{
+	border-radius: 20px;
 }
 
 .search-spinner {
@@ -203,3 +218,37 @@ label{
 	color: #000;
 	border-bottom: none;
 }
+
+
+/*Menu option user*/
+.lunetube-groupbox-header{
+	background-image: none; 
+	background-color: rgb(246, 246, 246);
+	color: #333;
+	text-align: center;
+	border: 2px solid rgb(124, 124, 124);
+	border-top-right-radius: 20px !important;
+	border-top-left-radius: 20px !important;
+	border-bottom-color: transparent;
+}
+.lunetube-option-item-bottom{
+	padding: 0;
+	margin: 0;
+	text-align: center;
+	border: none;
+}
+.lunetube-option-item-down{
+	width: 72px !important;
+	margin-top: -1px;
+}
+.lunetube-option-item-after-bottom{
+	border-bottom: 2px solid rgb(124, 124, 124);
+	border-bottom-left-radius: 20px !important;
+	border-bottom-right-radius: 20px !important;
+	margin-bottom: -1px;
+}
+.lunetube-option-item{
+	border-color: rgb(211, 211, 211);
+/* border-bottom-color: transparent; */
+}
+
