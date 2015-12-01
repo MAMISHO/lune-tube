@@ -1,6 +1,6 @@
 {
 	"id":			"com.emsoft.lunetube",
-	"version":		"0.1.3",
+	"version":		"0.1.4",
 	"vendor":		"mamisho",
 	"type":			"web",
 	"main":			"index.html",
