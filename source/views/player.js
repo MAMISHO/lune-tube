@@ -50,7 +50,7 @@ enyo.kind({
 						{kind:"Image", src:"assets/video-player/icon_fullscreen.png"}
 					]},
 					{name:"showInfo",kind: "moon.IconButton", classes:"", ontap:"showVideoInfo", components:[
-						{content: "i"}
+						{content: "i", style:"color: #fff"}
 					]}
 				]},
 			],

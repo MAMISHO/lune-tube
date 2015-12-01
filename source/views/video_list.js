@@ -76,7 +76,7 @@ enyo.kind({
 
     selectedVideo: function(inSender, inEvent){
         this.selected = inEvent.index;
-        this.bubble("onStartVideo",this.videoList[inEvent.index].video_id);
+        this.bubble("onStartVideo",this.videoList[inEvent.index]);
     },
 
     loadMore: function(inSender, inEvent){

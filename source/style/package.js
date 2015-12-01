@@ -5,5 +5,6 @@ enyo.depends(
 	"main.css",
 	"menu.css",
 	"video_list.css",
-	"player.css"
+	"player.css",
+	"video_info.css"
 );

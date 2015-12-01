@@ -21,6 +21,7 @@ enyo.kind({
 			regionCode: localeInfo.info.locale,
 			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
 		};
+		console.log(localeInfo.info.locale);
 			if(typeof inSearchText === "string"){
 				if(inRelated == null){		// sin videos relacionados				
 					params.q = inSearchText;
@@ -133,6 +134,7 @@ enyo.kind({
 			regionCode: localeInfo.info.locale
 		};
 
+		console.log(localeInfo);
 		if(inRelated == null){		// sin videos relacionados				
 				params.q = inSearchText;
 		}else{						//peticion de videos relacionados

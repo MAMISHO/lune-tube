@@ -70,6 +70,7 @@ enyo.kind({
         // this.$.views.setContent(this.statistics.statistics.viewCount + " views");
         var aux = this.convertTimeFormat(this.statistics.contentDetails.duration);
         this.$.duration.setContent(aux);
+
         this.$.viewsTime.setContent(this.statistics.statistics.viewCount + " views" + " <span style='font-size: 1.4em'>&middot;</span> " + this.time);
     },
     

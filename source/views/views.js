@@ -51,7 +51,7 @@ enyo.kind({
 								{kind:"VideoList", name:"videoListRelated"},
 								// {kind:"CommentList", name:"commentList"}
 								{tag:"div", components:[
-									{content:"titulo"},
+									{kind: "videoInfo", name: "videoInfo"},
 									{kind:"CommentList", name:"commentList", fit: true}
 								]}
 							]}	
@@ -264,7 +264,9 @@ enyo.kind({
 
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
-	startVideo: function(inSender, video_id){
+	startVideo: function(inSender, video){
+		var video_id = video.video_id;
+		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
 			this._videoIdCurrent = video_id;
 			this.numberOfTries++; //numero de intentos de reproducir

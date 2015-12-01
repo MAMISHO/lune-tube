@@ -1,0 +1,17 @@
+.main-info{
+	background-color: #fff;
+	padding: 5px;
+}
+.info-title{
+	font-weight: bolder;
+}
+.info-channel{
+	font-size: 12px;
+	color: rgb(201, 201, 201);
+}
+.info-likes{
+	display: inline-block;
+}
+.info-dislikes{
+	display: inline-block;
+}
