@@ -51,8 +51,11 @@ enyo.kind({
 								{kind:"VideoList", name:"videoListRelated"},
 								// {kind:"CommentList", name:"commentList"}
 								{tag:"div", components:[
-									{kind: "videoInfo", name: "videoInfo"},
-									{kind:"CommentList", name:"commentList", fit: true}
+									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap"},
+									{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
+										{kind:"CommentList", name:"commentList"},
+										{kind: "videoInfo", name: "videoInfo"}
+									]}
 								]}
 							]}	
 							// ]}
@@ -491,6 +494,10 @@ enyo.kind({
 		return true;
 	},
 
+	groupControlTap: function(inSender, inEvent){
+		this.$.infoCommentPanel.setIndex(inEvent.index);
+	},
+
 	// Experimental
 	launchFinished: function(inSender, inResponse) {
 		console.log(inSender);
@@ -507,6 +514,7 @@ enyo.kind({
 	doubleTap: function(inSender, inEvent){
 		console.log("Ha legado el evento doble");
 	},
+
 
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");

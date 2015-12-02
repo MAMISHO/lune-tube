@@ -6,6 +6,7 @@ enyo.depends(
 	"$lib/enyo-ilib/",
 	"$lib/enyo-webos/",
 	"$lib/webos-lib/",
+	"$lib/mochi/",
 	"style",
 	"data",
 	"views",

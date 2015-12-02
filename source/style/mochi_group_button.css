@@ -1,0 +1,51 @@
+.mochi-group-button{
+	padding: 0;
+	margin: 0;
+}
+.mochi-group-button > div{
+	width: 50%;
+	display: inline-block;
+	height: 40px;
+	text-align: center;
+	/*background-color: rgb(234, 234, 234);*/
+}
+.mochi-group-button-tab-inactive{
+	background-color: #fff;
+}
+
+.mochi-group-button-tab-active{
+	background-color: rgb(234, 234, 234);
+}
+.mochi-group-button-active{
+	height: 40px;
+	background-color: #fff;
+}
+.mochi-group-button-inactive{
+	height: 40px;
+	background-color: rgb(234, 234, 234);
+}
+
+.button-active-1{
+	height: 41px;
+	text-shadow: 0 1px 1px #333;
+	font-weight: bolder;
+	border-top-right-radius: 25px;
+	box-shadow: 0 0 0 #939393;
+}
+.button-inactive-1{
+	height: 39px;
+	border-bottom-right-radius: 25px;
+	box-shadow: -1px 1px 0 #939393;
+}
+.button-active-2{
+	height: 41px;
+	text-shadow: 0 1px 1px #333;
+	font-weight: bolder;
+	border-top-left-radius: 25px;
+	box-shadow: inset -1px 1px 0 #939393;
+}
+.button-inactive-2{
+	height: 40px;
+	border-bottom-left-radius: 25px;
+	box-shadow: 1px 1px 0 #939393;
+}

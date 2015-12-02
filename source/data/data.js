@@ -24,3 +24,4 @@ var myApiErrors={
 
 var loc = ilib.getLocale();
 var localeInfo = new ilib.LocaleInfo(loc);
+var regionCode = loc.split("-").pop().toUpperCase();

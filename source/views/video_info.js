@@ -1,7 +1,7 @@
 enyo.kind({
     name: "videoInfo",
     kind: "Control",
-    classes:"main-info",
+    classes:"main-info enyo-fit",
     published: {
         videoDetails: {},
     },
@@ -9,11 +9,13 @@ enyo.kind({
         
     },
     components: [
-        {content: "title", name:"title", classes:"info-title"},
-        {content: "channel", name:"channel", classes:"info-channel"},
-        {content: "description", name:"description", classes:"info-description"},
-        {content: "", name: "likes", classes:"info-likes"},
-        {content: "", name: "dislikes", classes:"info-dislikes"}
+        {kind: 'Scroller',fit:true, horizontal:"hidden", touch: true, components: [
+            {content: "title", name:"title", classes:"info-title"},
+            {content: "channel", name:"channel", classes:"info-channel"},
+            {content: "description", name:"description", classes:"info-description", allowHtml:true},
+            {content: "", name: "likes", classes:"info-likes"},
+            {content: "", name: "dislikes", classes:"info-dislikes"}
+        ]}
     ],
     create:function() {
         this.inherited(arguments);
@@ -27,6 +29,7 @@ enyo.kind({
 			this.$.description.setContent(this.videoDetails.description);
 			this.$.likes.setContent(this.videoDetails.statistics.likeCount);
 			this.$.dislikes.setContent(this.videoDetails.statistics.dislikeCount);
+            this.render();
 		}
 	}
 

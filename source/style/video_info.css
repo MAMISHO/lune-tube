@@ -15,3 +15,7 @@
 .info-dislikes{
 	display: inline-block;
 }
+.info-description{
+	height: 100%;
+	min-height: 100px;
+}

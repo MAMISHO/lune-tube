@@ -13,15 +13,16 @@ enyo.kind({
 		this.inherited(arguments);
 	},
 	search: function(inSearchText, inRelated) {
+		console.log(regionCode);
 		var params={
 			maxResults: 15,
 			order: "relevance",
 			part: "snippet",
 			type: "video",
-			regionCode: localeInfo.info.locale,
+			regionCode: regionCode,
 			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
 		};
-		console.log(localeInfo.info.locale);
+		// console.log(localeInfo.info.locale);
 			if(typeof inSearchText === "string"){
 				if(inRelated == null){		// sin videos relacionados				
 					params.q = inSearchText;
@@ -131,7 +132,7 @@ enyo.kind({
 			q: inSearchText,
 			part: "snippet",
 			type: "video",
-			regionCode: localeInfo.info.locale
+			regionCode: regionCode
 		};
 
 		console.log(localeInfo);
@@ -168,7 +169,7 @@ enyo.kind({
 		var method = "activities";
 		var params={
 			maxResults: 15,
-			regionCode: localeInfo.info.locale,
+			regionCode: regionCode,
 			part: "snippet, contentDetails",
 			home: true,
 			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"

@@ -1,0 +1,84 @@
+.mochi-sample-background {
+	border-width: 244px 244px 244px 244px;
+	-moz-border-image: url("assets/background-gradient.png") 244 244 244 244 stretch stretch;
+	-webkit-border-image: url("assets/background-gradient.png") 244 244 244 244 stretch stretch;
+	-o-border-image: url("assets/background-gradient.png") 244 244 244 244 stretch stretch;
+	border-image: url("assets/background-gradient.png") 244 244 244 244 stretch stretch;
+	z-index: 0;
+}
+.mochi-sample {
+	/* padding: 60px; */
+}
+.mochi-sample-tools {
+	/* padding-bottom: 10px; */
+	padding: 0px 32px;
+}
+.mochi-sample-tools > * {
+	margin: 3px;
+}
+.mochi-sample-result-box {
+	width: 100%;
+}
+.mochi-sample-result {
+	padding: 8px;
+}
+.mochi-sample-spaced-button {
+	margin: 3px;
+}
+.mochi-sample-content {
+	vertical-align: middle; 
+	padding-left: 5px;
+	font-family: "Prelude Med Oblique";
+	font-size: 14px;
+	color: #323232;
+	font-style: oblique;
+}
+.mochi-sample-label {
+	color: #1879CD;
+	font-size: 18px;
+	text-transform: uppercase;
+}
+.mochi-sample-popup {
+	font-size: 30px;
+	text-align: center;
+}
+.mochi-sample-progress-red {
+	background-color: #ff4a4a;
+}
+.mochi-sample-progress-text-red {
+	color: #ff4a4a;
+}
+.mochi-sample-progress-bar {
+	margin: 8px 16px;
+}
+.mochi-button:active:hover:not([disabled]) > .mochi-button-bar.mochi-sample-orange {
+	background-color: orange;
+}
+.mochi-background-orange {
+	background-color: #ffb80d;
+}
+.mochi-sample-orange {
+	color: #ffb80d;
+}
+.mochi-sample-textarea-tools > * {
+	margin: 0px 16px 16px 0px;
+}
+.mochi-contextualpopup-button-container{
+	padding:10px;
+}
+.list-sample-list {
+	width: 50%;
+	min-width:300px;
+	margin: auto;
+}
+.list-sample-index {
+	float: right;
+}
+@media all and (max-width: 800px) {
+	.enyo-panels-fit-narrow > * {
+		min-width: 100%;
+		max-width: 100%;
+		padding-right: 0px;
+		border-top-left-radius: 0px;		
+	}
+}
