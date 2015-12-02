@@ -22,6 +22,12 @@ var myApiErrors={
 	login:"Login required"
 };
 
-var loc = ilib.getLocale();
+var defaultRegionCode = new ilib.Locale("en-US");
+var loc = ilib.getLocale(); //other locations
 var localeInfo = new ilib.LocaleInfo(loc);
-var regionCode = loc.split("-").pop().toUpperCase();
+// var regionCode = loc.split("-").pop().toUpperCase();
+var regionCode = defaultRegionCode.region;
+
+/*if(webos){ //tested on webos && LuneOS
+    regionCode = webos.locales.UI.region;
+}*/

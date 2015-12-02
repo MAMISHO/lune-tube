@@ -41,6 +41,7 @@ enyo.kind({
 	},
 
 	processResponse: function(inRequest, inResponse) {
+		// console.log(inRequest);
 			if(!inResponse) return [];
 			// return inResponse;
 			// console.log(inResponse);

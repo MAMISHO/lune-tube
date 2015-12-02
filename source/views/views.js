@@ -139,6 +139,7 @@ enyo.kind({
 		}else{
 			// console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
+			// this.loadHomeFeeds();
 		}
 
 		if(myApiKey.login){
