@@ -5,7 +5,7 @@ enyo.kind({
         
     },
     events: {
-        
+        doInfoSelected:"infoSelected"
     },
     components: [
     	{kind: "enyo.Group", onActivate: "tabActivated", classes: "mochi-group-button", components:[
@@ -42,5 +42,12 @@ enyo.kind({
 		this.$.infoButton.removeClass("button-inactive-2");
 		this.$.infoButton.addClass("button-active-2");
 		this.bubble("onActiveTab", inSender);
+	},
+	infoSelected: function(inSender, inEvent){
+		this.$.commentButton.removeClass("button-active-1");
+		this.$.commentButton.addClass("button-inactive-1");
+		this.$.infoButton.removeClass("button-inactive-2");
+		this.$.infoButton.addClass("button-active-2");
+		// this.bubble("onActiveTab", inSender);
 	}
 });

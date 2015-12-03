@@ -51,7 +51,7 @@ enyo.kind({
 								{kind:"VideoList", name:"videoListRelated"},
 								// {kind:"CommentList", name:"commentList"}
 								{tag:"div", components:[
-									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap"},
+									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap", name: "groupButtonVideoInfo"},
 									{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
 										{kind:"CommentList", name:"commentList"},
 										{kind: "videoInfo", name: "videoInfo"}
@@ -208,6 +208,7 @@ enyo.kind({
 			this.videos = this.videos.concat(inResponse);
 		}
 
+		console.log(this.videos);
 		this.$.videoList.setVideoList(this.videos);
 		this.$.panel.setIndex(0);
 		this.$.search.setSearching(false);
@@ -239,6 +240,8 @@ enyo.kind({
 				}
 			}
 		}
+		console.log(statistics);
+		console.log(this.videos);
 		this.$.videoList.setVideoList(JSON.parse(JSON.stringify(this.videos)));
 	},
 
@@ -252,6 +255,7 @@ enyo.kind({
 				}
 			}
 		}
+		console.log(this.videosRelated);
 		this.$.videoListRelated.setVideoList(JSON.parse(JSON.stringify(this.videosRelated)));
 	},
 
@@ -269,6 +273,7 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
+		console.log(video);
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
@@ -287,8 +292,7 @@ enyo.kind({
 			this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
 			return;
 		}
-		// console.log(video);
-		
+		console.log(video);
 		if(!video[0].restricted){
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
@@ -346,6 +350,8 @@ enyo.kind({
 		this.$.panel.setIndex(0);
 		this.$.videoDetailGroup.setActive(this.$.videoDetailGroup.children[2]);
 		this.$.listPanels.setIndex(this.$.videoDetailGroup.active.index-1);
+		this.$.infoCommentPanel.setIndex(1);
+		this.$.groupButtonVideoInfo.infoSelected();
 		return true;
 	},
 

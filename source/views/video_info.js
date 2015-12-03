@@ -1,7 +1,8 @@
 enyo.kind({
     name: "videoInfo",
-    kind: "Control",
-    classes:"main-info enyo-fit",
+    kind: "FittableRows",
+    classes:"main-info",
+    fit:true,
     published: {
         videoDetails: {},
     },
@@ -9,12 +10,19 @@ enyo.kind({
         
     },
     components: [
-        {kind: 'Scroller',fit:true, horizontal:"hidden", touch: true, components: [
+        {kind: 'Scroller',fit:true, horizontal:"hidden", touch: true,layoutKind: enyo.FittableRowsLayout, components: [
+
             {content: "title", name:"title", classes:"info-title"},
             {content: "channel", name:"channel", classes:"info-channel"},
-            {content: "description", name:"description", classes:"info-description", allowHtml:true},
-            {content: "", name: "likes", classes:"info-likes"},
-            {content: "", name: "dislikes", classes:"info-dislikes"}
+            {name:"description", classes:"info-description", allowHtml:true, fit:true,content: "Lorem"},
+            {tag:"div", classes:"statistics-content", components:[
+                {kind: "Image", src: "assets/icon-like.png", ontap: "iconTapped", style:"margin-right:5px;"},
+                {content: "", name: "likes", classes:"info-likes"}
+            ]},
+            {tag:"div", classes:"statistics-content", components:[
+                {kind: "Image", src: "assets/icon-unlike.png", ontap: "iconTapped"},
+                {content: "", name: "dislikes", classes:"info-dislikes"}
+            ]}
         ]}
     ],
     create:function() {
@@ -24,6 +32,7 @@ enyo.kind({
 
 	videoDetailsChanged: function(){
 		if(this.videoDetails.video_id){
+            console.log(this.videoDetails);
 			this.$.title.setContent(this.videoDetails.title);
 			this.$.channel.setContent(this.videoDetails.chanel);
 			this.$.description.setContent(this.videoDetails.description);

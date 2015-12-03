@@ -293,4 +293,10 @@ enyo.kind({
 			this.bubble("onShowMenuOption", this);
 		}
 	},
+
+	cancelLogin: function(inSender, inEvent){
+		this.$.info.hide();
+        this.$.listChannel.hide();
+        this.$.loginGroup.hide();
+	}
 });

@@ -419,7 +419,7 @@ enyo.kind({
 					v.chanel = data[i].snippet.channelTitle;
 					v.views = "",
 					v.time = data[i].snippet.publishedAt.split("T")[0];
-					
+					v.description = data[i].snippet.description;
 					/*var vevo = v.chanel.search("VEVO");
 					if(vevo === -1){
 						videos.push(v);

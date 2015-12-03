@@ -1,15 +1,14 @@
 enyo.kind({
     name: "CommentList",
-    kind: "Control",
-    style: "height:100%;",
+    kind: "FittableRows",
+    style: "height:50%;",
+    fit:true,
     published: {
       comments:[]  
     },
     components: [
 		{kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", classes:"enyo-fit", components: [
-            {name: "item", ontap: "selectedVideo", components: [
                 {kind:"CommentItem", name:"commentItem"}    
-            ]}
         ]}
     ],
     create:function() {
@@ -23,6 +22,11 @@ enyo.kind({
         
         this.$.commentItem.setImage(item.authorProfileImageUrl);
         this.$.commentItem.setComment(item.textDisplay);
+        this.$.commentItem.setUser(item.authorDisplayName);
+        /*if(typeof this.comments[i+1]==="undefined"){
+            console.log(this.comments[i+1]);
+            this.$.commentItem.setLast(true);
+        }*/
         // this.$.more.canGenerate = !this.videoList[i+1] && this.showMore;
         return true;
     },
