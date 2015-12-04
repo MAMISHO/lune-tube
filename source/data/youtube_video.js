@@ -17,6 +17,7 @@ enyo.kind({
     },
 
     startVideo: function(video_id){
+      // console.log(video_id);
       this.video_id_try = video_id;
     	var url = "http://www.youtube.com/get_video_info";
 	    var ajax = new enyo.Ajax({

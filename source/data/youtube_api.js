@@ -9,11 +9,12 @@ enyo.kind({
 	components: [
 
 	],
+	_tryLogincound:0,
 	create:function() {
 		this.inherited(arguments);
 	},
 	search: function(inSearchText, inRelated) {
-		console.log(regionCode);
+		// console.log(regionCode);
 		var params={
 			maxResults: 15,
 			order: "relevance",
@@ -60,12 +61,12 @@ enyo.kind({
 				v.time = data[i].snippet.publishedAt.split("T")[0];
 				v.description = data[i].snippet.description;
 				
-				var vevo = v.chanel.search("VEVO");
+				/*var vevo = v.chanel.search("VEVO");
 				if(vevo === -1){
 					videos.push(v);
-				}
+				}*/
 				
-				// videos.push(v);
+				videos.push(v);
 			}
 			// console.log(videos);
 			this.getStatistics(videos);
@@ -98,7 +99,9 @@ enyo.kind({
 	processError: function(a, b){
 		console.log(a);
 		console.log(b);
-		if(b == 401){
+		if(b == 401 && this._tryLogincound<2){
+		// if(b == 401){
+			// this._tryLogincound++;
 			this.refreshToken();
 			// return a.go();
 			// this.getActivities();
@@ -286,6 +289,7 @@ enyo.kind({
 			myApiKey.access_token = ck.access_token;
 			myApiKey.refresh_token = ck.refresh_token;
 			myApiKey.login = true;
+			this._tryLogincound=0;
 			console.log("cookie refrescada");
 			return this.bubble("onRefreshTokenFinish",this);
 		}
@@ -294,6 +298,7 @@ enyo.kind({
 
 	processErrorRefreshToken: function(inRequest, inResponse){
 		if(!inResponse) return;
+		this._tryLogincound++;
 		console.log("no se puede refrescar el token, es necesario logarse otra vez.");
 		return this.bubble("onRefreshTokenError",this);
 	},

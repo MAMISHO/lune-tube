@@ -26,15 +26,16 @@
 	width: 50%;
 	text-align: center;
 }
-.statistics-content >div,img{
+/*.statistics-content >div,img{
 	vertical-align: text-top;
-}
+}*/
 .info-likes{
 	/*display: inline-block;
 	margin-bottom: 50px;
 	width: 50%;*/
 	display: inline-block;
-	font-size: 32px;
+	font-size: 22px;
+	font-weight: bolder;
 	/*width: 30%;*/
 	/*margin-top: 10px;*/
 	/*padding-left: 20px;*/
@@ -46,7 +47,8 @@
 }
 .info-dislikes{
 	display: inline-block;
-	font-size: 32px;
+	font-size: 22px;
+	font-weight: bolder;
 	/*margin-bottom: 50px;*/
 	/*width: 50%;*/
 	/*text-align: right;*/

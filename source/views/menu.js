@@ -1,7 +1,8 @@
 enyo.kind({
     name:"LuneTube.Menu",
     kind: "FittableRows",
-    classes:"enyo-fit",
+    // classes:"enyo-fit",
+    fit:true,
     published: {
         status:"",
         imageUser:"assets/icon_user.png",

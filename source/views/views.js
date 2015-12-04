@@ -208,7 +208,7 @@ enyo.kind({
 			this.videos = this.videos.concat(inResponse);
 		}
 
-		console.log(this.videos);
+		// console.log(this.videos);
 		this.$.videoList.setVideoList(this.videos);
 		this.$.panel.setIndex(0);
 		this.$.search.setSearching(false);
@@ -240,8 +240,8 @@ enyo.kind({
 				}
 			}
 		}
-		console.log(statistics);
-		console.log(this.videos);
+		// console.log(statistics);
+		// console.log(this.videos);
 		this.$.videoList.setVideoList(JSON.parse(JSON.stringify(this.videos)));
 	},
 
@@ -255,7 +255,7 @@ enyo.kind({
 				}
 			}
 		}
-		console.log(this.videosRelated);
+		// console.log(this.videosRelated);
 		this.$.videoListRelated.setVideoList(JSON.parse(JSON.stringify(this.videosRelated)));
 	},
 
@@ -273,10 +273,11 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
-		console.log(video);
+		// console.log(video);
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
+			// console.log("entra");
 			this._videoIdCurrent = video_id;
 			this.numberOfTries++; //numero de intentos de reproducir
 			this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
@@ -292,7 +293,7 @@ enyo.kind({
 			this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
 			return;
 		}
-		console.log(video);
+		// console.log(video);
 		if(!video[0].restricted){
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
@@ -455,8 +456,9 @@ enyo.kind({
 				break;
 			}
 		}
+		// console.log(nextId);
 		if(nextId){
-			this.startVideo(inSender, nextId.video_id);
+			this.startVideo(inSender, nextId);
 		}else{
 			return true;
 		}
