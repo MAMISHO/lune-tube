@@ -47,8 +47,8 @@ enyo.kind({
 					{content: "Home", style:"display: inline-block"}
 				]},
 				{ontap: "expand", classes:"menu-option-item", components:[
-					{kind:"Image", src:"assets/playlist-icon.png"},
-					{name: "playlistUser", kind: "Playlist", style:"display: inline-block;width: 85%"}
+					// {kind:"Image", src:"assets/playlist-icon.png"},
+					{name: "playlistUser", kind: "Playlist", style:"display: inline-block;width: 100%"}
 				]},
 	            {ontap:"loadHistory", classes:"menu-option-item", components:[
 	               	{kind:"Image", src:"assets/history-icon.png"},

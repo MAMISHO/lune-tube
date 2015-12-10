@@ -36,6 +36,7 @@
 	height: 39px;
 	border-bottom-right-radius: 25px;
 	box-shadow: -1px 1px 0 #939393;
+	-webkit-box-shadow: -1px 1px 0 #939393;
 }
 .button-active-2{
 	height: 41px;
@@ -43,9 +44,11 @@
 	font-weight: bolder;
 	border-top-left-radius: 25px;
 	box-shadow: inset -1px 1px 0 #939393;
+	-webkit-box-shadow: inset -1px 1px 0 #939393;
 }
 .button-inactive-2{
 	height: 40px;
 	border-bottom-left-radius: 25px;
 	box-shadow: 1px 1px 0 #939393;
+	-webkit-box-shadow: 1px 1px 0 #939393;
 }

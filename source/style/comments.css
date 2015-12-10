@@ -9,6 +9,9 @@
 	max-width: 50px;
 	border-radius: 66px;
 	-webkit-border-radius: 66px;
+	user-drag: none; 
+	-moz-user-select: none;
+	-webkit-user-drag: none;
 }
 .comment-user{
 	font-size: 20px;

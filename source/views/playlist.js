@@ -5,7 +5,8 @@ enyo.kind({
 	},
 	components: [
 		{name: "filter", kind: "Control", title: "Playlist", icon: "filter", ontap: "toggleDrawer", components: [
-			{content: "Playlist", style:"font-size: 20px"}
+			{kind:"Image", src:"assets/playlist-icon.png", style:"display: inline-block"},
+			{content: "Playlist", style:"font-size: 20px; display: inline-block"}
 		]},
 		{name: "drawer", kind: onyx.Drawer, open: false, components: [
 			{content: "Item", classes:"playlist-item", ontap: "tapItemPlaylist"},
@@ -16,6 +17,7 @@ enyo.kind({
 		this.dataChanged();
 	},
 	dataChanged: function(){
+		console.log(this.data);
 		this.selected = null;
 		if(this.data.items){
 			this.$.drawer.destroyClientControls();
@@ -32,7 +34,8 @@ enyo.kind({
             published:{playlistInfo:item},
             ontap: "tapItemPlaylist",
             components:[
-            	{kind:"Image", src:"assets/playlist-item-icon.png"},
+            	// {kind:"Image", src:"assets/playlist-item-icon.png"},
+            	{kind:"Image", src:item.snippet.thumbnails.default.url},
             	{content:item.snippet.title, style:"display: inline-block"}
             ]
         });

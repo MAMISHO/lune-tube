@@ -75,6 +75,7 @@ enyo.kind({
 
 
     selectedVideo: function(inSender, inEvent){
+        console.log(inEvent.index);
         this.selected = inEvent.index;
         this.bubble("onStartVideo",this.videoList[inEvent.index]);
     },
@@ -92,7 +93,10 @@ enyo.kind({
         var i = inEvent.index;
         var item = this.videoList[i];
         // console.log(item);
-        this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
+        // if(this.selected){
+            this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));   
+        // }
+        // this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
         this.$.videoItem.addClass(this.platformStyle);
         this.$.videoItem.setVideoId(item.video_id);
         this.$.videoItem.setChannelId(item.channel_id);

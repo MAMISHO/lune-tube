@@ -14,7 +14,7 @@ enyo.kind({
     },
     components: [
         // {tag:"div", components:[
-            {tag:"img",name:"image", attributes:{src:""}},
+            {tag:"img",name:"image", attributes:{src:""}, draggable:false},
         // ]},
         {kind:"FittableRows", classes:"comment-text", components:[
             {tag:"p", name:"user", classes:"comment-user", content:""},

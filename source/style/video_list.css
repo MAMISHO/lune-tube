@@ -91,14 +91,16 @@
   	overflow: hidden;
   	text-overflow: ellipsis;
   	font-size: 16px;
-	padding: 5px 5px;
+	/*padding: 5px 0;*/
+	padding: 2px 0 0 0;
 	border-bottom: 1px solid #333;
 	font-weight: normal;
+	color: rgb(111,111,111);
 }
 
 .playlist-item img{
-	width: 16px;
-	padding-right: 5px;
+	width: 50px;
+	/*padding-right: 5px;*/
 	display: inline-block;
 	vertical-align: middle;
 }
