@@ -5,7 +5,7 @@ enyo.kind({
         
     },
     events: {
-        doInfoSelected:"infoSelected"
+        // doInfoSelected:"infoSelected"
     },
     components: [
     	{kind: "enyo.Group", onActivate: "tabActivated", classes: "mochi-group-button", components:[

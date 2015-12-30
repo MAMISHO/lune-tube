@@ -208,3 +208,25 @@
 	top: 5px;
 	/*height: 100%;*/
 }
+
+/*Menu option item*/
+.mochi-badge-inner{
+	background-color: rgba(105, 205, 255, 0.8);
+	color: rgb(255, 255, 255);
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	border-top-left-radius: 12px;
+	border-bottom-left-radius: 12px;
+	border-top-right-radius: 12px;
+	border-bottom-right-radius:0;
+}
+.video-menu-button{
+	position: absolute;bottom: 0;left: 93px
+}
+.mochi-contextual-popup-scroller{
+	padding: 5px;
+}
+#app_videoList_menu_client_strategy_client{
+	max-height: 200px !important;
+	height: 200px !important;
+}

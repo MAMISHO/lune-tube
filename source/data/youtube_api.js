@@ -611,4 +611,41 @@ enyo.kind({
 		return inResponse.items;
 	},
 
+	setVideoToPlaylist: function(resource){
+		console.log("Se envia la peticion");
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var method = "playlistItems";
+		var params={
+			part: "snippet",
+			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+		};
+
+		var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "POST",
+	           	postBody: resource,
+    			contentType: "application/json",
+	            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "setVideoToPlaylistResponse"));
+	        request.error(enyo.bind(this, "setVideoToPlaylistError"));
+	        return request.go(params);
+	},
+
+	setVideoToPlaylistResponse: function(inRequest, inResponse){
+		if(!inResponse) return;
+		console.log(inResponse);
+	},
+
+	setVideoToPlaylistError: function(inRequest, inResponse){
+		if(!inResponse) return;
+		console.log(inResponse);
+		console.log(inRequest.xhrResponse.body);
+		console.log(inRequest);
+	}
+
 });

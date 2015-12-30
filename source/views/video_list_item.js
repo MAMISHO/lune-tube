@@ -5,7 +5,10 @@ enyo.kind({
     // classes: "list-item",
     style:"height:103px",
     handlers:{
-        // ontap:"itemTap"
+        ontap:"tap"
+    },
+    events:{
+        // onAddToPlaylist: ''
     },
     published: {
         videoId:"",
@@ -18,9 +21,11 @@ enyo.kind({
       	time:""
     },
     components: [
-        // {tag:"img",name:"image", attributes:{src:""}},
         {tag:"div",name:"image", classes:"list-item-img", components:[
             {tag: "p", name: "duration", classes:"list-item-duration"},
+            {name:"boton", classes: "mochi-sample-tools video-menu-button", ontap:"showVideoMenu", components: [
+                    {kind: "mochi.Badge", content: "···", classes:"round"}
+            ]},
         ]},
         {tag:"span", classes:"list-description", components:[
         	{tag:"h3", name:"title", classes:"", content:""},
@@ -36,38 +41,29 @@ enyo.kind({
     ],
     create:function() {
         this.inherited(arguments);
-		    this.imageChanged();
-		    this.titleChanged();
-		    this.channelChanged();
-		    // this.viewsChanged();
-		    this.timeChanged();
+		this.imageChanged();
+		this.titleChanged();
+		this.channelChanged();
+		this.timeChanged();
     },
 
 	imageChanged: function(){
-		// this.$.image.setAttribute("src", this.image);
         this.$.image.setStyle("background-image:url(" + this.image + ");margin-top: 5px !important;");   // 
 	},
+
 	titleChanged: function(){
 		this.$.title.setContent(this.title);
 	},
+
 	channelChanged: function(){
 		this.$.channel.setContent(this.channel);
 	},
-	// viewsChanged: function(){
-	// 	this.$.views.setContent(this.views);
-	// },
+	
 	timeChanged: function(){
 		this.$.viewsTime.setContent(this.time);
 	},
-    itemTap: function(inSender, inEvent){
-        console.log("me tap");
-        console.log(inSender);
-        console.log(inEvent);
-    },
+
     statisticsChanged: function(){
-        // console.log("item list -> actualiza la lista");
-        // console.log(this.statistics);
-        // this.$.views.setContent(this.statistics.statistics.viewCount + " views");
         var aux = this.convertTimeFormat(this.statistics.contentDetails.duration);
         this.$.duration.setContent(aux);
 
@@ -122,5 +118,16 @@ enyo.kind({
             }
         }
         return videoTime;
+    },
+
+    showVideoMenu: function(inSender, inEvent){
+        inEvent.allowBubble = true;
+    },
+
+    tap:function(inSender, inEvent) {
+        if(inEvent.allowBubble){
+            this.bubble("onShowVideoMenu",inEvent);
+            return true;
+        }
     }
 });

@@ -1,6 +1,6 @@
 enyo.kind({
     name: "CommentItem",
-    kind: "FittableColumns",
+    kind: "FittableRows",
     classes:"comment",
     fit:true,
     published: {
@@ -13,13 +13,12 @@ enyo.kind({
         
     },
     components: [
-        // {tag:"div", components:[
+        {kind:"FittableColumns", classes:"comment-text", components:[
             {tag:"img",name:"image", attributes:{src:""}, draggable:false},
-        // ]},
-        {kind:"FittableRows", classes:"comment-text", components:[
             {tag:"p", name:"user", classes:"comment-user", content:""},
-            {tag:"p", name:"comment", content:"", allowHtml:true}
-        ]}
+        ]},
+        {tag:"p", name:"comment", content:"", allowHtml:true, style:"padding: 0;margin: 0"}
+
     ],
     create:function() {
         this.inherited(arguments);

@@ -47,7 +47,7 @@ enyo.kind({
 								// {kind:"VideoList", name:"videoList"},
 							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
 								// {kind:"VideoGridList", name:"videoList"},
-								{kind:"VideoList", name:"videoList"},
+								{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist"},
 								{kind:"VideoList", name:"videoListRelated"},
 								// {kind:"CommentList", name:"commentList"}
 								{tag:"div", components:[
@@ -216,6 +216,7 @@ enyo.kind({
 	},
 
 	receiveResultsRelated: function(inRequest, inResponse){
+		console.log("llegan relacionados");
 		if(!inResponse) return;
 		this.videosRelated = inResponse;
 		// console.log(inResponse);
@@ -295,6 +296,7 @@ enyo.kind({
 		}
 		// console.log(video);
 		if(!video[0].restricted){
+			console.log("Peticiosn de relacionados");
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
 			// this.$.videoDetailGroup.show();
@@ -386,6 +388,8 @@ enyo.kind({
 	getMyPlaylistResults: function(inRequest, inResponse){
 		if(!inResponse) return;
 		this.$.menuPanel.setPlaylistUser(inResponse);
+		// this._myPlaylist=in;
+		this.$.videoList.setPlaylist(inResponse);
 		return;
 	},
 
@@ -507,6 +511,13 @@ enyo.kind({
 		this.$.infoCommentPanel.setIndex(inEvent.index);
 	},
 
+	addVideoToPlaylist: function(inSender, resource){
+		// console.log("llega a  controlador para añadir");
+		// console.log(resource.snippet);
+		this.$.youtube.setVideoToPlaylist(resource.snippet);
+		return true;
+	},
+
 	// Experimental
 	launchFinished: function(inSender, inResponse) {
 		console.log(inSender);
@@ -520,6 +531,7 @@ enyo.kind({
 	{
 	    this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": "http://www.google.com"}});
 	},
+
 	doubleTap: function(inSender, inEvent){
 		console.log("Ha legado el evento doble");
 	},

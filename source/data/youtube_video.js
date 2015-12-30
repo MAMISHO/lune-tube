@@ -119,7 +119,7 @@ enyo.kind({
     				break;
     			}
   		  }
-    		// console.log(my_array);
+    		console.log(my_array);
     		if (found) {
     			// console.log("video direct URL found: " + url);
     			params.target = url;
@@ -170,7 +170,7 @@ enyo.kind({
 
     // Otherwise, the query was successful
     
-    // console.log(params);
+    console.log(params);
     // Now parse the available streams
     var streamsText = params.url_encoded_fmt_stream_map;
     if (!streamsText)

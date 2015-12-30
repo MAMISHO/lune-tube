@@ -3,13 +3,21 @@ enyo.kind({
     kind: "Control",
     published: {
         videoList:[],
+        playlist:[],
         searching: false,
         showMore: true
     },
     handlers: {
+        onShowVideoMenu: "showVideoMenu"
+    },
+    events:{
+        onAddToPlaylist:''
     },
     components: [
-        {kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", classes:"enyo-fit", components: [
+        {kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", classes:"enyo-fit",
+        // enableSwipe: true,
+        // onSetupSwipeItem: "setupSwipeItem",
+         components: [
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"VideoListItem", name:"videoItem"}    
             ]},
@@ -19,7 +27,26 @@ enyo.kind({
                     {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;top: 0"}
                 ]}
             ]}
-        ]}
+        ],
+        /*swipeableComponents: [
+                {name: 'swipeItem', classes: 'enyo-fit swipeGreen', components: [
+                    {name: 'swipeTitle', classes: 'swipeTitle', style:"background-color:rgb(0,160,40)"}
+                ]}
+        ]*/
+        },
+        {name:"decorator",kind: "mochi.ContextualPopupDecorator", style:"display:inline-block", components: [
+            // {content:"..."},
+            {kind: "mochi.ContextualPopup", name:"menu",
+            title:"Add To",
+            floating:true,
+            actionButtons:[
+                    {content:"watch later"},
+                    {content:"New"},
+                    {content:"Cancel", ontap:"hidePopup"}
+                ],
+            components: [
+            ]}
+        ]},
     ],
     _isNewList:null,
     platformStyle:"",
@@ -75,9 +102,14 @@ enyo.kind({
 
 
     selectedVideo: function(inSender, inEvent){
-        console.log(inEvent.index);
+        // console.log(inSender);
+        // console.log(inEvent.originator);
         this.selected = inEvent.index;
-        this.bubble("onStartVideo",this.videoList[inEvent.index]);
+        /*if(inEvent.originator.name === "button"){
+            console.log("mostrar menu y quitar estylo");
+        }else{*/
+            this.bubble("onStartVideo",this.videoList[inEvent.index]);
+        // }
     },
 
     loadMore: function(inSender, inEvent){
@@ -111,6 +143,74 @@ enyo.kind({
         }
         this.$.more.canGenerate = !this.videoList[i+1] && this.showMore;
         // this.$.more.canGenerate = !this.videoList[i+1];
+        return true;
+    },
+
+    /*setupSwipeItem: function(inSender, inEvent) {
+
+        var i = inEvent.index;
+        this.$.swipeTitle.setContent("hola" + i);
+        return true;
+    },*/
+
+    showVideoMenu: function(inSender, inEvent){
+        // console.log(this.videoList[inEvent.index]);
+        this._videoToPlaylist = {
+            snippet:{
+                playlistId:'',
+                resourceId:{
+                    videoId: this.videoList[inEvent.index].video_id,
+                    kind: "youtube#video"
+                }
+            }
+        };
+
+        this.popupActive = true;
+        inEvent.node = inEvent.originator.eventNode;
+        inEvent.activator = this.$.decorator;
+        inEvent.activator.node = inEvent.originator.eventNode;
+        this.$.menu.requestShow(inSender, inEvent);
+        this.$.menu.show();
+        return true;
+    },
+
+    playlistChanged: function(){
+        if(this.playlist.items){
+            this.$.menu.destroyClientControls();
+            enyo.forEach(this.playlist.items, this.addItems, this);
+            this.$.menu.render();
+        }
+    },
+
+    addItems: function(item, index){
+        this.createComponent({
+            kind: "Control",
+            container: this.$.menu,
+            classes: "playlist-item",
+            published:{playlistInfo:item},
+            ontap: "tapItemPlaylist",
+            index: index,
+            components:[
+                // {kind:"Image", src:"assets/playlist-item-icon.png"},
+                {kind:"Image", src:item.snippet.thumbnails.default.url},
+                {content:item.snippet.title, style:"display: inline-block"}
+            ]
+        });
+    },
+
+    hidePopup: function(inSender, inEvent){
+        console.log("hide");
+        this.$.menu.hide();
+        this.$.menu.requestHide();
+    },
+
+    tapItemPlaylist: function(inSender, inEvent){
+        // console.log(inEvent);
+        // console.log(inSender);
+        this._videoToPlaylist.snippet.playlistId = this.playlist.items[inSender.index].id;
+        this.doAddToPlaylist({snippet:this._videoToPlaylist});
+        // console.log(this._videoToPlaylist);
+        this.hidePopup();
         return true;
     }
 });

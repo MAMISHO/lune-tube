@@ -17,7 +17,7 @@ enyo.kind({
 		this.dataChanged();
 	},
 	dataChanged: function(){
-		console.log(this.data);
+		// console.log(this.data);
 		this.selected = null;
 		if(this.data.items){
 			this.$.drawer.destroyClientControls();
