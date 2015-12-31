@@ -18,7 +18,8 @@ enyo.kind({
       	channel:"",
       	views:"",
         statistics: {},
-      	time:""
+      	time:"",
+        playlistItemId: ""
     },
     components: [
         {tag:"div",name:"image", classes:"list-item-img", components:[
@@ -45,6 +46,7 @@ enyo.kind({
 		this.titleChanged();
 		this.channelChanged();
 		this.timeChanged();
+
     },
 
 	imageChanged: function(){

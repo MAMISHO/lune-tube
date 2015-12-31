@@ -221,12 +221,13 @@
 	border-bottom-right-radius:0;
 }
 .video-menu-button{
-	position: absolute;bottom: 0;left: 93px
+	position: absolute;bottom: 0;left: 93px;
 }
 .mochi-contextual-popup-scroller{
 	padding: 5px;
 }
-#app_videoList_menu_client_strategy_client{
+
+#app_videoList_menu_client_strategy_client, #app_videoListRelated_menu_client_strategy_client{
 	max-height: 200px !important;
 	height: 200px !important;
 }

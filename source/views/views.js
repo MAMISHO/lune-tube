@@ -47,9 +47,8 @@ enyo.kind({
 								// {kind:"VideoList", name:"videoList"},
 							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
 								// {kind:"VideoGridList", name:"videoList"},
-								{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist"},
-								{kind:"VideoList", name:"videoListRelated"},
-								// {kind:"CommentList", name:"commentList"}
+								{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist"},
+								{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist"},
 								{tag:"div", components:[
 									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap", name: "groupButtonVideoInfo"},
 									{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
@@ -172,14 +171,16 @@ enyo.kind({
 
     loadHomeFeeds: function(){
     	this.$.listPanels.setIndex(0);
-    	this.queryType = "home";
+    	// this.queryType = "home";
+    	this.setQueryType("home");
     	this.$.youtube.getActivities().response(this, "receiveResults");
     	this.videoDetailGroupReset(true);
     },
 
     search: function(q) {
     	this.$.listPanels.setIndex(0);
-    	this.queryType = "keyword";
+    	// this.queryType = "keyword";
+    	this.setQueryType("keyword");
     	if(myApiKey.login){
     		this.$.youtube.searchAuth(q).response(this, "receiveResults");
     	}else{
@@ -216,7 +217,6 @@ enyo.kind({
 	},
 
 	receiveResultsRelated: function(inRequest, inResponse){
-		console.log("llegan relacionados");
 		if(!inResponse) return;
 		this.videosRelated = inResponse;
 		// console.log(inResponse);
@@ -261,9 +261,9 @@ enyo.kind({
 	},
 
 	loadMore: function(inSender, inEvent){
-		if(this.queryType === "playlist"){
+		if(this.getQueryType() === "playlist"){
 			this.$.youtube.getPlaylistFromIdNextPage().response(this, "receiveResults");
-		}else if(this.queryType === "home"){
+		}else if(this.getQueryType() === "home"){
 			this.$.youtube.getActivities().response(this, "receiveResults");
 		}else{
 			this.$.youtube.searchNext(this.query).response(this, "receiveResults");
@@ -296,7 +296,6 @@ enyo.kind({
 		}
 		// console.log(video);
 		if(!video[0].restricted){
-			console.log("Peticiosn de relacionados");
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
 			// this.$.videoDetailGroup.show();
@@ -317,6 +316,14 @@ enyo.kind({
 
 	queryChanged: function(){
 		this.search(this.query);
+	},
+
+	queryTypeChanged: function(){
+		if(this.getQueryType() === "playlist"){
+			this.$.videoList.setIsPlaylist(true);
+		}else{
+			this.$.videoList.setIsPlaylist(false);
+		}
 	},
 
 	draggableMenu: function(inSender, inEvent){
@@ -390,6 +397,9 @@ enyo.kind({
 		this.$.menuPanel.setPlaylistUser(inResponse);
 		// this._myPlaylist=in;
 		this.$.videoList.setPlaylist(inResponse);
+		this.$.videoListRelated.setPlaylist(inResponse);
+		this.$.videoList.setRelatedPlaylists(this._myChannel.relatedPlaylists);
+		this.$.videoListRelated.setRelatedPlaylists(this._myChannel.relatedPlaylists);
 		return;
 	},
 
@@ -398,7 +408,8 @@ enyo.kind({
 		this.$.listPanels.setIndex(0);
 		// this.$.videoDetailGroup.setActive(false);
 
-		this.queryType = "playlist";
+		// this.queryType = "playlist";
+		this.setQueryType("playlist");
 		this.$.search.setSearching(true);
 		this.query_history = playlistInfo.id;
 		this.$.youtube.getPlaylistFromId(playlistInfo.id).response(this, "receiveResults");
@@ -431,7 +442,8 @@ enyo.kind({
 			// this.$.videoDetailGroup.setActive(false);
 			this.videoDetailGroupReset(true);
 
-			this.queryType = "playlist";
+			// this.queryType = "playlist";
+			this.setQueryType("playlist");
 			if(myApiKey.login){
 				this.$.search.setSearching(true);
 				this.query_history = playlist_id;
@@ -512,9 +524,12 @@ enyo.kind({
 	},
 
 	addVideoToPlaylist: function(inSender, resource){
-		// console.log("llega a  controlador para añadir");
-		// console.log(resource.snippet);
 		this.$.youtube.setVideoToPlaylist(resource.snippet);
+		return true;
+	},
+
+	removeFromPlaylist: function(inSender, resource){
+		this.$.youtube.deleteVideoFromPlaylist(resource.videoId);
 		return true;
 	},
 

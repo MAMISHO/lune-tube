@@ -15,6 +15,7 @@
 		"./lib/moonstone",
 		"./lib/enyo-webos",
 		"./lib/enyo-ilib",
-		"./lib/webos-lib"
+		"./lib/webos-lib",
+		"./lib/mochi"
 	]
 }

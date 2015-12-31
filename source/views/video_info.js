@@ -38,8 +38,10 @@ enyo.kind({
 			this.$.title.setContent(this.videoDetails.title);
 			this.$.channel.setContent(this.videoDetails.chanel);
 			this.$.description.setContent(this.videoDetails.description);
-			this.$.likes.setContent(this.videoDetails.statistics.likeCount);
-			this.$.dislikes.setContent(this.videoDetails.statistics.dislikeCount);
+            if(this.videoDetails.statistics){
+                this.$.likes.setContent(this.videoDetails.statistics.likeCount);
+                this.$.dislikes.setContent(this.videoDetails.statistics.dislikeCount);
+            }
             this.render();
 		}
 	}

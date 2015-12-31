@@ -170,7 +170,7 @@ enyo.kind({
 
     // Otherwise, the query was successful
     
-    console.log(params);
+    // console.log(params);
     // Now parse the available streams
     var streamsText = params.url_encoded_fmt_stream_map;
     if (!streamsText)

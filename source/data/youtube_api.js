@@ -425,6 +425,7 @@ enyo.kind({
 					v.views = "",
 					v.time = data[i].snippet.publishedAt.split("T")[0];
 					v.description = data[i].snippet.description;
+					v.playlistItemId = data[i].id;
 					/*var vevo = v.chanel.search("VEVO");
 					if(vevo === -1){
 						videos.push(v);
@@ -612,7 +613,7 @@ enyo.kind({
 	},
 
 	setVideoToPlaylist: function(resource){
-		console.log("Se envia la peticion");
+		// console.log("Se envia la peticion");
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "playlistItems";
 		var params={
@@ -638,14 +639,49 @@ enyo.kind({
 
 	setVideoToPlaylistResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log(inResponse);
+		// console.log(inResponse);
 	},
 
 	setVideoToPlaylistError: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log(inResponse);
+		// console.log(inResponse);
 		console.log(inRequest.xhrResponse.body);
-		console.log(inRequest);
+		// console.log(inRequest);
+	},
+
+	deleteVideoFromPlaylist: function(videoId){
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var method = "playlistItems";
+		var params={
+			// part: "snippet",
+			id: videoId,
+			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+		};
+
+		var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "DELETE",
+	            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "deleteVideoFromPlaylistResponse"));
+	        request.error(enyo.bind(this, "deleteVideoFromPlaylistError"));
+	        return request.go(params);
+	},
+
+	deleteVideoFromPlaylistResponse: function(inRequest, inResponse){
+		if(!inResponse) return;
+		// console.log(inResponse);
+	},
+
+	deleteVideoFromPlaylistError: function(inRequest, inResponse){
+		if(!inResponse) return;
+		// console.log(inResponse);
+		console.log(inRequest.xhrResponse.body);
+		// console.log(inRequest);
 	}
 
 });

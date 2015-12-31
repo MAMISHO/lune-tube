@@ -5,13 +5,17 @@ enyo.kind({
         videoList:[],
         playlist:[],
         searching: false,
-        showMore: true
+        showMore: true,
+        isPlaylist: false,
+        relatedPlaylists: ''
     },
     handlers: {
-        onShowVideoMenu: "showVideoMenu"
+        onShowVideoMenu: "showVideoMenu",
+        ontap: "tapHandler"
     },
     events:{
-        onAddToPlaylist:''
+        onAddToPlaylist: '',
+        onRemoveFromPlaylist: ''
     },
     components: [
         {kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", classes:"enyo-fit",
@@ -34,19 +38,37 @@ enyo.kind({
                 ]}
         ]*/
         },
-        {name:"decorator",kind: "mochi.ContextualPopupDecorator", style:"display:inline-block", components: [
+        {name:"decorator", kind: "mochi.ContextualPopupDecorator", style:"display:inline-block", components: [
             // {content:"..."},
             {kind: "mochi.ContextualPopup", name:"menu",
             title:"Add To",
             floating:true,
             actionButtons:[
-                    {content:"watch later"},
-                    {content:"New"},
-                    {content:"Cancel", ontap:"hidePopup"}
+                    {content:"watch later", name:"later_button"},
+                    // {content:"New", name: "new_button"},
+                    {content:"Cancel", name:"dismiss_button"}
                 ],
             components: [
             ]}
         ]},
+        {kind: "mochi.ContextualPopup", name:"menu_video",
+            title:"Options",
+            floating:true,
+            actionButtons:[
+                    {content:"Delete", name:"delete_button"},
+                    {content:"Cancel", name:"dismiss_button"}
+                ],
+            components: [
+            ]},
+        {kind: "mochi.ContextualPopup", name:"menu_login",
+            title:"Please Login",
+            floating:true,
+            actionButtons:[
+                    {content:"Login", name:"login_button"},
+                    {content:"Cancel", name:"dismiss_button"}
+                ],
+            components: [
+            ]}
     ],
     _isNewList:null,
     platformStyle:"",
@@ -62,6 +84,8 @@ enyo.kind({
             this.platformStyle = "list-item-webos";
         }
 
+        this.playlistChanged();
+        // this.isPlaylistChanged();
     },
 
     videoListChanged: function(){
@@ -125,24 +149,33 @@ enyo.kind({
         var i = inEvent.index;
         var item = this.videoList[i];
         // console.log(item);
-        // if(this.selected){
-            this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));   
-        // }
-        // this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
-        this.$.videoItem.addClass(this.platformStyle);
-        this.$.videoItem.setVideoId(item.video_id);
-        this.$.videoItem.setChannelId(item.channel_id);
-        this.$.videoItem.setChannel(item.chanel);
-        this.$.videoItem.setImage(item.image);
-        this.$.videoItem.setTitle(item.title);
-        this.$.videoItem.setViews(item.views);
-        this.$.videoItem.setTime(item.time);
-        if(item.statistics){
-            // console.log(item.statistics);
-            this.$.videoItem.setStatistics(item);
+        if(item){
+
+
+            // console.log(item);
+            // if(this.selected){
+                this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));   
+            // }
+            // this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
+            this.$.videoItem.addClass(this.platformStyle);
+            this.$.videoItem.setVideoId(item.video_id);
+            this.$.videoItem.setChannelId(item.channel_id);
+            this.$.videoItem.setChannel(item.chanel);
+            this.$.videoItem.setImage(item.image);
+            this.$.videoItem.setTitle(item.title);
+            this.$.videoItem.setViews(item.views);
+            this.$.videoItem.setTime(item.time);
+            if(item.statistics){
+                // console.log(item.statistics);
+                this.$.videoItem.setStatistics(item);
+            }
+
+            if(item.playlistItemId){
+                this.$.videoItem.setPlaylistItemId(item.playlistItemId);
+            }
+            this.$.more.canGenerate = !this.videoList[i+1] && this.showMore;
+            // this.$.more.canGenerate = !this.videoList[i+1];
         }
-        this.$.more.canGenerate = !this.videoList[i+1] && this.showMore;
-        // this.$.more.canGenerate = !this.videoList[i+1];
         return true;
     },
 
@@ -155,6 +188,11 @@ enyo.kind({
 
     showVideoMenu: function(inSender, inEvent){
         // console.log(this.videoList[inEvent.index]);
+        if(this.videoList[inEvent.index].playlistItemId){
+            this._videoDeleteFromPlaylist = this.videoList[inEvent.index].playlistItemId;
+            this._videoDeleteIndex = inEvent.index;
+        }
+
         this._videoToPlaylist = {
             snippet:{
                 playlistId:'',
@@ -169,19 +207,44 @@ enyo.kind({
         inEvent.node = inEvent.originator.eventNode;
         inEvent.activator = this.$.decorator;
         inEvent.activator.node = inEvent.originator.eventNode;
-        this.$.menu.requestShow(inSender, inEvent);
-        this.$.menu.show();
+
+        if(myApiKey.login){
+            if(!this.getIsPlaylist()){
+                this.$.menu.requestShow(inSender, inEvent);
+                this.$.menu.show();
+            }else{
+                this.$.menu_video.requestShow(inSender, inEvent);
+                this.$.menu_video.show();
+            }
+        }else{
+            this.$.menu_login.requestShow(inSender, inEvent);
+            this.$.menu_login.show();
+        }
         return true;
     },
 
     playlistChanged: function(){
-        if(this.playlist.items){
+        if(this.playlist.items && myApiKey.login){
+            this.$.menu.setTitle("Add To");
             this.$.menu.destroyClientControls();
             enyo.forEach(this.playlist.items, this.addItems, this);
             this.$.menu.render();
         }
+        // else{
+            // this.$.menu_login.setTitle("Please Login");
+            /*this.$.menu.actionButtons = [
+                {name:"login_button", content:"Login"},
+                {name:"cancel_button", content:"Cancel"}
+            ];*/
+            // this.$.later_button.hide();
+            // this.$.menu.render();
+        // }
     },
 
+    /*isPlaylistChanged: function(){
+        console.log("es playlist? : " + this.getIsPlaylist());
+    },
+*/
     addItems: function(item, index){
         this.createComponent({
             kind: "Control",
@@ -199,17 +262,50 @@ enyo.kind({
     },
 
     hidePopup: function(inSender, inEvent){
-        console.log("hide");
         this.$.menu.hide();
-        this.$.menu.requestHide();
+        this.$.menu_login.hide();
+        this.$.menu_video.hide();
+        return true;
+    },
+
+    tapHandler: function(inSender, inEvent){
+        if (inEvent.actionButton) {
+
+            if (inEvent.originator.name == "dismiss_button"){
+                inEvent.popup.hide();
+            }
+
+            if (inEvent.originator.name == "new_button"  && myApiKey.login){
+                console.log("create new playlist");
+            }
+
+            if (inEvent.originator.name == "later_button"  && myApiKey.login){
+                this._videoToPlaylist.snippet.playlistId = this.getRelatedPlaylists().watchLater;
+                this.doAddToPlaylist({snippet:this._videoToPlaylist});
+                this.hidePopup();
+                return true;
+            }
+
+            if (inEvent.originator.name == "delete_button" && myApiKey.login){
+                this.videoList.splice(this._videoDeleteIndex , 1);
+                this.$.list.setCount(this.videoList.length);
+
+                this.doRemoveFromPlaylist({videoId:this._videoDeleteFromPlaylist});
+                this.$.list.refresh();
+                this.hidePopup();
+                return true;
+            }
+
+            if (inEvent.originator.name == "login_button"){
+                this.bubble("onShowMenuOption",this);
+                this.hidePopup();
+            }
+        }
     },
 
     tapItemPlaylist: function(inSender, inEvent){
-        // console.log(inEvent);
-        // console.log(inSender);
         this._videoToPlaylist.snippet.playlistId = this.playlist.items[inSender.index].id;
         this.doAddToPlaylist({snippet:this._videoToPlaylist});
-        // console.log(this._videoToPlaylist);
         this.hidePopup();
         return true;
     }
