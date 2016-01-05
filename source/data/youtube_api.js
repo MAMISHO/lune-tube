@@ -483,7 +483,8 @@ enyo.kind({
 			var params={
 				// part: "id, replies, snippet",
 				part: "id, snippet",
-				maxResults: 15,
+				// maxResults: 15,
+				maxResults: 30,
 				order: "relevance",
 				videoId: id,
 				key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
@@ -678,6 +679,48 @@ enyo.kind({
 	},
 
 	deleteVideoFromPlaylistError: function(inRequest, inResponse){
+		if(!inResponse) return;
+		// console.log(inResponse);
+		console.log(inRequest.xhrResponse.body);
+		// console.log(inRequest);
+	},
+
+	createPlaylist: function(newPlaylist){
+		this._videoToNewPlaylist = newPlaylist.video;
+		// console.log(newPlaylist);
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var method = "playlists";
+		var params={
+			part: "snippet, status",
+			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+		};
+
+		var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "POST",
+	           	postBody: newPlaylist.snippet,
+    			contentType: "application/json",
+	            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "createPlaylistResponse"));
+	        request.error(enyo.bind(this, "createPlaylistError"));
+	        return request.go(params);
+	},
+
+	createPlaylistResponse: function(inRequest, inResponse){
+		if(!inResponse) return;
+		// console.log(inResponse);
+		this._videoToNewPlaylist.snippet.playlistId = inResponse.id;
+		// console.log(this._videoToNewPlaylist);
+		this.setVideoToPlaylist(this._videoToNewPlaylist);
+		return inResponse;
+	},
+
+	createPlaylistError: function(inRequest, inResponse){
 		if(!inResponse) return;
 		// console.log(inResponse);
 		console.log(inRequest.xhrResponse.body);

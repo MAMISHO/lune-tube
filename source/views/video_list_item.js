@@ -73,6 +73,7 @@ enyo.kind({
     },
     
     convertTimeFormat: function (duration) {
+        // console.log(duration);
         var a = duration.match(/\d+/g);
 
         if (duration.indexOf('M') >= 0 && duration.indexOf('H') == -1 && duration.indexOf('S') == -1) {

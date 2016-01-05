@@ -6694,7 +6694,7 @@
 }
 @font-face {
   font-family: "Mochi Med Oblique";
-  src: local("☺"),  url('../lib/mochi/fonts/lato-italic.woff') format("woff"), url('../lib/mochi/fonts/lato-italic.ttf') format("truetype");
+  src: local("☺"), url('../lib/mochi/fonts/lato-italic.woff') format("woff"), url('../lib/mochi/fonts/lato-italic.ttf') format("truetype");
   font-weight: normal;
   font-style: oblique;
 }
@@ -8503,14 +8503,34 @@ label{
 	border-bottom-right-radius:0;
 }
 .video-menu-button{
-	position: absolute;bottom: 0;left: 93px
+	position: absolute;bottom: 0;left: 93px;
 }
 .mochi-contextual-popup-scroller{
 	padding: 5px;
 }
-#app_videoList_menu_client_strategy_client{
+
+#app_videoList_menu_client_strategy_client, #app_videoListRelated_menu_client_strategy_client{
 	max-height: 200px !important;
 	height: 200px !important;
+}
+.mochi-togle-buttom-custom{
+	border-radius: 24px;
+	background-color: #69cdff;
+}
+div[class="onyx-toggle-button-knob"]{
+	border-radius: 24px;
+}
+div[class="onyx-toggle-content on"]{
+	background-color: #69cdff;
+	border-radius: 24px;
+}
+div[class="onyx-toggle-content off"]{
+	background-color: #ff4a4a;
+	border-radius: 24px;
+}
+/*div[class="onyx-toggle-button mochi-togle-buttom-custom off"]{*/
+.onyx-toggle-button.off{
+	background-color: #ff4a4a !important;
 }
 
 /* source/style/player.css */

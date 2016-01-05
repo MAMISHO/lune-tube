@@ -33,7 +33,9 @@ enyo.kind({
     	onLoadFavorites: "loadPlaylistById",
 		onLoadLikes: "loadPlaylistById",
 		onLoadWatchLater: "loadPlaylistById",
-		onLoadMyChannel: "loadMyChannel"
+		onLoadMyChannel: "loadMyChannel",
+		//events from list
+		onUpdateTime: "updateTime"
 	},
 	components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
@@ -47,8 +49,8 @@ enyo.kind({
 								// {kind:"VideoList", name:"videoList"},
 							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
 								// {kind:"VideoGridList", name:"videoList"},
-								{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist"},
-								{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist"},
+								{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist", onCreatePlaylist:"createPlaylist"},
+								{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist", onCreatePlaylist:"createPlaylist"},
 								{tag:"div", components:[
 									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap", name: "groupButtonVideoInfo"},
 									{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
@@ -530,6 +532,30 @@ enyo.kind({
 
 	removeFromPlaylist: function(inSender, resource){
 		this.$.youtube.deleteVideoFromPlaylist(resource.videoId);
+		return true;
+	},
+
+	createPlaylist: function(inSender, newPlaylist){
+		// console.log(newPlaylist);
+		this.$.youtube.createPlaylist(newPlaylist).response(this, "createPlaylistResult");
+		return true;
+	},
+
+	createPlaylistResult: function(inRequest, inResponse){
+		var playlistUpdated = JSON.parse(JSON.stringify(this.$.videoList.getPlaylist()));
+		playlistUpdated.items.unshift(inResponse);
+		this.$.videoList.setPlaylist(playlistUpdated);
+		this.$.videoListRelated.setPlaylist(playlistUpdated);
+		this.$.menuPanel.setPlaylistUser(playlistUpdated);
+	},
+
+	updateTime: function(inSender, inEvent){
+		// console.log("Llega al controller");
+		// console.log(inSender);
+		// console.log(inEvent.time);
+		this.$.player.setCurrentTime(inEvent.time);
+		this.$.panel.setIndex(1);
+		this.$.player.showControlsPlayer(inSender, inEvent);
 		return true;
 	},
 

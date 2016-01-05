@@ -160,9 +160,9 @@ enyo.kind({
 	},
 	
 	showControlsPlayer: function(inSender, inEvent){
-
+		// console.log(inEvent.originator.name);
 		var control = inEvent.originator.name;
-		if(control != "tapArea" && control != "sdButton" && control != "hdButton"){
+		if(control != "tapArea" && control != "sdButton" && control != "hdButton" & control != "commentItem"){
 			if(this.$.player.isOverlayShowing()){
 				this.$.player.playPause();
 				return;
@@ -248,6 +248,22 @@ enyo.kind({
 		// console.log("Mostrar la info");
 		inEvent.preventDefault();
 		this.bubble("onShowVideoInfo",this);
+	},
+
+	currentTimeChanged: function(){
+		
+		var hms = this.currentTime;   	// your input string
+		var a = hms.split(':'); 		// split it at the colons
+		var seconds = 0;
+
+		if(a.length === 2){
+			seconds = (+a[0]) * 60 + (+a[1]); 	
+		}
+		if(a.length === 3){
+			seconds = (+a[0]) * 60 * 60 + (+a[1]) * 60 + (+a[2]); 
+		}
+
+		this.$.player.getVideo().setCurrentTime(seconds);
 	}
 
 	// Se lanza cuando los datos informativos del video son cargados

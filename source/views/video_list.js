@@ -15,7 +15,8 @@ enyo.kind({
     },
     events:{
         onAddToPlaylist: '',
-        onRemoveFromPlaylist: ''
+        onRemoveFromPlaylist: '',
+        onCreatePlaylist: ''
     },
     components: [
         {kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", classes:"enyo-fit",
@@ -45,12 +46,13 @@ enyo.kind({
             floating:true,
             actionButtons:[
                     {content:"watch later", name:"later_button"},
-                    // {content:"New", name: "new_button"},
+                    {content:"New", name: "new_button"},
                     {content:"Cancel", name:"dismiss_button"}
                 ],
             components: [
             ]}
         ]},
+
         {kind: "mochi.ContextualPopup", name:"menu_video",
             title:"Options",
             floating:true,
@@ -68,7 +70,29 @@ enyo.kind({
                     {content:"Cancel", name:"dismiss_button"}
                 ],
             components: [
-            ]}
+            ]},
+
+        {kind: "mochi.ContextualPopup", name: "popupNewPlaylist",
+            title: "New Playlist",
+            floating: true,
+            actionButtons:[
+                {content: "Create", name: "create_button"},
+                // {content: "Back", name:"back_button"},
+                {content:"Cancel", name:"dismiss_button"}
+            ],
+            components: [
+                {kind: "mochi.InputDecorator", components: [
+                    {kind: "mochi.Input", placeholder: "Enter title", name: "playlistTitle"},
+                ]},
+                {tag:"br",classes: "onyx-menu-divider"},
+                // {classes: "onyx-menu-divider"},
+                {kind: "mochi.InputDecorator", components: [
+                    {kind: "mochi.Input", placeholder: "Enter Description", name: "playlistDescription"}
+                ]},
+                {tag:"br",classes: "onyx-menu-divider"},
+                {name:"status", kind: "onyx.ToggleButton", onChange: "toggleChanged", onContent: " Public", offContent: "Private", value:true, classes:"mochi-togle-buttom-custom"}
+            ]
+        }
     ],
     _isNewList:null,
     platformStyle:"",
@@ -211,6 +235,7 @@ enyo.kind({
         if(myApiKey.login){
             if(!this.getIsPlaylist()){
                 this.$.menu.requestShow(inSender, inEvent);
+                this._popupPosition = inEvent;
                 this.$.menu.show();
             }else{
                 this.$.menu_video.requestShow(inSender, inEvent);
@@ -253,10 +278,11 @@ enyo.kind({
             published:{playlistInfo:item},
             ontap: "tapItemPlaylist",
             index: index,
+            // style:"width:150px",
             components:[
                 // {kind:"Image", src:"assets/playlist-item-icon.png"},
                 {kind:"Image", src:item.snippet.thumbnails.default.url},
-                {content:item.snippet.title, style:"display: inline-block"}
+                {content:item.snippet.title, style:"display: inline-block; font-size:16px"}
             ]
         });
     },
@@ -265,6 +291,7 @@ enyo.kind({
         this.$.menu.hide();
         this.$.menu_login.hide();
         this.$.menu_video.hide();
+        this.$.popupNewPlaylist.hide()
         return true;
     },
 
@@ -275,18 +302,24 @@ enyo.kind({
                 inEvent.popup.hide();
             }
 
-            if (inEvent.originator.name == "new_button"  && myApiKey.login){
-                console.log("create new playlist");
+            if (inEvent.originator.name == "new_button"  && myApiKey.login){ //Form new playlist
+                this.$.menu.hide();
+                this.$.popupNewPlaylist.requestShow(inSender, this._popupPosition);
+                this.$.playlistTitle.setValue("");
+                this.$.playlistDescription.setValue("");
+                this.$.status.setValue(true);
+                this.$.popupNewPlaylist.show();
+                this.$.playlistTitle.focus();
             }
 
-            if (inEvent.originator.name == "later_button"  && myApiKey.login){
+            if (inEvent.originator.name == "later_button"  && myApiKey.login){ //add new video to Watch later
                 this._videoToPlaylist.snippet.playlistId = this.getRelatedPlaylists().watchLater;
                 this.doAddToPlaylist({snippet:this._videoToPlaylist});
                 this.hidePopup();
                 return true;
             }
 
-            if (inEvent.originator.name == "delete_button" && myApiKey.login){
+            if (inEvent.originator.name == "delete_button" && myApiKey.login){ // remove video from playlist
                 this.videoList.splice(this._videoDeleteIndex , 1);
                 this.$.list.setCount(this.videoList.length);
 
@@ -296,9 +329,48 @@ enyo.kind({
                 return true;
             }
 
-            if (inEvent.originator.name == "login_button"){
+            if (inEvent.originator.name == "login_button"){ // Need Login
                 this.bubble("onShowMenuOption",this);
                 this.hidePopup();
+            }
+
+            if (inEvent.originator.name == "create_button"){ // send request to create new playlist
+                // console.log("Solicita crear playlist");
+                // console.log(this.$.playlistTitle.getValue());
+                // console.log(this.$.playlistDescription.getValue());
+                var newPlaylist = {
+                    snippet:{
+                        title:'',
+                        description:''
+                    },
+                    status:{
+                        privacyStatus:''
+                    }
+                };
+
+                var title = this.$.playlistTitle.getValue();
+                var description = this.$.playlistDescription.getValue();
+                var status = this.$.status.getValue();
+                title = title.trim();
+                description = description.trim();
+
+                if(title.length > 0){
+                    newPlaylist.snippet.title = title;
+                    if(description.length > 0){
+                        newPlaylist.snippet.description = description;
+                    }
+
+                    if(status){
+                        newPlaylist.status.privacyStatus = "public";
+                    }else{
+                        newPlaylist.status.privacyStatus = "private";
+                    }
+                    // console.log(newPlaylist);
+                    this.doCreatePlaylist({snippet:newPlaylist, video:this._videoToPlaylist});
+                    this.hidePopup();
+                }else{
+                    this.$.playlistTitle.focus();
+                }
             }
         }
     },

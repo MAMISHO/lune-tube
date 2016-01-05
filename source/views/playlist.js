@@ -9,7 +9,7 @@ enyo.kind({
 			{content: "Playlist", style:"font-size: 20px; display: inline-block"}
 		]},
 		{name: "drawer", kind: onyx.Drawer, open: false, components: [
-			{content: "Item", classes:"playlist-item", ontap: "tapItemPlaylist"},
+			// {content: "Item", classes:"playlist-item", ontap: "tapItemPlaylist"},
 		]}
 	],
 	create: function() {
