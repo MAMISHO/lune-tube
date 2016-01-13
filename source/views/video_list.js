@@ -26,11 +26,13 @@ enyo.kind({
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"VideoListItem", name:"videoItem"}    
             ]},
-            {name: "more", style:"width:100%;background-color:#333;position: relative;height: 58px",ontap: "loadMore", components: [
-                {kind:"onyx.Button", content:"Load More +", classes:"list-load-more", components:[
+            {name: "more", style:"width:100%;background-color:rgb(211,211,211);position: relative;height: 38px;text-align: center;",ontap: "loadMore", components: [
+                /*{kind:"onyx.Button", content:"Load More +", classes:"list-load-more", components:[
                     {content:"Load More + "},
                     {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;top: 0"}
-                ]}
+                ]}*/
+                {kind: "mochi.Button", content: "Load More +", ontap:"buttonTapped"},
+                {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;top: 0;height: 38px"}
             ]}
         ],
         /*swipeableComponents: [
@@ -161,6 +163,13 @@ enyo.kind({
     },
 
     loadMore: function(inSender, inEvent){
+        /*console.log(this.selected);
+        console.log(this.$.list.getSelection());
+        console.log(inEvent.index);
+        if(this.selected === null){
+            console.log("entra");
+            this.$.list.deselect(inEvent.index);
+        }*/
         this.$.searchSpinner.show();
         this.bubble("onLoadMore",this);
     },
@@ -177,9 +186,9 @@ enyo.kind({
 
 
             // console.log(item);
-            // if(this.selected){
+            if(this.selected){
                 this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));   
-            // }
+            }
             // this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
             this.$.videoItem.addClass(this.platformStyle);
             this.$.videoItem.setVideoId(item.video_id);

@@ -5,7 +5,7 @@ enyo.kind({
     fit:true,
     published: {
         status:"",
-        imageUser:"assets/icon_user.png",
+        imageUser: "assets/icon_user.png",
         playlistUser:[],
         loginButton: "Login",
         login:false,

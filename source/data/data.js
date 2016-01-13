@@ -9,7 +9,7 @@ var myApiKey = {
     	client_id : "588965728760-7v9hac1gcppmkqcnktesvvj6qt079296.apps.googleusercontent.com",
     	client_secret : "ylXYTO5pxK--WuCtFIFroxLs",
     	redirect_uri : "urn:ietf:wg:oauth:2.0:oob",
-    	scope : "https://www.googleapis.com/auth/youtube",
+    	scope : "https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/youtube.force-ssl",
     	response_type : "code",
     	access_type : "offline",
     	grant_type: "authorization_code",

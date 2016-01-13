@@ -10,8 +10,8 @@ enyo.kind({
 	fit: true,
 	published:{
 		query_history: "",
-		query:"",
-		queryType:"keyword" //[ keyword | playlist | home ]
+		query: "",
+		queryType: "keyword" //[ keyword | playlist | home ]
 	},
 	handlers: {
     	onLoadMore: "loadMore",
@@ -35,7 +35,9 @@ enyo.kind({
 		onLoadWatchLater: "loadPlaylistById",
 		onLoadMyChannel: "loadMyChannel",
 		//events from list
-		onUpdateTime: "updateTime"
+		onUpdateTime: "updateTime",
+		//events from comments
+		onSetComment: "setComment"
 	},
 	components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
@@ -51,7 +53,8 @@ enyo.kind({
 								// {kind:"VideoGridList", name:"videoList"},
 								{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist", onCreatePlaylist:"createPlaylist"},
 								{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist", onCreatePlaylist:"createPlaylist"},
-								{tag:"div", components:[
+								// {tag:"div", components:[
+								{layoutKind: "FittableRowsLayout", components: [
 									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap", name: "groupButtonVideoInfo"},
 									{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
 										{kind:"CommentList", name:"commentList"},
@@ -230,6 +233,8 @@ enyo.kind({
 	receiveComments: function(inRequest, inResponse){
 		if(!inResponse) return;
 		this.$.commentList.setComments(inResponse.items);
+		this.$.commentList.setImageUser(this.$.menuPanel.getImageUser());
+		this.$.commentList.setUserName(this.$.menuPanel.getStatus());
 	},
 
 	// recive las estadisticas de los videos de la consulta actual y los actualiza en la lista de videos
@@ -556,6 +561,21 @@ enyo.kind({
 		this.$.player.setCurrentTime(inEvent.time);
 		this.$.panel.setIndex(1);
 		this.$.player.showControlsPlayer(inSender, inEvent);
+		return true;
+	},
+
+	setComment: function(inSender, inEvent){
+		var snippet = {
+			snippet:{
+				videoId : this._videoIdCurrent,
+				topLevelComment:{
+					snippet:{
+                        textOriginal: inEvent.comment.snippet.topLevelComment.snippet.textDisplay,
+                    }
+				}
+			}
+		};
+		this.$.youtube.setComment(snippet);
 		return true;
 	},
 

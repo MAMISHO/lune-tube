@@ -200,6 +200,15 @@
 		* @private
 		*/
 		updateValue: function () {
+			/*Start Hack
+			*when a RichText is rendered into enyoList is affected
+			*for the flyweight pattern and it not generated any node
+			*/
+			if(this.node == null){
+				this.node = this.eventNode;
+			}
+			/*End Hack*/
+			
 			var val = this.node.innerHTML;
 			this.set('value', val);
 		},

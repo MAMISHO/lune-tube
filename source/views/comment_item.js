@@ -20,7 +20,7 @@ enyo.kind({
             {tag:"img",name:"image", attributes:{src:""}, draggable:false},
             {tag:"p", name:"user", classes:"comment-user", content:""},
         ]},
-        {tag:"p", name:"comment", content:"", style:"padding: 0;margin: 0;width:100%", components:[
+        {tag:"p", name:"comment",classes:"comment-text", content:"", style:"padding: 0;margin: 0;width:100%", components:[
 
         ]}
 
@@ -66,6 +66,7 @@ enyo.kind({
                     tag: "span",
                     container: this.$.comment,
                     allowHtml:true,
+                    classes:"comment-text",
                     content: comment[j]
                 });
             }else{
@@ -73,11 +74,14 @@ enyo.kind({
                 if(typeof 'undefined'){
                     st = comment[j];
                 }
-                if(st.substr(0,1) !== "#"){
-                    var tl = this.convertTimeFormat(st);
+                var tl = this.convertTimeFormat(st);
+                if(st.substr(0,1) !== "#" && st.substr(0,4) !== "http" && tl){
+                // if(tl){
+                    
                     this.createComponent({
                         kind: "mochi.Button",
                         container: this.$.comment,
+                        classes:"comment-text",
                         ontap: "updateTime",
                         content: tl
                     });    
@@ -86,6 +90,7 @@ enyo.kind({
                         tag: "span",
                         container: this.$.comment,
                         allowHtml:true,
+                        classes:"comment-text",
                         style:"color: blue; font-size: 0.8em",
                         content: comment[j]
                     });
@@ -105,12 +110,14 @@ enyo.kind({
     },
 
     convertTimeFormat: function (duration) {
-        // console.log(duration);
         // if(duration){
 
 
         var a = duration.match(/\d+/g);
-
+        // console.log(a);
+        if(!a){
+            return a;
+        }
         if (duration.indexOf('M') >= 0 && duration.indexOf('H') == -1 && duration.indexOf('S') == -1) {
             a = [0, a[0], 0];
         }
@@ -123,6 +130,8 @@ enyo.kind({
         }
         
         var videoTime = "";
+        // console.log(a);
+        // console.log(a.length);
         if (a.length == 3) {
             videoTime += parseInt(a[0]);
             if(parseInt(a[1])<10){
