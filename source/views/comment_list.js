@@ -1,7 +1,7 @@
 enyo.kind({
     name: "CommentList",
     kind: "FittableRows",
-    // style: "height:50%;",
+    style: "height:100%;",
     fit:true,
     handlers:{
         onfocus:"focused",
@@ -10,7 +10,8 @@ enyo.kind({
     published: {
       comments:[],
       imageUser: "assets/icon_user.png",
-      userName: ""
+      userName: "",
+      showMore: true
     },
     components: [
 
@@ -22,27 +23,25 @@ enyo.kind({
                 ]},
                 {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", style:"height: 24px;vertical-align: bottom"}
             ]},
+
             {kind:"CommentItem", name:"commentItem"},
             {name: "more", style:"width:100%;background-color:rgb(211,211,211);position: relative;height: 38px;text-align: center",ontap: "loadMore", components: [
-                // {components: [
-                    {kind: "mochi.Button", content: "Load More +", ontap:"buttonTapped"},
-                    {name: "searchSpinner", kind: "Image", src: "lib/mochi/images/spinner-large-light.gif", style:"display: inline-block; position: absolute;top: 0; height:48px"}
-                // ]}
+                    {name: "loadMoreSpinner", kind: "Image", src: "lib/mochi/images/spinner-large-light.gif", style:"height:48px"},//, style:"display: inline-block; position: absolute;top: 0; height:48px"},
+                    {name: "loadMoreButton", kind: "mochi.Button", content: "Load More +", ontap:"buttonTapped"},
             ]}
-        ]},
-        /*{name:"myComme",kind: "mochi.InputDecorator", components: [
-                    {kind: "mochi.Input", placeholder: "Enter text here", onchange:"inputChanged"}
-                ]},*/
+        ]}
     ],
     create:function() {
         this.inherited(arguments);
         this.imageUserChanged();
+        this.$.loadMoreSpinner.hide();
         // this.userNameChanged();
         // this.commentsChanged();
     },
     setupItem: function(inSender, inEvent) {
         // console.log(inEvent.index);
-        // console.log(this.comments[inEvent.index].empty);
+        // console.log(this.comments[inEvent.index]);
+
         if(this.comments[inEvent.index].empty){
             // console.log("if");
             this.$.commentUser.canGenerate = true;
@@ -60,12 +59,14 @@ enyo.kind({
 
             // this.$.myComment.canGenerate = !this.comments[i-1];
             this.$.commentUser.canGenerate = !this.comments[i-1];
-            this.$.more.canGenerate = !this.comments[i+1];
+            this.$.more.canGenerate = !this.comments[i+1] && this.showMore;
         }
         return true;
     },
     commentsChanged: function(){
         // console.log(this.comments);
+        this.$.loadMoreSpinner.hide();
+        this.$.loadMoreButton.show();
         if(this.comments.length === 0){
             var flag = {empty:true};
             this.comments = [];
@@ -73,8 +74,10 @@ enyo.kind({
         }
         // console.log(this.comments);
         // console.log(this.comments.length);
+        // console.log(this.showMore);
         this.$.list.setCount(this.comments.length);
-    	this.$.list.reset();
+    	this.$.list.refresh();
+        // this.render();
     },
 
     /*userNameChanged: function(){
@@ -114,6 +117,12 @@ enyo.kind({
         this.commentsChanged();
         this.$.comment.setValue("");
         this.bubble("onSetComment", {comment: myComment});
+    },
+
+    loadMore: function(inSender, inEvent){
+        this.$.loadMoreButton.hide();
+        this.$.loadMoreSpinner.show();
+        this.bubble("onLoadMoreComments",this);
     }
     /*toggleDrawer: function(inSender, inEvent) {
 		this.$.drawer.setOpen(!this.$.drawer.open);

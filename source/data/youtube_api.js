@@ -10,6 +10,7 @@ enyo.kind({
 
 	],
 	_tryLogincound:0,
+	_nextPageComments:"",
 	create:function() {
 		this.inherited(arguments);
 	},
@@ -139,7 +140,7 @@ enyo.kind({
 			regionCode: regionCode
 		};
 
-		console.log(localeInfo);
+		// console.log(localeInfo);
 		if(inRelated == null){		// sin videos relacionados				
 				params.q = inSearchText;
 		}else{						//peticion de videos relacionados
@@ -469,7 +470,7 @@ enyo.kind({
 	        request.error(enyo.bind(this, "getMyPlaylistResponseError"));
 	        return request.go(params);
     	}else{
-    		console.log("va al response");
+    		// console.log("va al response");
     		var ajaxMock = new enyo.Ajax({});
     		ajaxMock.response(enyo.bind(this, "getPlaylistFromIdResponse"));
         	ajaxMock.error(enyo.bind(this, "getMyPlaylistResponseError"));
@@ -509,9 +510,54 @@ enyo.kind({
 	        return request.go(params);
 	},
 
+	getNextComments: function(id){
+		if(typeof this._nextPageComments !== "undefined"){
+			var url_base = "https://www.googleapis.com/youtube/v3/";
+				var method = "commentThreads";
+				var params={
+					part: "id, replies, snippet",
+					// part: "id, snippet",
+					// maxResults: 15,
+					maxResults: 30,
+					pageToken : this._nextPageComments,
+					order: "relevance",
+					videoId: id,
+					key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+					fields: "etag,eventId,items,kind,nextPageToken,pageInfo,tokenPagination,visitorId"
+				};
+
+				// if(this.myChannel){
+				//	 console.log(this.myChannel);
+				// }
+
+				var request = new enyo.Ajax({
+		            url: url_base + method,
+		            method: "GET",
+		            // headers:{"Authorization": "Bearer " + myApiKey.access_token},
+		            cacheBust: false,
+		            callbackName: null,
+		            overrideCallback: null
+		        });
+
+		        request.response(enyo.bind(this, "getCommentsResults"));
+		        // request.error(enyo.bind(this, "getMyPlaylistResponseError"));
+		        return request.go(params);
+		    }else{
+		    	var ajaxMock = new enyo.Ajax({});
+	    		ajaxMock.response(enyo.bind(this, "getCommentsResults"));
+	        	// ajaxMock.error(enyo.bind(this, "getMyPlaylistResponseError"));
+	    		return ajaxMock.go();
+		    }
+	},
+
 	getCommentsResults: function(inSender, inResponse){
 		if(!inResponse) return;
 		// console.log(inResponse);
+		// console.log(typeof inResponse);
+		if( typeof inResponse === "string"){
+			return {error:"maxResults"};
+		}
+		this._nextPageComments = inResponse.nextPageToken;
 		return inResponse;
 	},
 

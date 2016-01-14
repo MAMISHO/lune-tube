@@ -37,7 +37,8 @@ enyo.kind({
 		//events from list
 		onUpdateTime: "updateTime",
 		//events from comments
-		onSetComment: "setComment"
+		onSetComment: "setComment",
+		onLoadMoreComments: "loadMoreComments"
 	},
 	components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
@@ -232,7 +233,32 @@ enyo.kind({
 
 	receiveComments: function(inRequest, inResponse){
 		if(!inResponse) return;
-		this.$.commentList.setComments(inResponse.items);
+		// console.log(inResponse);
+		if(inResponse.error){
+			console.log(inResponse.error);
+			this.$.commentList.setShowMore(false);
+			inResponse.items = [];
+		}else{
+			this.$.commentList.setShowMore(true);
+		}
+		
+		var aux = this.$.commentList.getComments();
+		// console.log(aux);
+		
+		if(aux.length > 0 && aux[0].snippet){
+			if(aux[0].snippet.videoId === this._videoIdCurrent){
+				aux = aux.concat(inResponse.items);
+			}else{
+				aux = inResponse.items;
+			}
+			// inResponse.items = aux;
+			// console.log(aux);
+			// console.log(inResponse);
+		}else{
+			aux = inResponse.items;
+		}
+
+		this.$.commentList.setComments(aux);
 		this.$.commentList.setImageUser(this.$.menuPanel.getImageUser());
 		this.$.commentList.setUserName(this.$.menuPanel.getStatus());
 	},
@@ -576,6 +602,11 @@ enyo.kind({
 			}
 		};
 		this.$.youtube.setComment(snippet);
+		return true;
+	},
+
+	loadMoreComments: function(inSender, inEvent){
+		this.$.youtube.getNextComments(this._videoIdCurrent).response(this, "receiveComments");
 		return true;
 	},
 
