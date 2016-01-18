@@ -6,14 +6,15 @@ enyo.kind({
     published: {
         image: "",
         comment:"",
-        user:""
+        user:"",
+        replies:[]
         // last: false
     },
     events: {
-        
+        onOpenReplies: ""
     },
     handlers:{
-        ontap:"tap"
+        // ontap:"tap"
     },
     components: [
         {kind:"FittableColumns", classes:"comment-text", components:[
@@ -22,7 +23,26 @@ enyo.kind({
         ]},
         {tag:"p", name:"comment",classes:"comment-text", content:"", style:"padding: 0;margin: 0;width:100%", components:[
 
-        ]}
+        ]},
+        /*{kind:"FittableColumns", classes:"comment-text", components:[
+            {content: "responder"},
+            {kind:"FittableColumns", classes:"comment-text", components:[
+                {content: "mg"},
+                {content: "Not mg"},
+                {content:"open",
+                style:"padding: 3px; background-color: red; border: 2px solid #333",
+                ontap: "toggleDrawer",}
+            ]}
+        ]},*/
+        /*{name: "drawer", kind: onyx.Drawer, open: false,
+        style:"width:70%; margin-left: 50px;",
+         components: [
+            // {content: "Item", classes:"playlist-item", ontap: "tapItemPlaylist"},
+        ]}*/
+        /*{name: "drawer", kind: "moon.Accordion", content: "This is an accordion", components: [
+                    {content: "Item One"},
+                    {content: "Item Two"}
+                ]},*/
 
     ],
     create:function() {
@@ -66,7 +86,7 @@ enyo.kind({
                     tag: "span",
                     container: this.$.comment,
                     allowHtml:true,
-                    classes:"comment-text",
+                    // classes:"comment-text",
                     content: comment[j]
                 });
             }else{
@@ -81,7 +101,7 @@ enyo.kind({
                     this.createComponent({
                         kind: "mochi.Button",
                         container: this.$.comment,
-                        classes:"comment-text",
+                        // classes:"comment-text",
                         ontap: "updateTime",
                         content: tl
                     });    
@@ -90,7 +110,7 @@ enyo.kind({
                         tag: "span",
                         container: this.$.comment,
                         allowHtml:true,
-                        classes:"comment-text",
+                        // classes:"comment-text",
                         style:"color: blue; font-size: 0.8em",
                         content: comment[j]
                     });
@@ -107,6 +127,29 @@ enyo.kind({
 
     userChanged: function(){
         this.$.user.setContent(this.user);
+    },
+
+    repliesChanged: function(){
+        // console.log(this.replies);
+        /*this.$.drawer.destroyClientControls();
+        enyo.forEach(this.replies.comments, this.addItems, this);
+        this.$.drawer.render();*/
+    },
+
+    addItems: function(item, index){
+        var comment = this.replies.comments[index].snippet;
+        this.createComponent({
+            kind: "commentReply",
+            container: this.$.drawer,
+            // components:[
+                // {kind: "CommentItem",
+                // style:"background-color:green",
+                image: comment.authorProfileImageUrl,
+                comment: comment.textDisplay,
+                user: comment.authorDisplayName,
+                // }
+            // ]
+        });
     },
 
     convertTimeFormat: function (duration) {
@@ -175,10 +218,27 @@ enyo.kind({
         this.bubble("onUpdateTime",{time: inSender.getContent()});
     },
 
-    tap: function(inSender, inEvent){
+    /*tap: function(inSender, inEvent){
         // console.log(inSender);
         // console.log(inEvent);
         // console.log("mi tap");
-    }
+    },*/
+
+    toggleDrawer: function(inSender, inEvent) {
+        this.doOpenReplies({index: inEvent.index});
+        return true;
+        // console.log("rep");
+        /*// console.log(inSender);
+        // console.log(inEvent);
+        console.log(this.$.drawer.getOpen());
+        if(this.$.drawer.getOpen() === false){
+            this.$.drawer.setOpen(true);
+        }else{
+            // this.$.drawer.setOpen(!this.$.drawer.open);
+            this.$.drawer.setOpen(false);
+        }
+        // return true;*/
+
+    },
 
 });

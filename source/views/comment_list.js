@@ -4,7 +4,7 @@ enyo.kind({
     style: "height:100%;",
     fit:true,
     handlers:{
-        onfocus:"focused",
+        onfocus:"focused"
         // onblur:"blurred"
     },
     published: {
@@ -24,7 +24,7 @@ enyo.kind({
                 {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", style:"height: 24px;vertical-align: bottom"}
             ]},
 
-            {kind:"CommentItem", name:"commentItem"},
+            {kind:"CommentItem", name:"commentItem", onOpenReplies: "openReplies"},
             {name: "more", style:"width:100%;background-color:rgb(211,211,211);position: relative;height: 38px;text-align: center",ontap: "loadMore", components: [
                     {name: "loadMoreSpinner", kind: "Image", src: "lib/mochi/images/spinner-large-light.gif", style:"height:48px"},//, style:"display: inline-block; position: absolute;top: 0; height:48px"},
                     {name: "loadMoreButton", kind: "mochi.Button", content: "Load More +", ontap:"buttonTapped"},
@@ -56,6 +56,10 @@ enyo.kind({
             this.$.commentItem.setImage(item.authorProfileImageUrl);
             this.$.commentItem.setComment(item.textDisplay);
             this.$.commentItem.setUser(item.authorDisplayName);
+
+            if(this.comments[i].replies){
+                this.$.commentItem.setReplies(this.comments[i].replies);
+            }
 
             // this.$.myComment.canGenerate = !this.comments[i-1];
             this.$.commentUser.canGenerate = !this.comments[i-1];
@@ -123,6 +127,13 @@ enyo.kind({
         this.$.loadMoreButton.hide();
         this.$.loadMoreSpinner.show();
         this.bubble("onLoadMoreComments",this);
+    },
+
+    openReplies: function(inSender, inEvent){
+        console.log(inSender);
+        console.log(inEvent);
+        console.log(this.$.list);
+        // this.$.list.controls[4].controls[3].
     }
     /*toggleDrawer: function(inSender, inEvent) {
 		this.$.drawer.setOpen(!this.$.drawer.open);

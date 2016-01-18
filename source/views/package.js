@@ -11,5 +11,6 @@ enyo.depends(
 	"video_grid_list.js",
 	"comment_item.js",
 	"comment_list.js",
+	"comment_item_reply.js",
 	"MochiGroupButton.js"
 );

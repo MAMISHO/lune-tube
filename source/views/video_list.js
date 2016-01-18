@@ -300,7 +300,7 @@ enyo.kind({
         this.$.menu.hide();
         this.$.menu_login.hide();
         this.$.menu_video.hide();
-        this.$.popupNewPlaylist.hide()
+        this.$.popupNewPlaylist.hide();
         return true;
     },
 
