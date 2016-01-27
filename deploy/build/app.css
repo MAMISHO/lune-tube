@@ -8076,7 +8076,7 @@ textarea::-webkit-scrollbar-thumb:vertical {
 }
 .mochi-button-base{
 	margin: 0;
-	font-size: 13px;
+	font-size: 13px !important;
 }
 .mochi-button-decorator-left{
 	padding: 0;
@@ -8087,7 +8087,8 @@ textarea::-webkit-scrollbar-thumb:vertical {
 
 #app_commentList_myComment{
 	/*enyo-tool-decorator mochi-input-decorator mochi-input-animate mochi-focused*/
-	 transform:translateZ(0) ;
+	 -webkit-transform:translateZ(0) ;
+	         transform:translateZ(0) ;
 }
 .my-comment-box{
 	margin: 4px;
@@ -8095,6 +8096,38 @@ textarea::-webkit-scrollbar-thumb:vertical {
 	padding-top: 4px;
 	padding-bottom: 6px;
 	font-size: 16px;
+}
+.comment-reply{
+	background-color: rgba(162, 162, 162, 0.53);
+	width: 95%;
+	margin-left: 5%;
+	padding-top: 10px;
+	/*-webkit-box-shadow: inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);
+	-moz-box-shadow:    inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);
+	box-shadow:         inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);*/
+}
+
+.moon-item{
+	font-size: 16px;
+}
+.moon-expandable-picker-header::after{
+	font-size: 36px;
+	line-height: 20px;	
+}
+.moon-accordion{
+	padding-right: 30px;
+}
+.moon-expandable-list-item, .moon-accordion, .open{
+	width: 98%;
+	padding: 1%;
+}
+.like-comment{
+	width: 24px;
+	height: 24px;
+	margin: 0 10px 0 10px;
+}
+.mochi-input-decorator{
+	padding: 1px 1px 5px 8px;
 }
 
 /* source/style/main.css */
@@ -8773,7 +8806,16 @@ img#app_player_image.enyo-image{
 }
 
 .fullscreen-button{
-	padding: 6px;
+	/* padding: 6px; */
+	position: absolute;
+	right: 0px;
+	top: 0;
+	/* padding: 3px; */
+	height: 42px !important;
+	margin: 0;
+	border: 4px solid rgba(0, 0, 0, 0.5) !important;
+	border-radius: 10px !important;
+	background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .fullscreen-button > img{
@@ -8807,8 +8849,6 @@ img#app_player_image.enyo-image{
 .moon-video-transport-slider-indicator-text{
 	left:auto;
 }
-
-
 
 /* source/style/video_info.css */
 

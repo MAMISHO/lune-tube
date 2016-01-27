@@ -123,7 +123,16 @@ img#app_player_image.enyo-image{
 }
 
 .fullscreen-button{
-	padding: 6px;
+	/* padding: 6px; */
+	position: absolute;
+	right: 0px;
+	top: 0;
+	/* padding: 3px; */
+	height: 42px !important;
+	margin: 0;
+	border: 4px solid rgba(0, 0, 0, 0.5) !important;
+	border-radius: 10px !important;
+	background-color: rgba(0, 0, 0, 0.5) !important;
 }
 
 .fullscreen-button > img{
@@ -157,4 +166,3 @@ img#app_player_image.enyo-image{
 .moon-video-transport-slider-indicator-text{
 	left:auto;
 }
-

@@ -33,6 +33,7 @@ enyo.kind({
 			poster: "assets/video-poster.png",
 			// autoplay:true,
 			onPlaybackControlsTapped: "controlsTapped",
+			onFullScreen:"fullScreen",
 			infoComponents: [
 				{kind: "moon.VideoInfoBackground", orient: "left", background: true, fit: true, components: [
 					{kind: "moon.VideoInfoHeader",subSubTitle: "Lunetube >>"}
@@ -46,9 +47,9 @@ enyo.kind({
 					]},
 					{content:"SD", name:"sdButton", classes:"quality-option-selected", ontap:"loadSD"},
 					{content:"HD", name:"hdButton", ontap:"loadHD"},
-					{name:"fullScreen",kind: "moon.IconButton", classes:"", ontap:"fullScreen", components:[
+					/*{name:"fullScreen",kind: "moon.IconButton", classes:"", ontap:"fullScreen", components:[
 						{kind:"Image", src:"assets/video-player/icon_fullscreen.png"}
-					]},
+					]},*/
 					{name:"showInfo",kind: "moon.IconButton", classes:"", ontap:"showVideoInfo", components:[
 						{content: "i", style:"color: #fff"}
 					]}
@@ -238,9 +239,12 @@ enyo.kind({
 	},
 
 	fullScreen: function(inSender, inEvent){
+		// console.log(inEvent);
 		// inEvent.preventDefault();
 		this.isFullScreen = !this.isFullScreen;
+		// console.log("fullScreen " + this.isFullScreen);
 		webos.setFullScreen(this.isFullScreen);
+		return true;
 		// this.$.player.play();
 	},
 

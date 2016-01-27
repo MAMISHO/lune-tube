@@ -35,7 +35,7 @@
 }
 .mochi-button-base{
 	margin: 0;
-	font-size: 13px;
+	font-size: 13px !important;
 }
 .mochi-button-decorator-left{
 	padding: 0;
@@ -46,7 +46,8 @@
 
 #app_commentList_myComment{
 	/*enyo-tool-decorator mochi-input-decorator mochi-input-animate mochi-focused*/
-	 transform:translateZ(0) ;
+	 -webkit-transform:translateZ(0) ;
+	         transform:translateZ(0) ;
 }
 .my-comment-box{
 	margin: 4px;
@@ -54,4 +55,36 @@
 	padding-top: 4px;
 	padding-bottom: 6px;
 	font-size: 16px;
+}
+.comment-reply{
+	background-color: rgba(162, 162, 162, 0.53);
+	width: 95%;
+	margin-left: 5%;
+	padding-top: 10px;
+	/*-webkit-box-shadow: inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);
+	-moz-box-shadow:    inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);
+	box-shadow:         inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);*/
+}
+
+.moon-item{
+	font-size: 16px;
+}
+.moon-expandable-picker-header::after{
+	font-size: 36px;
+	line-height: 20px;	
+}
+.moon-accordion{
+	padding-right: 30px;
+}
+.moon-expandable-list-item, .moon-accordion, .open{
+	width: 98%;
+	padding: 1%;
+}
+.like-comment{
+	width: 24px;
+	height: 24px;
+	margin: 0 10px 0 10px;
+}
+.mochi-input-decorator{
+	padding: 1px 1px 5px 8px;
 }

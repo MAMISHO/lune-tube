@@ -1,6 +1,6 @@
 {
 	"id":			"com.emsoft.lunetube",
-	"version":		"0.1.7",
+	"version":		"0.1.8",
 	"vendor":		"mamisho",
 	"type":			"web",
 	"main":			"index.html",
@@ -12,6 +12,6 @@
 	"keywords": ["Videos", "Movies", "Youtube"],
 	"splashicon": "assets/icon_splash.png",
 	"mimeTypes": [
-			{ "urlPattern": "^https:\/\/(?:www\.)?youtube.com\/watch\?(?=[^?]*v=\w+)(?:[^\s?]+)?$" }
+			{ "urlPattern": "^(https?\:\/\/)?((www\.)?youtube\.com|youtu\.?be)\/.+$" }
 		],
 }

@@ -585,6 +585,32 @@ enyo.kind({
 	        return request.go(params);
 	},
 
+	setReplyComment: function(resource){
+		console.log("llega a la API");
+		console.log(resource);
+		var url_base = "https://www.googleapis.com/youtube/v3/";
+			var method = "comments";
+			var params={
+				part: "snippet",
+				key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
+			};
+
+			var request = new enyo.Ajax({
+	            url: url_base + method,
+	            method: "POST",
+	           	postBody: resource,
+    			contentType: "application/json",
+	            headers:{"Authorization": "Bearer " + myApiKey.access_token},
+	            cacheBust: false,
+	            callbackName: null,
+	            overrideCallback: null
+	        });
+
+	        request.response(enyo.bind(this, "setReplyCommentResults"));
+	        request.error(enyo.bind(this, "setReplyCommentResponseError"));
+	        return request.go(params);
+	},
+
 	setCommentsResults: function(inRequest, inResponse){
 		if(!inResponse) return;
 		// console.log(inResponse);
@@ -592,6 +618,18 @@ enyo.kind({
 	},
 
 	setCommentsResultsResponseError: function(inRequest, inResponse){
+		if(!inResponse) return;
+		console.log(inRequest);
+		console.log(inRequest.xhrResponse.body);
+	},
+
+	setReplyCommentResults: function(inRequest, inResponse){
+		if(!inResponse) return;
+		// console.log(inResponse);
+		return inResponse;
+	},
+
+	setReplyCommentResponseError: function(inRequest, inResponse){
 		if(!inResponse) return;
 		console.log(inRequest);
 		console.log(inRequest.xhrResponse.body);

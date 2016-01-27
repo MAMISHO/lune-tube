@@ -24,29 +24,15 @@ enyo.kind({
         {tag:"p", name:"comment",classes:"comment-text", content:"", style:"padding: 0;margin: 0;width:100%", components:[
 
         ]},
-        /*{kind:"FittableColumns", classes:"comment-text", components:[
-            {content: "responder"},
-            {kind:"FittableColumns", classes:"comment-text", components:[
-                {content: "mg"},
-                {content: "Not mg"},
-                {content:"open",
-                style:"padding: 3px; background-color: red; border: 2px solid #333",
-                ontap: "toggleDrawer",}
-            ]}
-        ]},*/
-        /*{name: "drawer", kind: onyx.Drawer, open: false,
-        style:"width:70%; margin-left: 50px;",
-         components: [
-            // {content: "Item", classes:"playlist-item", ontap: "tapItemPlaylist"},
-        ]}*/
-        /*{name: "drawer", kind: "moon.Accordion", content: "This is an accordion", components: [
-                    {content: "Item One"},
-                    {content: "Item Two"}
-                ]},*/
-
+        {name:"myComment",kind: "mochi.InputDecorator", style:"vertical-align: bottom; width: 94%;position: relative", components: [
+            {name:"commentText", kind: "onyx.RichText", classes:"mochi-animated", style: "width: 89%", fit:true, allowHtml:false, placeholder: "Enter your comment", onchange:"inputChanged", attributes:{"onfocus":enyo.bubbler}},
+                {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", style:"height: 24px;width:24px;vertical-align: bottom; position: absolute;right: 3px;bottom: 3px"
+                }
+        ]}
     ],
     create:function() {
         this.inherited(arguments);
+        this.$.myComment.hide();
         this.imageChanged();
         this.commentChanged();
         this.userChanged();
@@ -141,14 +127,9 @@ enyo.kind({
         this.createComponent({
             kind: "commentReply",
             container: this.$.drawer,
-            // components:[
-                // {kind: "CommentItem",
-                // style:"background-color:green",
-                image: comment.authorProfileImageUrl,
-                comment: comment.textDisplay,
-                user: comment.authorDisplayName,
-                // }
-            // ]
+            image: comment.authorProfileImageUrl,
+            comment: comment.textDisplay,
+            user: comment.authorDisplayName,
         });
     },
 
@@ -213,32 +194,51 @@ enyo.kind({
     },
 
     updateTime: function(inSender, inEvent){
-        // console.log("log desde enyo" + inSender.getContent());
-        // this.doUpdateTime({time: inSender.getContent()});
         this.bubble("onUpdateTime",{time: inSender.getContent()});
     },
 
-    /*tap: function(inSender, inEvent){
-        // console.log(inSender);
-        // console.log(inEvent);
-        // console.log("mi tap");
-    },*/
 
     toggleDrawer: function(inSender, inEvent) {
         this.doOpenReplies({index: inEvent.index});
         return true;
-        // console.log("rep");
-        /*// console.log(inSender);
-        // console.log(inEvent);
-        console.log(this.$.drawer.getOpen());
-        if(this.$.drawer.getOpen() === false){
-            this.$.drawer.setOpen(true);
-        }else{
-            // this.$.drawer.setOpen(!this.$.drawer.open);
-            this.$.drawer.setOpen(false);
-        }
-        // return true;*/
-
     },
+
+    sendTapped: function(inSender, inEvent){
+        
+        var comment = this.$.commentText.getValue();
+
+        // Hack to plain text from Rich text
+        var div = document.createElement("div");
+        div.innerHTML = comment;
+        comment = div.textContent || div.innerText;
+        
+        if(comment){
+            comment = comment.trim();
+        }
+
+        if(comment.length > 0){
+            var myComment = {
+                snippet:{
+                        snippet:{
+                            parentId: "",
+                            textOriginal: comment
+                        }
+                },
+                index:inEvent.index
+            };
+            this.$.commentText.setValue("");
+            this.bubble("onSetReply", {comment: myComment});
+        }
+    },
+
+    showTextBox: function(inSender, inEvent){
+        this.$.commentText.setValue("");
+        this.$.myComment.show();
+    },
+
+    hideTextBox: function(inSender, inEvent){
+        this.$.commentText.setValue("");
+        this.$.myComment.hide();
+    }
 
 });
