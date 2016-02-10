@@ -244,6 +244,19 @@ enyo.kind({
 		this.isFullScreen = !this.isFullScreen;
 		// console.log("fullScreen " + this.isFullScreen);
 		webos.setFullScreen(this.isFullScreen);
+
+		/*var elem = document.getElementById("app_player_player_video");
+		if(this.isFullScreen){
+			if (elem.requestFullscreen) {
+			  elem.requestFullscreen();
+			} else if (elem.msRequestFullscreen) {
+			  elem.msRequestFullscreen();
+			} else if (elem.mozRequestFullScreen) {
+			  elem.mozRequestFullScreen();
+			} else if (elem.webkitRequestFullscreen) {
+			  elem.webkitRequestFullscreen();
+			}
+		}*/
 		return true;
 		// this.$.player.play();
 	},

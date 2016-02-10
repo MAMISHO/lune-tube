@@ -92,7 +92,7 @@ enyo.kind({
     	}
 
     	streamsSplit = newSplit;
-    	// console.log(streamsSplit);
+    	console.log(streamsSplit);
     				
     	var url, sig, itag;
     	var found = false;

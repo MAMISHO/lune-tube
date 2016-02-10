@@ -8123,7 +8123,9 @@ textarea::-webkit-scrollbar-thumb:vertical {
 }
 .like-comment{
 	width: 24px;
+	max-width: 24px;
 	height: 24px;
+	max-height: 24px;
 	margin: 0 10px 0 10px;
 }
 .mochi-input-decorator{

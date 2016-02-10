@@ -129,6 +129,7 @@ enyo.kind({
             container: this.$.drawer,
             image: comment.authorProfileImageUrl,
             comment: comment.textDisplay,
+            // comment: comment.textOriginal,
             user: comment.authorDisplayName,
         });
     },

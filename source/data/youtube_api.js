@@ -1,3 +1,4 @@
+var ii = 0;
 enyo.kind({
 	name: "YoutubeApi",
 	kind: enyo.Component,
@@ -334,7 +335,7 @@ enyo.kind({
 		return inResponse;
 	},
 
-	getMyPlaylist: function(){
+	getMyPlaylist: function(nextPage){
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "playlists";
 		var params={
@@ -343,9 +344,14 @@ enyo.kind({
 			maxResults: 50,
 			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
 		};
+		/*console.log(nextPage);
+		if(nextPage){
+			params.pageToken = nextPage;
+		}*/
 
 		var request = new enyo.Ajax({
-            url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=50&mine=true",
+            // url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=50&mine=true",
+            url: "https://www.googleapis.com/youtube/v3/playlists",
             method: "GET",
             headers:{"Authorization": "Bearer " + myApiKey.access_token},
             cacheBust: false,
@@ -355,12 +361,26 @@ enyo.kind({
 
         request.response(enyo.bind(this, "getMyPlaylistResponse"));
         request.error(enyo.bind(this, "getMyPlaylistResponseError"));
-        return request.go();
+        return request.go(params);
 	},
 
 	getMyPlaylistResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
-		// console.log(inResponse);
+		/*console.log(inResponse);
+		if(!inResponse.nextPageToken){
+			console.log("no hay nada");
+		}
+		var totalPlaylist = inResponse.pageInfo;
+		if(totalPlaylist.totalResults > totalPlaylist.resultsPerPage && inResponse.items.length === totalPlaylist.resultsPerPage){
+			this.getMyPlaylist(inResponse.nextPageToken);
+		}else{
+			// return inResponse;
+		}*/
+		/*if(inResponse.nextPageToken && ii === 0){
+
+			this.getMyPlaylist(inResponse.nextPageToken);
+			ii++;
+		}*/
 		return inResponse;
 	},
 
@@ -488,6 +508,7 @@ enyo.kind({
 				maxResults: 30,
 				order: "relevance",
 				videoId: id,
+				textFormat: "plainText",
 				key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
 				fields: "etag,eventId,items,kind,nextPageToken,pageInfo,tokenPagination,visitorId"
 			};
@@ -522,6 +543,7 @@ enyo.kind({
 					pageToken : this._nextPageComments,
 					order: "relevance",
 					videoId: id,
+					textFormat: "plainText",
 					key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE",
 					fields: "etag,eventId,items,kind,nextPageToken,pageInfo,tokenPagination,visitorId"
 				};
@@ -552,7 +574,7 @@ enyo.kind({
 
 	getCommentsResults: function(inSender, inResponse){
 		if(!inResponse) return;
-		// console.log(inResponse);
+		console.log(inResponse);
 		// console.log(typeof inResponse);
 		if( typeof inResponse === "string"){
 			return {error:"maxResults"};
