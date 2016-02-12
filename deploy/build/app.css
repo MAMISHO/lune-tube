@@ -8091,9 +8091,9 @@ textarea::-webkit-scrollbar-thumb:vertical {
 	         transform:translateZ(0) ;
 }
 .my-comment-box{
-	margin: 4px;
+	/*margin: 4px;*/
 	border-bottom: 1px solid rgb(211, 211, 211);
-	padding-top: 4px;
+	/*padding-top: 4px;*/
 	padding-bottom: 6px;
 	font-size: 16px;
 }
@@ -8130,6 +8130,20 @@ textarea::-webkit-scrollbar-thumb:vertical {
 }
 .mochi-input-decorator{
 	padding: 1px 1px 5px 8px;
+}
+.moon-expandable-picker-header{
+	background-image: url('../lib/moonstone/images/caret-black-small-down-icon.png');
+	background-repeat: no-repeat;
+	background-position-x: 62px;
+	background-position-y: -2.5px;
+	content: "" !important;
+}
+.moon-expandable-list-item.open .moon-expandable-picker-header{
+	background-image: url('../lib/moonstone/images/caret-black-small-up-icon.png');
+	background-repeat: no-repeat;
+	background-position-x: 62px;
+	background-position-y: -2.5px;
+	content: "" !important;
 }
 
 /* source/style/main.css */
@@ -8331,6 +8345,14 @@ label{
 
 .search-button {
 	cursor: pointer;
+}
+
+.search-autocomplete{
+	background-color: rgba(211, 211, 211, 0.94);
+	color: #333;
+	font-weight: bolder;
+	font-family: "Mochi Bold Oblique";
+	font-size: 1.2em;
 }
 
 @media screen and (min-width: 800px) {
@@ -8912,7 +8934,7 @@ img#app_player_image.enyo-image{
 .info-description{
 	padding: 5px;
 	/*padding-bottom: 50px;*/
-	/*height: 100%;*/
+	height: 100%;
 	/*min-height: 1000px;*/
 }
 

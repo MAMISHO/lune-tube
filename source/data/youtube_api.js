@@ -574,7 +574,7 @@ enyo.kind({
 
 	getCommentsResults: function(inSender, inResponse){
 		if(!inResponse) return;
-		console.log(inResponse);
+		// console.log(inResponse);
 		// console.log(typeof inResponse);
 		if( typeof inResponse === "string"){
 			return {error:"maxResults"};

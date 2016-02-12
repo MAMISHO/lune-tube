@@ -24,15 +24,15 @@ enyo.kind({
         {tag:"p", name:"comment",classes:"comment-text", content:"", style:"padding: 0;margin: 0;width:100%", components:[
 
         ]},
-        {name:"myComment",kind: "mochi.InputDecorator", style:"vertical-align: bottom; width: 94%;position: relative", components: [
+        /*{name:"myComment",kind: "mochi.InputDecorator", style:"vertical-align: bottom; width: 94%;position: relative", components: [
             {name:"commentText", kind: "onyx.RichText", classes:"mochi-animated", style: "width: 89%", fit:true, allowHtml:false, placeholder: "Enter your comment", onchange:"inputChanged", attributes:{"onfocus":enyo.bubbler}},
                 {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", style:"height: 24px;width:24px;vertical-align: bottom; position: absolute;right: 3px;bottom: 3px"
                 }
-        ]}
+        ]}*/
     ],
     create:function() {
         this.inherited(arguments);
-        this.$.myComment.hide();
+        // this.$.myComment.hide();
         this.imageChanged();
         this.commentChanged();
         this.userChanged();

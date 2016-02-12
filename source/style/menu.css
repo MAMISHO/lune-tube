@@ -161,6 +161,14 @@ label{
 	cursor: pointer;
 }
 
+.search-autocomplete{
+	background-color: rgba(211, 211, 211, 0.94);
+	color: #333;
+	font-weight: bolder;
+	font-family: "Mochi Bold Oblique";
+	font-size: 1.2em;
+}
+
 @media screen and (min-width: 800px) {
 	input{
 		width: 96%;
