@@ -129,7 +129,7 @@ enyo.kind({
 	},
 
 	searchAuth: function(inSearchText, inRelated){
-		console.log("Solicitud enviada con oAuth");
+		// console.log("Solicitud enviada con oAuth");
 		var url_base = "https://www.googleapis.com/youtube/v3/";
 		var method = "search";
 		var params={

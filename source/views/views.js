@@ -157,7 +157,11 @@ enyo.kind({
 		}
 		
 		console.log("Hi LuneOS & webOS --> starting debug");
-		this._platform = navigator.userAgent.split("(")[1].split(";")[0]; // default webos
+		var userAgent = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
+		if(userAgent){
+			this._platform = "webOS";
+		}
+		// this._platform = navigator.userAgent.split("(")[1].split(";")[0]; // default webos
 		webos.setWindowOrientation("free");
     },
 
@@ -540,7 +544,7 @@ enyo.kind({
 		console.log("\n***window Active***");
 		// console.log(a);
 		// console.log(b);
-		if(this._platform !== "LuneOS"){
+		if(this._platform === "webOS"){
 			this.$.player.playVideo();
 		}
 		return true;
@@ -550,7 +554,7 @@ enyo.kind({
 		console.log("\n***window Anactive***");
 		// console.log(a);
 		// console.log(b);
-		if(this._platform !== "LuneOS"){
+		if(this._platform === "webOS"){
 			this.$.player.pauseVideo();
 		}
 		return true;

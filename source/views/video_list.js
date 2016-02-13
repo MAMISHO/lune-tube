@@ -103,12 +103,17 @@ enyo.kind({
         /*El siguiente código es necesario para la compatibilidad con webos*/
         //descomentar antes de desplegar 
 
-        var platform = navigator.userAgent.split("(")[1].split(";")[0];
-        if(platform === "LuneOS"){
-            this.platformStyle = "list-item";
-        }else{
-            this.platformStyle = "list-item-webos";
+        // var platform = navigator.userAgent.split("(")[1].split(";")[0];
+        /*var platform = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
+        if(platform){
+            this._platform = "webOS";
         }
+        if(this._platform === "webOS"){
+            this.platformStyle = "list-item-webos";
+        }else{
+            this.platformStyle = "list-item";
+        }*/
+        this.platformStyle = "list-item-webos";
 
         this.playlistChanged();
         // this.isPlaylistChanged();

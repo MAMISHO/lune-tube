@@ -201,6 +201,11 @@ enyo.kind({
 			
 			/*Start hack*/
 				var platform = navigator.userAgent.split("(")[1].split(";")[0];
+				console.log(navigator.userAgent);
+				/*var userAgent = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
+				if(userAgent){
+					this._platform = "webOS";
+				}*/
 		        if(platform === "LuneOS"){
 		            this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
 
