@@ -59,8 +59,7 @@ Después se creará un paquete .ipk el cual puedes instalarlo mediante USB (Con 
 
 webOS SDK lo puedes conseguir en http://forums.webosnation.com/webos-development/325645-looks-like-you-cant-get-sdk-anymore-almost.html
 
-
-Si lo deseas, también puede generar un desplegable mediante __Grunt__ en el directorio raíz
+Si lo deseas puedes generar un paquete de forma directa con __Grunt__ en el directorio raíz (Recomendado). El comando realizará todas las tareas de desplieque, minificación, compilación y generación del paquete __.ipk__ listo para instalar
 ```
 grunt build
 ```
