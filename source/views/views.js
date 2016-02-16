@@ -95,24 +95,16 @@ enyo.kind({
 		// Componentes que no se ven
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
-		{kind: "LunaService",
-			 name: "launchBrowserCall",
-		     service: "palm://com.palm.applicationManager/",
-		     method: "launch",
-		     onSuccess: "launchFinished",
-		     onFailure: "launchFail",
-		     onResponse: "gotResponse",
-		     subscribe: true
-		},
-
-		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate"}
+		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate"},
+		{kind: "Auth", name:"auth"}
 	],
 	videos:[],
 	videosRelated:[],
 	numberOfTries:0,
 	_myChannel:null,
 	_videoIdCurrent:null,
-	_platform: "WebOS",
+	// _platform: "webOS",
+	_platform: "",
 	create:function() {
         this.inherited(arguments);
 
@@ -158,13 +150,15 @@ enyo.kind({
 				this.$.menuPanel.setLogin(myApiKey.login);
 		}
 		
-		console.log("Hi LuneOS & webOS --> starting debug");
-		var userAgent = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
-		if(userAgent){
-			this._platform = "webOS";
-		}
-		// this._platform = navigator.userAgent.split("(")[1].split(";")[0]; // default webos
+		
+		currentOsPlatform = this.getCurrentOsPlatform();
+		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		webos.setWindowOrientation("free");
+		if(currentOsPlatform){
+			this.$.auth.createDbKind();
+			// this.$.auth.getToken();
+			// this.$.auth.saveToken();
+		}
     },
 
     refreshTokenFinish: function(inSender, inEvent){
@@ -625,6 +619,22 @@ enyo.kind({
 	loadMoreComments: function(inSender, inEvent){
 		this.$.youtube.getNextComments(this._videoIdCurrent).response(this, "receiveComments");
 		return true;
+	},
+
+	getCurrentOsPlatform: function(){
+		// var userAgent = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
+		var userAgent = navigator.userAgent.match(/(LuneOS|webOS|hpwOS|Android)/g);
+		if(userAgent){
+			for (var i = 0; i < userAgent.length; i++) {
+				if(userAgent[i] === "LuneOS"){
+					this._platform = "LuneOS";
+					break;
+				}else{
+					this._platform = "webOS";
+				}
+			}
+		}
+		return this._platform;
 	},
 
 	// Experimental

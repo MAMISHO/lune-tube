@@ -22,9 +22,9 @@ module.exports = function(grunt) {
 		build: {
 			files: [{
 				expand: true,
-				cwd: 'playground-code/enyo-ilib',
-				src: ['**/*'],
-				dest: 'deploy/lib/enyo-ilib'
+				cwd: './playground-code/enyo-ilib',
+				src: ['**'],
+				dest: './deploy/lib/enyo-ilib'
 			}]
 		}
 	});

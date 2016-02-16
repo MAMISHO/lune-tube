@@ -18,6 +18,8 @@ var myApiKey = {
     	login:false
 };
 
+var currentOsPlatform = "webOS";
+
 var myApiErrors={
 	login:"Login required"
 };

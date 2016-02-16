@@ -82,12 +82,22 @@ enyo.kind({
 	            {ontap:"aboutTap", classes:"menu-option-item", components:[
 	              	// {kind:"Image", src:"assets/home-icon.png"},
 	               	{name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
-						{allowHtml:true, content:"<b>LuneTube v0.1.8<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
+						{allowHtml:true, content:"<b>LuneTube v0.2.0<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
 			    	]},
 	            	{content: "( About APP )", style:"display: inline-block"}
 	            ]},
 	        ]},
-	    ]}
+	    ]},
+	    // Componentes que no se ven
+	    {kind: "LunaService",
+			 name: "launchBrowserCall",
+		     service: "palm://com.palm.applicationManager/",
+		     method: "launch",
+		     onSuccess: "launchFinished",
+		     onFailure: "launchFail",
+		     onResponse: "gotResponse",
+		     subscribe: true
+		}
     ],
     create:function() {
         this.inherited(arguments);
@@ -196,25 +206,17 @@ enyo.kind({
 
 	/*Login functions*/
 	youtubeLogin: function(inSender, inEvent){
+		console.log("Menu -> youtubeLogin : Vemos las versiones de login");
 		if(!myApiKey.login){
 			var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
 			
-			/*Start hack*/
-				var platform = navigator.userAgent.split("(")[1].split(";")[0];
-				console.log(navigator.userAgent);
-				/*var userAgent = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
-				if(userAgent){
-					this._platform = "webOS";
-				}*/
-		        if(platform === "LuneOS"){
-		            this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
-
-		        }else{
-		            window.open(url, '_blank');
-		        }
+			if(currentOsPlatform === "LuneOS"){
+				this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
+			}else{
+				window.open(url, '_blank');
+			}
 		    this.$.loginGroup.show();
 		    this.$.token.focus();
-			/*End Hack*/
 
 		}else{
 			this.logout();
