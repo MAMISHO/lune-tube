@@ -115,6 +115,8 @@ enyo.kind({
 	_platform: "WebOS",
 	create:function() {
         this.inherited(arguments);
+
+        enyo.load("https://s.ytimg.com/yts/jsbin/html5player-de_DE-vflR89yTY/html5player.js");
         this.$.mainPanel.setIndex(1);
         this.$.listPanels.setIndex(0);
 		var cookie = enyo.getCookie("session_youtube");
