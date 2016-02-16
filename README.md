@@ -64,7 +64,7 @@ Si lo deseas, también puede generar un desplegable mediante __Grunt__ en el dir
 ```
 grunt build
 ```
-Proiblemente necesites tener instalado __NodeJS__ y realizar un
+Posiblemente necesites tener instalado __NodeJS__ y realizar un
 ```
 npm install
 ```
