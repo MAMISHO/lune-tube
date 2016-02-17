@@ -11,7 +11,7 @@ enyo.kind({
         {kind: "onyx.Toolbar", classes:"topbar",  components:[
                 {kind: "Image", src: "assets/yt_icon_1.png", ontap:"showMenu", style:"padding: 0 16px 0 16px"},
                 {name:"acid", kind:"AutoCompleteInputDecorator", onInputChanged:"inputChanged", onValueSelected: "searchAction", components:[
-                    {kind: "onyx.Input",fit:true, name:"searchQuery", placeholder: "Just Type...", onchange: "inputChanged", selectOnFocus:true, defaultFocus:true, onkeypress: "inputKeypress"},
+                    {kind: "onyx.Input",fit:true, name:"searchQuery", placeholder: "Just Type...", onchange: "inputChanged", selectOnFocus:true, defaultFocus:false, onkeypress: "inputKeypress"},
                     {name:"searchButton",kind: "Image", src: "assets/search-input-search.png", ontap:"searchAction", showing: true, style:"width:20px"},
                     {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", showing: false, style:"width:20px"}
                 ]}
@@ -21,7 +21,7 @@ enyo.kind({
     results:[],
     create:function() {
         this.inherited(arguments);
-        this.$.searchQuery.focus();
+        // this.$.searchQuery.focus();
     },
     inputKeypress: function(inSender, inEvent) {
         if (inEvent.keyCode === 13 || inEvent.keyIdentifier == "Enter") {

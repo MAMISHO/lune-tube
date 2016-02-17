@@ -253,6 +253,8 @@ enyo.kind({
 
 	/*private*/
 	refreshToken: function(){
+		console.log("Se va arefrecar el token con:");
+		console.log(myApiKey.refresh_token);
 		var formData = new FormData();
 
 		formData.append("client_id", myApiKey.client_id);
@@ -264,8 +266,12 @@ enyo.kind({
 		var request = new enyo.Ajax({
 			url: "https://accounts.google.com/o/oauth2/token",
 			method: "POST",
-			postBody: formData
+			postBody: formData,
+			cacheBust: false,
+            callbackName: null,
+            overrideCallback: null
 		});
+
 		request.response(enyo.bind(this, "refreshTokenResponse"));
 		request.error(enyo.bind(this, "processErrorRefreshToken"));
 		return request.go();
@@ -286,8 +292,8 @@ enyo.kind({
 			// document.cookie="session_youtube=" + JSON.stringify(ck);
 			// var time = (ck.expires_in) / (24*60*60*1000);
 			enyo.setCookie("youtube_token", ck.access_token, {"Max-Age":ck.expires_in});
-			enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":60});
-			enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":60});
+			enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":360});
+			enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":360});
 			myApiKey.access_token = ck.access_token;
 			myApiKey.refresh_token = ck.refresh_token;
 			myApiKey.login = true;
@@ -301,6 +307,7 @@ enyo.kind({
 	processErrorRefreshToken: function(inRequest, inResponse){
 		if(!inResponse) return;
 		this._tryLogincound++;
+		console.log(inRequest.xhrResponse.body);
 		console.log("no se puede refrescar el token, es necesario logarse otra vez.");
 		return this.bubble("onRefreshTokenError",this);
 	},

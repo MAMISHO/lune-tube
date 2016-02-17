@@ -96,7 +96,8 @@ enyo.kind({
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate"},
-		{kind: "Auth", name:"auth"}
+		{kind: "Auth", name:"auth"},
+		{name: "launchApplicationService", kind: "enyo.LunaService", service: "enyo.palmServices.application", method: "open", onFailure: "gotResourceError"},
 	],
 	videos:[],
 	videosRelated:[],
@@ -121,7 +122,7 @@ enyo.kind({
 
 
 		if(youtube_token && youtube_refresh){
-			// console.log("token vigente");
+			console.log("token vigente");
 			var token = JSON.parse(cookie);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
@@ -130,7 +131,7 @@ enyo.kind({
 				// this.$.menuPanel.setStatus("Estas Logado");
 
 		}else if(!youtube_token && youtube_refresh){
-			// console.log("token expirado, se refresaca el token");
+			console.log("token expirado, se refresaca el token");
 			var token = JSON.parse(cookie);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
@@ -138,7 +139,7 @@ enyo.kind({
 
 			this.$.youtube.refreshToken();
 		}else{
-			// console.log("no hay token, necesita iniciar sesion");
+			console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
 			// this.loadHomeFeeds();
 		}
@@ -547,7 +548,7 @@ enyo.kind({
 	},
 
 	deactivate: function(a, b){
-		console.log("\n***window Anactive***");
+		console.log("\n***window Unactive***");
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){

@@ -7,6 +7,7 @@
 		"./assets",
 		"./resources",
 		"./appinfo.json",
+		"./packageinfo.json",
 		"./framework_config.json"
 	],
 	"libs": [
