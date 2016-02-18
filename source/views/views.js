@@ -95,9 +95,9 @@ enyo.kind({
 		// Componentes que no se ven
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
-		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate"},
-		{kind: "Auth", name:"auth"},
-		{name: "launchApplicationService", kind: "enyo.LunaService", service: "enyo.palmServices.application", method: "open", onFailure: "gotResourceError"},
+		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange"},
+		// {kind: "Auth", name:"auth"},
+		// {name: "launchApplicationService", kind: "enyo.LunaService", service: "enyo.palmServices.application", method: "open", onFailure: "gotResourceError"},
 	],
 	videos:[],
 	videosRelated:[],
@@ -156,10 +156,42 @@ enyo.kind({
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		webos.setWindowOrientation("free");
 		if(currentOsPlatform){
-			this.$.auth.createDbKind();
-			// this.$.auth.getToken();
-			// this.$.auth.saveToken();
+			// this.$.auth.createDbKind();
+			this.windowParamsChange();
 		}
+
+    },
+
+    windowParamsChange: function(){
+    	console.log("LuneTube -> windowParamsChange");
+    	console.log(enyo.webos.launchParams());
+    	if(enyo.webos.launchParams()){
+    		var params = enyo.webos.launchParams();
+    		var newVideo={};
+    		// video.video_id
+    		if(params.videoId){
+    			if(params.videoId.trim().length > 0){
+    				newVideo.video_id = params.videoId.trim();
+    				this.startVideo(newVideo);
+    			}
+				return true;
+			}
+
+    		if(params.url){ //run regex match this is a hack now
+    			if(params.url.trim().length > 0){
+    				// var platform = navigator.userAgent.split("(")[1].split(";")[0];
+    				var match = params.url.split("v=")[1].split("&")[0];
+    				newVideo.video_id = match;
+    				this.startVideo(newVideo);
+    			}
+    			return true;
+    		}
+
+			if(params.video){
+				console.log("Try open Video from other sources!! Next support");
+				return true;
+			}
+    	}
     },
 
     refreshTokenFinish: function(inSender, inEvent){
@@ -310,7 +342,8 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
-		// console.log(video);
+		console.log("LuneTube -> startVideo: vamos a reproducir el siguiente recurso");
+		console.log(video);
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){

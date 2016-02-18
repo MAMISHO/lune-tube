@@ -253,7 +253,7 @@ enyo.kind({
 
 	/*private*/
 	refreshToken: function(){
-		console.log("Se va arefrecar el token con:");
+		console.log("Se va a refrescar el token con:");
 		console.log(myApiKey.refresh_token);
 		var formData = new FormData();
 

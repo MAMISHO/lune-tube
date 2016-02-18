@@ -1,0 +1,10 @@
+enyo.depends(
+	"$lib/layout",
+	"$lib/onyx",
+	"$lib/webos-lib/",
+	"$lib/enyo-webos/",
+	"style",
+	"data",
+	"views",
+	"app.js"
+);
