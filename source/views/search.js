@@ -41,7 +41,13 @@ enyo.kind({
 
     searchAction: function(inSender, inEvent){
         this.setSearching(true);
-        this.bubble("onSearchEvent", this.$.searchQuery.getValue());
+        var url = this.isYoutubeURL(this.$.searchQuery.getValue());
+        if(url){
+            this.bubble("onSearchFromUrl", url);
+        }else{
+            this.bubble("onSearchEvent", this.$.searchQuery.getValue());
+        }
+
         this.$.acid.completeSearch();
         return true;
     },
@@ -96,6 +102,16 @@ enyo.kind({
       if(!inResponse) return;
       console.log(inRequest);
       console.log(inRequest.xhrResponse.body);
+    },
+
+    isYoutubeURL: function(url){
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        if ( match && match[7].length == 11 ){
+            return match[7];
+        }else{
+            return  false;
+        }
     }
 });
 

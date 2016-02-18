@@ -40,6 +40,8 @@ enyo.kind({
             subscribe : true
          },
 	],
+	_youtubeURI: "https://www.youtube.com/watch?v=vPKIXiHf-rE&list=jshdkajshdkasj",
+	_videoId: "vPKIXiHf-rE",
 	helloWorldTap: function(inSender, inEvent) {
 		this.$.main.addContent("The button was tapped.<br/>");
 	},
@@ -48,10 +50,10 @@ enyo.kind({
 		console.log("Se envia openLuneTube");
 		var params= {
 					params:{
-						url:"https://www.youtube.com/watch?v=IJLn-76iFPw&list=jshdkajshdkasj",
-						videoId:"IJLn-76iFPw",
+						url: this._youtubeURI,
+						videoId: this._videoId,
 						video:{
-							src:"http://clips.vorwaerts-gmbh.de/VfE_html5.mp4",
+							src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4",
 							type: "video/mp4"
 						}
 					}
@@ -65,7 +67,7 @@ enyo.kind({
 		console.log("Se envia openLuneTubeUrl");
 		var params= {
 					params:{
-						url:"https://www.youtube.com/watch?v=IJLn-76iFPw&list=jshdkajshdkasj"
+						url:this._youtubeURI
 					}
 		};
 
@@ -84,7 +86,7 @@ enyo.kind({
 		console.log("Se envia openLuneTubeVideoId");
 		var params= {
 					params:{
-						videoId:"IJLn-76iFPw"
+						videoId:this._videoId
 					}
 		};
 

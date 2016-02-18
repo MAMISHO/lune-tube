@@ -17,6 +17,7 @@ enyo.kind({
     	onLoadMore: "loadMore",
     	onStartVideo: "startVideo",
     	onSearchEvent:"searchEvent",
+    	onSearchFromUrl: "searchFromUrl",
     	onShowMainMenu: "showMainMenu",
     	onBackToList: "backToList",
     	onShowVideoInfo: "showVideoInfo",
@@ -95,7 +96,8 @@ enyo.kind({
 		// Componentes que no se ven
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
-		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange"},
+		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
+		{kind: "enyo.Signals", onactivate: "handleActivate", ondeactivate: "handleDeactivate", onmenubutton: "handleMenuButton", onApplicationRelaunch: "windowParamsChange", onlowmemory:"handleLowMemory", onWindowParamsChange: "windowParamsChange"}
 		// {kind: "Auth", name:"auth"},
 		// {name: "launchApplicationService", kind: "enyo.LunaService", service: "enyo.palmServices.application", method: "open", onFailure: "gotResourceError"},
 	],
@@ -162,27 +164,44 @@ enyo.kind({
 
     },
 
-    windowParamsChange: function(){
-    	console.log("LuneTube -> windowParamsChange");
-    	console.log(enyo.webos.launchParams());
+    windowParamsChange: function(inSender, inEvent){
+
     	if(enyo.webos.launchParams()){
-    		var params = enyo.webos.launchParams();
+    		var launchParams = {};
+
+    		if(typeof PalmSystem.launchParams === "string"){
+    			if(PalmSystem.launchParams.length>0){
+    				launchParams = JSON.parse(PalmSystem.launchParams);
+    			}else{
+    				return true;
+    			}
+    		}else{
+    			launchParams = JSON.parse(PalmSystem.launchParams);
+    		}
+
+    		if(!launchParams.params) return true;
+
+    		var params = launchParams.params;
     		var newVideo={};
-    		// video.video_id
+
     		if(params.videoId){
+
     			if(params.videoId.trim().length > 0){
     				newVideo.video_id = params.videoId.trim();
-    				this.startVideo(newVideo);
+    				this.startVideo(inSender, newVideo);
+    				this.$.listPanels.setIndex(1);
     			}
 				return true;
 			}
 
-    		if(params.url){ //run regex match this is a hack now
+    		if(params.url){
     			if(params.url.trim().length > 0){
-    				// var platform = navigator.userAgent.split("(")[1].split(";")[0];
-    				var match = params.url.split("v=")[1].split("&")[0];
-    				newVideo.video_id = match;
-    				this.startVideo(newVideo);
+    				var match = params.url.match("v=([a-zA-Z0-9\_\-]+)&?")[1];
+    				if(match){
+    					newVideo.video_id = match;
+	    				this.startVideo(inSender, newVideo);
+	    				this.$.listPanels.setIndex(1);
+    				}
     			}
     			return true;
     		}
@@ -342,8 +361,8 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
-		console.log("LuneTube -> startVideo: vamos a reproducir el siguiente recurso");
-		console.log(video);
+		/*console.log("LuneTube -> startVideo: vamos a reproducir el siguiente recurso");
+		console.log(video);*/
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
@@ -359,7 +378,7 @@ enyo.kind({
 		if(video.status === "fail" && this.numberOfTries > 0){
 			// second try
 			// console.log("seccond try");
-			this.numberOfTries=0,
+			this.numberOfTries=0;
 			this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
 			return;
 		}
@@ -380,6 +399,13 @@ enyo.kind({
 		}else{
 			this.$.search.setSearching(false);
 		}
+		return true;
+	},
+
+	searchFromUrl: function(inSender, url){
+		this.$.listPanels.setIndex(1);
+    	this.startVideo(inSender, {video_id: url});
+		this.$.search.setSearching(false);
 		return true;
 	},
 
