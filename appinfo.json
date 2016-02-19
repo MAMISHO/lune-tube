@@ -12,6 +12,15 @@
 	"keywords": ["Videos", "Movies", "Youtube"],
 	"splashicon": "assets/icon_splash.png",
 	"mimeTypes": [
-			{ "urlPattern": "^https://www.youtube.com/?" }
+			{ "urlPattern": "(?:youtu.be\/|youtube.com\/(?:watch?.*\bv=|embed\/|v\/)|ytimg.com\/vi\/)(.+?)(?:[^-a-zA-Z0-9]|$)"},
+			{ "urlPattern": "^.*((youtu.be\/)|(v\/)|(\/u\/w\/)|(embed\/)|(watch?))??v?=?([^#&?]*).*:" },
+			{ "urlPattern": "^https://(?:www.)?youtu(?:be.com/watch?v=|.be/)([w-]+)(&(amp;)?[w?=]*)?:" }
 		],
+	"universalSearch":{
+		"action":{ 
+			"displayName": "Search video",
+			"url":"com.emsoft.lunetube",
+			"launchParam": {"params":{"searchTerm":"#{searchTerms}"}}
+		}
+	}
 }

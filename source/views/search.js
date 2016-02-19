@@ -5,7 +5,8 @@ enyo.kind({
         // onblur: "changedBlur"
     },
     published: {
-        searching: false
+        searching: false,
+        searchTerm:""
     },
     components: [
         {kind: "onyx.Toolbar", classes:"topbar",  components:[
@@ -37,6 +38,10 @@ enyo.kind({
             this.$.searchButton.setShowing(true);
             this.$.searchSpinner.setShowing(false);
         }
+    },
+
+    searchTermCahnged: function(){
+        this.$.searchQuery.setValue(searchTerm);
     },
 
     searchAction: function(inSender, inEvent){

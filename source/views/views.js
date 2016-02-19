@@ -167,8 +167,8 @@ enyo.kind({
     windowParamsChange: function(inSender, inEvent){
 
     	if(enyo.webos.launchParams()){
-    		var launchParams = {};
 
+    		var launchParams = {};
     		if(typeof PalmSystem.launchParams === "string"){
     			if(PalmSystem.launchParams.length>0){
     				launchParams = JSON.parse(PalmSystem.launchParams);
@@ -178,11 +178,34 @@ enyo.kind({
     		}else{
     			launchParams = JSON.parse(PalmSystem.launchParams);
     		}
+    		console.log("\n");
+    		console.log("\n");
+    		console.log("\n");
+    		console.log("***Pasa el control 1");
+    		console.log(JSON.stringify(launchParams));
 
-    		if(!launchParams.params) return true;
+    		if(!launchParams.params && !launchParams.target) return true;
 
+    		if(launchParams.target){
+    			console.log("------- Llega desde target -------");
+    			var video_id = launchParams.target.match("v=([a-zA-Z0-9\_\-]+)&?");
+    			console.log();
+    			console.log("Control Match : " + video_id);
+    				if(video_id.length > 0){
+    					console.log(console.log("control target con : " + video_id[1]));
+	    				this.startVideo(inSender, {video_id:video_id});
+	    				console.log("Se ha enviado el video: " + video_id);
+	    				this.$.listPanels.setIndex(1);
+    				}
+    			return true;
+    		}
+
+    		console.log("***Pasa el control 2");
     		var params = launchParams.params;
     		var newVideo={};
+    		console.log("***Llega al control 3");
+
+
 
     		if(params.videoId){
 
@@ -203,6 +226,13 @@ enyo.kind({
 	    				this.$.listPanels.setIndex(1);
     				}
     			}
+    			return true;
+    		}
+
+    		if(params.searchTerm){
+    			console.log("Buscando :" + params.searchTerm);
+    			this.search(params.searchTerm);
+    			this.$.search.setSearchTerm();
     			return true;
     		}
 
@@ -361,8 +391,8 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
-		/*console.log("LuneTube -> startVideo: vamos a reproducir el siguiente recurso");
-		console.log(video);*/
+		console.log("LuneTube -> startVideo: vamos a reproducir el siguiente recurso");
+		console.log(video);
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
