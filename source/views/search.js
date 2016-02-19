@@ -40,8 +40,8 @@ enyo.kind({
         }
     },
 
-    searchTermCahnged: function(){
-        this.$.searchQuery.setValue(searchTerm);
+    searchTermChanged: function(){
+        this.$.searchQuery.setValue(this.searchTerm);
     },
 
     searchAction: function(inSender, inEvent){

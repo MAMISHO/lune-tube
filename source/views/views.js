@@ -111,16 +111,14 @@ enyo.kind({
 	create:function() {
         this.inherited(arguments);
 
-        enyo.load("https://s.ytimg.com/yts/jsbin/html5player-de_DE-vflR89yTY/html5player.js");
+        // enyo.load("https://s.ytimg.com/yts/jsbin/html5player-de_DE-vflR89yTY/html5player.js");
+
         this.$.mainPanel.setIndex(1);
         this.$.listPanels.setIndex(0);
 		var cookie = enyo.getCookie("session_youtube");
 
 		var youtube_token = enyo.getCookie("youtube_token");
 		var youtube_refresh = enyo.getCookie("youtube_refresh");
-		// console.log(cookie);
-		// console.log(youtube_token);
-		// console.log(youtube_refresh);
 
 
 		if(youtube_token && youtube_refresh){
@@ -158,16 +156,14 @@ enyo.kind({
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		webos.setWindowOrientation("free");
 		if(currentOsPlatform){
-			// this.$.auth.createDbKind();
 			this.windowParamsChange();
 		}
-
     },
 
     windowParamsChange: function(inSender, inEvent){
 
     	if(enyo.webos.launchParams()){
-
+    		console.log(PalmSystem.launchParams);
     		var launchParams = {};
     		if(typeof PalmSystem.launchParams === "string"){
     			if(PalmSystem.launchParams.length>0){
@@ -178,33 +174,21 @@ enyo.kind({
     		}else{
     			launchParams = JSON.parse(PalmSystem.launchParams);
     		}
-    		console.log("\n");
-    		console.log("\n");
-    		console.log("\n");
-    		console.log("***Pasa el control 1");
-    		console.log(JSON.stringify(launchParams));
 
     		if(!launchParams.params && !launchParams.target) return true;
 
     		if(launchParams.target){
-    			console.log("------- Llega desde target -------");
     			var video_id = launchParams.target.match("v=([a-zA-Z0-9\_\-]+)&?");
-    			console.log();
-    			console.log("Control Match : " + video_id);
-    				if(video_id.length > 0){
-    					console.log(console.log("control target con : " + video_id[1]));
-	    				this.startVideo(inSender, {video_id:video_id});
-	    				console.log("Se ha enviado el video: " + video_id);
+    				if(video_id){
+    					
+	    				this.startVideo(inSender, {video_id:video_id[1]});
 	    				this.$.listPanels.setIndex(1);
     				}
     			return true;
     		}
 
-    		console.log("***Pasa el control 2");
     		var params = launchParams.params;
     		var newVideo={};
-    		console.log("***Llega al control 3");
-
 
 
     		if(params.videoId){
@@ -230,9 +214,8 @@ enyo.kind({
     		}
 
     		if(params.searchTerm){
-    			console.log("Buscando :" + params.searchTerm);
     			this.search(params.searchTerm);
-    			this.$.search.setSearchTerm();
+    			this.$.search.setSearchTerm(params.searchTerm);
     			return true;
     		}
 

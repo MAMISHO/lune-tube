@@ -212,6 +212,9 @@ enyo.kind({
 			
 			if(currentOsPlatform === "LuneOS"){
 				this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
+			}else if(currentOsPlatform === "webOS"){
+				console.log("Se envia webos");
+				this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
 			}else{
 				window.open(url, '_blank');
 			}

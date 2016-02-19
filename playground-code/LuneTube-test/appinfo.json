@@ -10,6 +10,5 @@
 	"noWindow":		false,
 	"splashicon": "assets/icon_splash.png",
 	"mimeTypes": [
-			{ "urlPattern": "^https://www.youtube.com/?" }
 		],
 }
