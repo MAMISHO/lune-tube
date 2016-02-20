@@ -1,9 +1,3 @@
-/**
-	For simple applications, you might define all of your views in this file.  
-	For more complex applications, you might choose to separate these kind definitions 
-	into multiple files under this folder.
-*/
-
 enyo.kind({
 	name: "App",
 	kind: "FittableRows",
@@ -98,8 +92,6 @@ enyo.kind({
 		{kind:"YoutubeVideo", name: "yt"},
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
 		{kind: "enyo.Signals", onactivate: "handleActivate", ondeactivate: "handleDeactivate", onmenubutton: "handleMenuButton", onApplicationRelaunch: "windowParamsChange", onlowmemory:"handleLowMemory", onWindowParamsChange: "windowParamsChange"}
-		// {kind: "Auth", name:"auth"},
-		// {name: "launchApplicationService", kind: "enyo.LunaService", service: "enyo.palmServices.application", method: "open", onFailure: "gotResourceError"},
 	],
 	videos:[],
 	videosRelated:[],
@@ -128,7 +120,6 @@ enyo.kind({
 				myApiKey.refresh_token = token.refresh_token;
 
 				myApiKey.login = true;
-				// this.$.menuPanel.setStatus("Estas Logado");
 
 		}else if(!youtube_token && youtube_refresh){
 			console.log("token expirado, se refresaca el token");
@@ -141,7 +132,6 @@ enyo.kind({
 		}else{
 			console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
-			// this.loadHomeFeeds();
 		}
 
 		if(myApiKey.login){
@@ -155,6 +145,7 @@ enyo.kind({
 		currentOsPlatform = this.getCurrentOsPlatform();
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		webos.setWindowOrientation("free");
+
 		if(currentOsPlatform){
 			this.windowParamsChange();
 		}
@@ -374,8 +365,7 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
-		console.log("LuneTube -> startVideo: vamos a reproducir el siguiente recurso");
-		console.log(video);
+		
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
