@@ -12,12 +12,14 @@ enyo.kind({
     ],
     // numberOfTries:0,
     video_id_try:"",
+    _videoId:"",
     create:function() {
         this.inherited(arguments);
     },
 
     startVideo: function(video_id){
       // console.log(video_id);
+      this._videoId = video_id;
       this.video_id_try = video_id;
     	var url = "http://www.youtube.com/get_video_info";
 	    var ajax = new enyo.Ajax({
@@ -39,10 +41,11 @@ enyo.kind({
       var ajax = new enyo.Ajax({
         url: url,
         method: "GET",
+        conntentype: "text/plain",
         cache: false,
         cacheBust: false,
-            callbackName: null,
-            overrideCallback: null
+        callbackName: null,
+        overrideCallback: null
       });
 
       ajax.response(enyo.bind(this, "startVideoResponse"));
@@ -51,17 +54,30 @@ enyo.kind({
 
     startVideoResponse: function(inRequest, inResponse){
     	if(!inResponse) return;
-    	// console.log(inResponse);
+    	console.log(inResponse);
       // console.log(inRequest);
     	// console.log();
-    	return this.parseYoutubeVideoInfo(inResponse);
+      // console.log();
+      // var r = false;
+      if(typeof inResponse === "string"){
+        r = this.parseYoutubeVideoInfo(inResponse);
+      }
+      // console.log(r);
+      if(r){
+        return r;
+      }else{
+        // console.log("Error");
+        return this.youtubeDecipherService();
+        // console.log("controller");
+        // console.log(a);
+      }
     	// return this.decodeVideo(inResponse);
     	// console.log(inRequest);
     	// console.log(inResponse);
     },
 
 
-    decodeVideo: function(videoInfo){
+    /*decodeVideo: function(videoInfo){
     	console.log(videoInfo.responseText);
     	var params={};
     	var videoInfoSplit = videoInfo.split("&");
@@ -84,7 +100,7 @@ enyo.kind({
   		streamsSplit = streams.split("&");
   		console.log(streamsSplit);
 
-		/*Algunas lineas contienen dos valores separados por comas*/
+		// Algunas lineas contienen dos valores separados por comas
     	var newSplit = [];
     	for (i = 0; i < streamsSplit.length; i++) {
     		var secondSplit = streamsSplit[i].split(",");
@@ -132,7 +148,7 @@ enyo.kind({
     			console.log(msg);
     			return;
     		}
-    },
+    },*/
 
     parseYoutubeVideoInfo: function(response) {
     // Splits parameters in a query string.
@@ -214,63 +230,74 @@ enyo.kind({
 
     // console.log(streams);
     var results = [];
+    var videoIsRestricted = false;
+
     for (i = 0; i < streams.length; i++) {
-    	var result = {
+    	
+      var result = {
       		status: params.status
     	};
+
     	var bestStream = streams[i];
 
 	    // If the best stream is a format we don't support give up.
-	    if (formats.indexOf(bestStream.itag) !== -1){
-	      // throw Error('No supported video formats');
-	      // console.log('No supported video formats');
-	    // }else{
-        
-        // send resolution
-        if(bestStream.itag === '22'){
-          result.resolution = "HD-MP4";
-        }else if(bestStream.itag === '18'){
-          result.resolution = "SD-MP4";
-        }else if(bestStream.itag === '43'){
-          result.resolution = "SD-WEBM";
-        }else{
-          result.resolution = "SD-3GP";
-        }
+  	    if (formats.indexOf(bestStream.itag) !== -1){
+  	      // throw Error('No supported video formats');
+  	      // console.log('No supported video formats');
+  	    // }else{
+          
+          // send resolution
+            if(bestStream.itag === '22'){
+              result.resolution = "HD-MP4";
+            }else if(bestStream.itag === '18'){
+              result.resolution = "SD-MP4";
+            }else if(bestStream.itag === '43'){
+              result.resolution = "SD-WEBM";
+            }else{
+              result.resolution = "SD-3GP";
+            }
 
 
-		    result.url = bestStream.url + '&signature=' + (bestStream.sig || '');
-		    result.type = bestStream.type;
-		    // Strip codec information off of the mime type
-		    if (result.type && result.type.indexOf(';') !== -1) {
-		      result.type = result.type.split(';', 1)[0];
-		    }
+    		    result.url = bestStream.url + '&signature=' + (bestStream.sig || '');
+    		    result.type = bestStream.type;
+    		    // Strip codec information off of the mime type
+    		    if (result.type && result.type.indexOf(';') !== -1) {
+    		      result.type = result.type.split(';', 1)[0];
+    		    }
 
-		    if (params.title) {
-		      result.title = params.title.replace(/\+/g, ' ');
-		    }
+    		    if (params.title) {
+    		      result.title = params.title.replace(/\+/g, ' ');
+    		    }
 
-		    if (params.length_seconds) {
-		      result.duration = params.length_seconds;
-		    }
+    		    if (params.length_seconds) {
+    		      result.duration = params.length_seconds;
+    		    }
 
-		    if (params.thumbnail_url) {
-		      result.poster = params.thumbnail_url;
-		    }
+    		    if (params.thumbnail_url) {
+    		      result.poster = params.thumbnail_url;
+    		    }
 
-        if (bestStream.s){
-          result.restricted = "This video is restricted by youtube. Soon we will support these videos.";
-        }
-		    var r = result;
-		    results.push(r);
-		  }
+            if (bestStream.s){
+              videoIsRestricted = true;
+              result.restricted = "This video is restricted by youtube. Soon we will support these videos.";
+            }
+    		    var r = result;
+    		    results.push(r);
+  		  }
     }
 
     // this.numberOfTries = 0;
     this.video_id_try = "";
-    return results;
+    // console.log(results);
+    if(videoIsRestricted){
+      // this.youtubeDecipherService(this._videoId);
+      return false;
+    }else{
+      return results;
+    }
   },
 
-  extractParameters: function(q) {
+    extractParameters: function(q) {
       var params = q.split('&');
       var result = {};
       for (var i = 0, n = params.length; i < n; i++) {
@@ -283,5 +310,36 @@ enyo.kind({
         result[name] = decodeURIComponent(value);
       }
       return result;
+    },
+
+    youtubeDecipherService: function(){
+      console.log("Se envia");
+      var url = "http://localhost:3000/";
+
+      var request = new enyo.Ajax({
+          url: url,
+          method: "GET",
+          cacheBust: false,
+          callbackName: null,
+          overrideCallback: null
+      });
+
+      request.response(enyo.bind(this, "startVideoResponse"));
+      request.error(enyo.bind(this, "youtubeDecipherServiceEror"));
+      return request.go({id:this._videoId});
+    },
+
+    youtubeDecipherServiceResponse: function(inRequest, inResponse){
+      console.log("recibe");
+      if(!inResponse) return;
+      console.log("successful");
+      console.log(inResponse);
+      return inResponse;
+    },
+
+    youtubeDecipherServiceEror: function(inRequest, inResponse){
+      if(!inResponse) return;
+      console.log("Error");
+      console.log(inResponse);
     }
 });
