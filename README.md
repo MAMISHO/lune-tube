@@ -94,39 +94,44 @@ LuneTube implementa la antiguamente llamada palmServicesRequest, la cual permite
 
 ```
 {
-					params:{
-						url: youtubeURL,
-						videoId: youtubeVideoId,
-						video:{
-							src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4", // any video source
-							type: "video/mp4" //format
-						}
-					}
+	params:{
+		url: youtubeURL,
+		videoId: youtubeVideoId,
+		video:{
+			src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4", // any video source
+			type: "video/mp4" //format
+		}
+}
 ```
-Todos los paramétros no son necesarios, pero es obligatorio enviar por le menos uno. (En el ejemplo anterior se respetará la prioridad de parámetros explicada más adelante).
+Todos los paramétros no son necesarios, pero es obligatorio enviar por lo menos uno. (En el ejemplo anterior se respetará la prioridad de parámetros explicada más adelante).
 
 Por ejemplo, si queremos llamar a LuneTube sólo con una URL debemos hacer la siguiente llamáda. (El código puede variar dependiendo de la versión de framework ENYO 1, ENYO 2 o Mojo).
 
 ```
 
 openLuneTubeUrl: function(inSender, inEvent){
-var youtubeURI = 'https://www.youtube.com/watch?v=j0t3Ot-4h54&feature=youtu.be';
-		var params= {
-					params:{
-						url: youtubeURI
-					}
+	var youtubeURI = 'https://www.youtube.com/watch?v=j0t3Ot-4h54&feature=youtu.be';
+	var params= {
+			params:{
+				url: youtubeURI
+			}
 		};
-		this.$.openLuneTube.send({ id: "com.emsoft.lunetube", params:params});
-	},
+	this.$.openLuneTube.send({ id: "com.emsoft.lunetube", params:params});
+},
 ```
 En el ejemplo anetrior podemos ver que no es necesario enviar todos los parámetros.
 Recuerda usar el servicio de applicationManager para poder hacer llamadas a otras aplicaciones.
 
 ## Prioridad de los parámetros
 los siguientes están ordenados de prioridad mayor a menor.
+
 1. target : Parámetro pode defecto de webOS, si se desea enviar una url se puede usar también éste parámetro.
-2. url : pasámos urls de youtube
+
+2. url : pasámos urls de youtube.
+
 3. videoId: si tenemos acceso a las IDs de los vídeos, podemos enviar solo al Id para reproducir el recurso.
+
 4. video: Permite reproducir videos de otras fuentes. NO está soportado aún, pero estará disponible en futuras versiones. El parámetro es un objeto JSON compuesto por los siguientes parámetros.
+
 ..* src : url del recurso, no soporta recursos embebidos, es necesario que sea la dirección directa del recurso. Esta es una URL válida [http://www.quirksmode.org/html5/videos/big_buck_bunny.mp4](http://www.quirksmode.org/html5/videos/big_buck_bunny.mp4)
 ..* type: Fromato del vídeo. Los formatos soportados son los especificados por la W3C
