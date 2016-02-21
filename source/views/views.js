@@ -1,9 +1,3 @@
-/**
-	For simple applications, you might define all of your views in this file.  
-	For more complex applications, you might choose to separate these kind definitions 
-	into multiple files under this folder.
-*/
-
 enyo.kind({
 	name: "App",
 	kind: "FittableRows",
@@ -98,8 +92,6 @@ enyo.kind({
 		{kind:"YoutubeVideo", name: "yt"},
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
 		{kind: "enyo.Signals", onactivate: "handleActivate", ondeactivate: "handleDeactivate", onmenubutton: "handleMenuButton", onApplicationRelaunch: "windowParamsChange", onlowmemory:"handleLowMemory", onWindowParamsChange: "windowParamsChange"}
-		// {kind: "Auth", name:"auth"},
-		// {name: "launchApplicationService", kind: "enyo.LunaService", service: "enyo.palmServices.application", method: "open", onFailure: "gotResourceError"},
 	],
 	videos:[],
 	videosRelated:[],
@@ -111,16 +103,14 @@ enyo.kind({
 	create:function() {
         this.inherited(arguments);
 
-        enyo.load("https://s.ytimg.com/yts/jsbin/html5player-de_DE-vflR89yTY/html5player.js");
+        // enyo.load("https://s.ytimg.com/yts/jsbin/html5player-de_DE-vflR89yTY/html5player.js");
+
         this.$.mainPanel.setIndex(1);
         this.$.listPanels.setIndex(0);
 		var cookie = enyo.getCookie("session_youtube");
 
 		var youtube_token = enyo.getCookie("youtube_token");
 		var youtube_refresh = enyo.getCookie("youtube_refresh");
-		// console.log(cookie);
-		// console.log(youtube_token);
-		// console.log(youtube_refresh);
 
 
 		if(youtube_token && youtube_refresh){
@@ -130,7 +120,6 @@ enyo.kind({
 				myApiKey.refresh_token = token.refresh_token;
 
 				myApiKey.login = true;
-				// this.$.menuPanel.setStatus("Estas Logado");
 
 		}else if(!youtube_token && youtube_refresh){
 			console.log("token expirado, se refresaca el token");
@@ -143,7 +132,6 @@ enyo.kind({
 		}else{
 			console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
-			// this.loadHomeFeeds();
 		}
 
 		if(myApiKey.login){
@@ -157,17 +145,16 @@ enyo.kind({
 		currentOsPlatform = this.getCurrentOsPlatform();
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		webos.setWindowOrientation("free");
+
 		if(currentOsPlatform){
-			// this.$.auth.createDbKind();
 			this.windowParamsChange();
 		}
-
     },
 
     windowParamsChange: function(inSender, inEvent){
 
     	if(enyo.webos.launchParams()){
-
+    		console.log(PalmSystem.launchParams);
     		var launchParams = {};
     		if(typeof PalmSystem.launchParams === "string"){
     			if(PalmSystem.launchParams.length>0){
@@ -178,33 +165,21 @@ enyo.kind({
     		}else{
     			launchParams = JSON.parse(PalmSystem.launchParams);
     		}
-    		console.log("\n");
-    		console.log("\n");
-    		console.log("\n");
-    		console.log("***Pasa el control 1");
-    		console.log(JSON.stringify(launchParams));
 
     		if(!launchParams.params && !launchParams.target) return true;
 
     		if(launchParams.target){
-    			console.log("------- Llega desde target -------");
     			var video_id = launchParams.target.match("v=([a-zA-Z0-9\_\-]+)&?");
-    			console.log();
-    			console.log("Control Match : " + video_id);
-    				if(video_id.length > 0){
-    					console.log(console.log("control target con : " + video_id[1]));
-	    				this.startVideo(inSender, {video_id:video_id});
-	    				console.log("Se ha enviado el video: " + video_id);
+    				if(video_id){
+    					
+	    				this.startVideo(inSender, {video_id:video_id[1]});
 	    				this.$.listPanels.setIndex(1);
     				}
     			return true;
     		}
 
-    		console.log("***Pasa el control 2");
     		var params = launchParams.params;
     		var newVideo={};
-    		console.log("***Llega al control 3");
-
 
 
     		if(params.videoId){
@@ -230,9 +205,8 @@ enyo.kind({
     		}
 
     		if(params.searchTerm){
-    			console.log("Buscando :" + params.searchTerm);
     			this.search(params.searchTerm);
-    			this.$.search.setSearchTerm();
+    			this.$.search.setSearchTerm(params.searchTerm);
     			return true;
     		}
 
@@ -391,8 +365,7 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
-		console.log("LuneTube -> startVideo: vamos a reproducir el siguiente recurso");
-		console.log(video);
+		
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
