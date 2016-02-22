@@ -54,28 +54,10 @@ enyo.kind({
 
     startVideoResponse: function(inRequest, inResponse){
     	if(!inResponse) return;
-    	console.log(inResponse);
-      // console.log(inRequest);
-    	// console.log();
-      // console.log();
-      // var r = false;
-      if(typeof inResponse === "string"){
-        r = this.parseYoutubeVideoInfo(inResponse);
-      }
-      // console.log(r);
-      if(r){
-        return r;
-      }else{
-        // console.log("Error");
-        return this.youtubeDecipherService();
-        // console.log("controller");
-        // console.log(a);
-      }
-    	// return this.decodeVideo(inResponse);
-    	// console.log(inRequest);
     	// console.log(inResponse);
+      // console.log(inRequest);
+      return this.parseYoutubeVideoInfo(inResponse);
     },
-
 
     /*decodeVideo: function(videoInfo){
     	console.log(videoInfo.responseText);
@@ -287,11 +269,11 @@ enyo.kind({
     }
 
     // this.numberOfTries = 0;
-    this.video_id_try = "";
+    // this.video_id_try = "";
     // console.log(results);
     if(videoIsRestricted){
       // this.youtubeDecipherService(this._videoId);
-      return false;
+      return {status:"fail",signature:true};
     }else{
       return results;
     }
@@ -312,10 +294,50 @@ enyo.kind({
       return result;
     },
 
-    youtubeDecipherService: function(){
-      console.log("Se envia");
-      var url = "http://localhost:3000/";
+    youtubeDecipherService: function(body){
+      console.log("Se envia decrypt");
+      var url = "http://localhost:5000/";
+      // var url = "https://fast-peak-30985.herokuapp.com";
+      // var url = "https://www.youtube.com/watch";
+      // var formData = new FormData();
 
+      // formData.append("user", body);
+      var param = {user:JSON.stringify(body)};
+      var request = new enyo.Ajax({
+          url: url,
+          method: "GET",
+          // postBody: formData,
+          // user:body,
+          // contentType: 'application/x-www-form-urlencoded',
+          // cacheBust: false,
+          // callbackName: null,
+          // overrideCallback: null
+      });
+
+      request.response(enyo.bind(this, "youtubeDecipherServiceResponse"));
+      request.error(enyo.bind(this, "youtubeDecipherServiceEror"));
+      return request.go({id:this.video_id_try});
+      // return request.go();
+    },
+
+    youtubeDecipherServiceResponse: function(inRequest, inResponse){
+      if(!inResponse) return;
+      console.log("successful decipher");
+      console.log(inResponse.length);
+      console.log(inResponse);
+      this.video_id_try = "";
+      return inResponse.videos;
+    },
+
+    youtubeDecipherServiceEror: function(inRequest, inResponse){
+      if(!inResponse) return;
+      console.log("Error decipher");
+      console.log(inResponse);
+    },
+
+    youtubeGetBody: function(){
+      console.log("Peticion de Body");
+      var url = "https://www.youtube.com/watch";
       var request = new enyo.Ajax({
           url: url,
           method: "GET",
@@ -324,22 +346,20 @@ enyo.kind({
           overrideCallback: null
       });
 
-      request.response(enyo.bind(this, "startVideoResponse"));
-      request.error(enyo.bind(this, "youtubeDecipherServiceEror"));
-      return request.go({id:this._videoId});
+      request.response(enyo.bind(this, "youtubeGetBodyResponse"));
+      request.error(enyo.bind(this, "youtubeGetBodyError"));
+      return request.go({v:this.video_id_try});
     },
 
-    youtubeDecipherServiceResponse: function(inRequest, inResponse){
-      console.log("recibe");
+    youtubeGetBodyResponse: function(inRequest, inResponse){
       if(!inResponse) return;
-      console.log("successful");
       console.log(inResponse);
       return inResponse;
     },
 
-    youtubeDecipherServiceEror: function(inRequest, inResponse){
+    youtubeGetBodyError: function(){
       if(!inResponse) return;
-      console.log("Error");
+      console.log("Error decipher");
       console.log(inResponse);
     }
 });

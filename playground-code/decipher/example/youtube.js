@@ -1,5 +1,5 @@
 var fs = require('fs');
-var ytdl = require('..');
+var getInfo = require('../lib/info');
 
 var express = require("express"),  
     app = express();
@@ -18,7 +18,7 @@ router.get('/', function(req, res) {
 		return res.send({video: null});
 	}
 
-	ytdl.getInfo(url, function(err, info) {
+	getInfo(url, function(err, info) {
 		if(err){
 			console.log("Hay ERR");
 			console.log(err);

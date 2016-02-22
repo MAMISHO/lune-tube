@@ -1,15 +1,29 @@
 {
     "id": "com.emsoft.lunetube.service",
-    "description" : "Hello from lunetube service",
-    "services" : [
+    "description": "LuneTube Service",
+    "services": [
         {
             "name": "com.emsoft.lunetube.service",
-            "description": "Hello from lunetube service",
+            "description": "LuneTube Service",
             "commands": [
-                {
-                    "name": "hello",
-                    "description": "Responds with the parameter given; echo service",
+                { 
+                    "name": "readdir", 
+                    "assistant": "ReadDirAssistant",
                     "public": true
+                },
+                { 
+                    "name": "writefile", 
+                    "assistant": "WriteFileAssistant",
+                    "public": true
+                },
+                { 
+                    "name": "readfile", 
+                    "assistant": "ReadFileAssistant",
+                    "public": true
+                },
+                {"name" : "hello",
+                    "assistant" : "HelloCommandAssistant",
+                    "public" : true
                 }
             ]
         }

@@ -380,12 +380,23 @@ enyo.kind({
 	startPlayVideo: function(inResponse, video){
 		if(video.status === "fail" && this.numberOfTries > 0){
 			// second try
-			// console.log("seccond try");
-			this.numberOfTries=0;
-			this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
-			return;
+			console.log("seccond try");
+			
+			if(this.numberOfTries === 1){ // restricted conutry
+				this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
+				this.numberOfTries++;
+				return;
+			}else if(this.numberOfTries === 2){
+				this.$.yt.youtubeDecipherService().response(this, "startPlayVideo");
+				// this.$.yt.youtubeGetBody().response(this, "decipherVideo");
+				this.numberOfTries++;
+				return;
+			}else{
+				this.numberOfTries=0;
+			}
 		}
 		// console.log(video);
+		this.numberOfTries = 0;
 		if(!video[0].restricted){
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
@@ -394,6 +405,13 @@ enyo.kind({
 		}
 		this.$.player.setVideoId(video);
 		this.$.panel.setIndex(1);
+	},
+
+	decipherVideo: function(inRequest, inResponse){
+		if(!inResponse) return;
+		console.log(inResponse);
+		this.$.yt.youtubeDecipherService(inResponse).response(this, "startPlayVideo");
+		this.numberOfTries=0;
 	},
 
 	searchEvent: function(inSender, q){

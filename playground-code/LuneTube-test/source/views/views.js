@@ -20,12 +20,12 @@ enyo.kind({
 				{kind: "onyx.Input", fit:true, name:"searchQuery", placeholder: "insert URI"}
 			]},
 			{kind: "onyx.Button", content: "Open with url", ontap: "openLuneTubeUrl"},
-			{kind: "onyx.Button", content: "Open with videId", ontap: "openLuneTubeVideoId"},
-			{kind: "onyx.Button", content: "Open other video", ontap: "openLuneTubeOtherVideo"},
+			// {kind: "onyx.Button", content: "Open with videId", ontap: "openLuneTubeVideoId"},
+			// {kind: "onyx.Button", content: "Open other video", ontap: "openLuneTubeOtherVideo"},
 			{kind: "onyx.Button", content: "Open LuneTube Service", ontap: "openLuneTubeService"}
 		]},
 		// {name: "launchApplicationService", kind: "enyo.LunaService", service: "enyo.palmServices.application", method: "open", onFailure: "gotResourceError"},
-		{name: "service", kind: "enyo.LunaService", service: "luna://com.emsoft.lunetube.service", method: "hello", onComplete: "onComplete"},
+		{name: "service", kind: "enyo.LunaService", service: "luna://com.emsoft.lunetube/", method: "hello", onComplete: "onComplete"},
 		
 
 		// Define PalmService or LuneService to launch app with parameters
@@ -134,13 +134,17 @@ enyo.kind({
 	},
 
 	onComplete: function(inSender, inResponse) {
-		console.log("responde al onComplete");
+		console.log("responde al onComplete con");
 		console.log(inResponse);
+		console.log(inResponse.returnValue);
 
         if (inResponse.returnValue) {
+        	this.$.main.addContent("Response : " + string);
+        	console.log(string);
             this.set("title", inResponse.data);
             this.$.result.set("content", "Service response.");
         } else {
+        	this.$.main.addContent("ERROR : " + inReques.errorText);
             this.$.result.set("content", "Oooops!  There is a problem with this service.");
         }
     }
