@@ -296,7 +296,7 @@ enyo.kind({
 
     youtubeDecipherService: function(body){
       console.log("Se envia decrypt");
-      var url = "http://localhost:5000/";
+      var url = "http://localhost:3000/";
       // var url = "https://fast-peak-30985.herokuapp.com";
       // var url = "https://www.youtube.com/watch";
       // var formData = new FormData();
@@ -353,7 +353,28 @@ enyo.kind({
 
     youtubeGetBodyResponse: function(inRequest, inResponse){
       if(!inResponse) return;
-      console.log(inResponse);
+      // console.log(inResponse);
+      var opts = {};
+      var callback={};
+      console.log("YoutubeVideo -> youtubeGetBodyResponse: Resvibe el body");
+      // console.log(inResponse);
+      console.log("YoutubeVideo -> youtubeGetBodyResponse: Sacamos los params");
+      var description = getVideoDescription(inResponse);
+      var jsonStr = between(inResponse, 'ytplayer.config = ', '</script>');
+      // console.log(jsonStr);
+
+      if (jsonStr) {
+        var config = this.parseJSON(jsonStr);
+        console.log("YoutubeVideo -> youtubeGetBodyResponse: Hay config");
+        console.log(config);
+        if (!config) {
+          return callback(new Error('could not parse video page config'));
+        }
+        this.gotConfig(opts, description, config, callback);
+      }else{
+        console.log("YoutubeVideo -> youtubeGetBodyResponse: No hay jsonSTR del body");
+      }
+
       return inResponse;
     },
 
@@ -361,5 +382,166 @@ enyo.kind({
       if(!inResponse) return;
       console.log("Error decipher");
       console.log(inResponse);
+    },
+
+    parseJSON: function (body) {
+      var JStream     = require('jstream');
+      var jstream = new JStream();
+      var config = null;
+
+      jstream.on('data', function(data) {
+        config = data;
+        jstream.pause();
+      });
+
+      // Suppress errors. If there is one, `config` won't be defined,
+      // which is already checked.
+      jstream.on('error', function() {});
+
+      jstream.end(body);
+      return config;
+    },
+
+    gotConfig: function (opts, description, config, callback) {
+      var KEYS_TO_SPLIT = [
+        'keywords',
+        'fmt_list',
+        'fexp',
+        'watermark'
+      ];
+
+      var info = config.args;
+      if (info.status === 'fail') {
+        var msg = info.errorcode && info.reason ?
+          'Code ' + info.errorcode + ': ' + info.reason : 'Video not found';
+        callback(new Error(msg));
+        return;
+      }
+
+      // Split some keys by commas.
+      KEYS_TO_SPLIT.forEach(function(key) {
+        if (!info[key]) return;
+        info[key] = info[key]
+        .split(',')
+        .filter(function(v) { return v !== ''; });
+      });
+
+      info.fmt_list = info.fmt_list ?
+        info.fmt_list.map(function(format) {
+          return format.split('/');
+        }) : [];
+
+      if (info.video_verticals) {
+        info.video_verticals = info.video_verticals
+        .slice(1, -1)
+        .split(', ')
+        .filter(function(val) { return val !== ''; })
+        .map(function(val) { return parseInt(val, 10); })
+        ;
+      }
+
+      info.formats = parseFormats(info);
+      info.description = description;
+      console.log(info);
+
+      if (info.formats[0] && info.formats[0].s || info.dashmpd || info.hlsvp) {
+        this.getTokens(config.assets.js, opts.debug, function(err, tokens) {
+          if (err) return callback(err);
+
+          sig.decipherFormats(info.formats, tokens, opts.debug);
+
+          var concurrent = info.dashmpd ? 1 : 0 + info.hlsvp ? 1 : 0;
+          if (!concurrent) {
+            callback(null, info);
+            return;
+          }
+
+          function checkDone() {
+            if (--concurrent > 0) { return; }
+            if (!info.formats.length) {
+              callback(new Error('No formats found'));
+              return;
+            }
+            info.formats.sort(util.sortFormats);
+            callback(null, info);
+          }
+
+          if (info.dashmpd) {
+            info.dashmpd = decipherURL(info.dashmpd, tokens);
+            getDashManifest(info.dashmpd, opts.debug, function(err, formats) {
+              if (err) return callback(err);
+              sig.decipherFormats(info.formats, tokens, opts.debug);
+              mergeFormats(info, formats);
+              checkDone();
+            });
+          }
+
+          if (info.hlsvp) {
+            info.hlsvp = decipherURL(info.hlsvp, tokens);
+            getM3U8(info.hlsvp, opts.debug, function(err, formats) {
+              if (err) return callback(err);
+              mergeFormats(info, formats);
+              checkDone();
+            });
+          }
+        });
+      } else {
+        if (!info.formats.length) {
+          callback(new Error('Video not found'));
+          return;
+        }
+        sig.decipherFormats(info.formats, null, opts.debug);
+        callback(null, info);
+      }
+    },
+
+    getTokens: function(html5playerfile, debug, callback) {
+      var key, cachedTokens;
+      var rs = /(?:html5)?player-([a-zA-Z0-9\-_]+)(?:\.js|\/)/
+        .exec(html5playerfile);
+      if (rs) {
+        key = rs[1];
+        // cachedTokens = cache.get(key);
+      } else {
+        console.warn('could not extract html5player key:', html5playerfile);
+      }
+
+      if (cachedTokens) {
+        callback(null, cachedTokens);
+      } else {
+        html5playerfile = 'http:' + html5playerfile;
+        console.log("Llega al else" + html5playerfile);
+
+
+        // CArgar body con enyo
+        loadScript(html5playerfile, function(err, body) {
+          if (err) return callback(err);
+          console.log("Carga el escript");
+          console.log(err);
+          console.log(body);
+          var tokens = exports.extractActions(body);
+          if (!tokens || !tokens.length) {
+            /*if (debug) {
+              var filename = key + '.js';
+              var filepath = path.resolve(
+                __dirname, '../test/files/html5player/' + filename);
+              fs.writeFile(filepath, body);
+              var html5player = require('../test/html5player.json');
+              if (!html5player[key]) {
+                html5player[key] = [];
+                fs.writeFile(
+                  path.resolve(__dirname, '../test/html5player.json'),
+                  JSON.stringify(html5player, null, 2));
+              }
+            }*/
+            callback(
+              new Error('Could not extract signature deciphering actions'));
+            return;
+          }
+
+          cache.set(key, tokens);
+          callback(null, tokens);
+        });
+      }
     }
 });

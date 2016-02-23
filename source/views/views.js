@@ -388,7 +388,7 @@ enyo.kind({
 				return;
 			}else if(this.numberOfTries === 2){
 				this.$.yt.youtubeDecipherService().response(this, "startPlayVideo");
-				// this.$.yt.youtubeGetBody().response(this, "decipherVideo");
+				this.$.yt.youtubeGetBody().response(this, "decipherVideo");
 				this.numberOfTries++;
 				return;
 			}else{
@@ -409,9 +409,10 @@ enyo.kind({
 
 	decipherVideo: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log(inResponse);
-		this.$.yt.youtubeDecipherService(inResponse).response(this, "startPlayVideo");
-		this.numberOfTries=0;
+		console.log("Views -> decipherVideo: Llega al Controler");
+		return;
+		// this.$.yt.youtubeDecipherService(inResponse).response(this, "startPlayVideo");
+		// this.numberOfTries=0;
 	},
 
 	searchEvent: function(inSender, q){
