@@ -370,12 +370,15 @@ enyo.kind({
         if (!config) {
           return callback(new Error('could not parse video page config'));
         }
-        this.gotConfig(opts, description, config, callback);
+        this.gotConfig(opts, description, config, function(err, formats){ 
+          console.log("Finalizado");
+          console.log(formats);
+        });
       }else{
         console.log("YoutubeVideo -> youtubeGetBodyResponse: No hay jsonSTR del body");
       }
 
-      return inResponse;
+      // return inResponse;
     },
 
     youtubeGetBodyError: function(){
@@ -448,7 +451,9 @@ enyo.kind({
         this.getTokens(config.assets.js, opts.debug, function(err, tokens) {
           if (err) return callback(err);
 
-          sig.decipherFormats(info.formats, tokens, opts.debug);
+          console.log("regresa al gotinfo");
+
+          decipherFormats(info.formats, tokens, opts.debug);
 
           var concurrent = info.dashmpd ? 1 : 0 + info.hlsvp ? 1 : 0;
           if (!concurrent) {
@@ -462,15 +467,17 @@ enyo.kind({
               callback(new Error('No formats found'));
               return;
             }
-            info.formats.sort(util.sortFormats);
+            info.formats.sort(sortFormats);
+            // console.log(info);
             callback(null, info);
+            return;
           }
 
           if (info.dashmpd) {
             info.dashmpd = decipherURL(info.dashmpd, tokens);
             getDashManifest(info.dashmpd, opts.debug, function(err, formats) {
               if (err) return callback(err);
-              sig.decipherFormats(info.formats, tokens, opts.debug);
+              decipherFormats(info.formats, tokens, opts.debug);
               mergeFormats(info, formats);
               checkDone();
             });
@@ -478,6 +485,7 @@ enyo.kind({
 
           if (info.hlsvp) {
             info.hlsvp = decipherURL(info.hlsvp, tokens);
+            // console.log(info);
             getM3U8(info.hlsvp, opts.debug, function(err, formats) {
               if (err) return callback(err);
               mergeFormats(info, formats);
@@ -485,15 +493,17 @@ enyo.kind({
             });
           }
         });
+
       } else {
         if (!info.formats.length) {
           callback(new Error('Video not found'));
           return;
         }
-        sig.decipherFormats(info.formats, null, opts.debug);
+        decipherFormats(info.formats, null, opts.debug);
         callback(null, info);
       }
     },
+
 
     getTokens: function(html5playerfile, debug, callback) {
       var key, cachedTokens;
@@ -514,34 +524,36 @@ enyo.kind({
 
 
         // CArgar body con enyo
-        loadScript(html5playerfile, function(err, body) {
-          if (err) return callback(err);
-          console.log("Carga el escript");
-          console.log(err);
-          console.log(body);
-          var tokens = exports.extractActions(body);
+        var ajax = new enyo.Ajax({
+            url: html5playerfile,
+            method: "GET",
+            cacheBust: false,
+            callbackName: null,
+            overrideCallback: null
+        });
+
+        ajax.response(function(inRequest, inResponse){
+          if(!inResponse) return;
+          console.log("Hay body html5");
+          // console.log(inResponse);
+          var body = inResponse;
+          var tokens = extractActions(body);
           if (!tokens || !tokens.length) {
-            /*if (debug) {
-              var filename = key + '.js';
-              var filepath = path.resolve(
-                __dirname, '../test/files/html5player/' + filename);
-              fs.writeFile(filepath, body);
-              var html5player = require('../test/html5player.json');
-              if (!html5player[key]) {
-                html5player[key] = [];
-                fs.writeFile(
-                  path.resolve(__dirname, '../test/html5player.json'),
-                  JSON.stringify(html5player, null, 2));
-              }
-            }*/
             callback(
               new Error('Could not extract signature deciphering actions'));
             return;
           }
 
-          cache.set(key, tokens);
+          // cache.set(key, tokens);
           callback(null, tokens);
+
+          // return inResponse;
         });
+        ajax.error(function(inRequest, inResponse){
+          if(!inResponse) return;
+          console.log("Hay error al tare el body html5");
+        });
+        return ajax.go();
       }
     }
 });

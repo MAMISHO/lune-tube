@@ -75,6 +75,305 @@ function loadScript(src, callback)
 }
 
 
+function extractActions(body) {
+  var objResult = actionsObjRegexp.exec(body);
+  if (!objResult) { return null; }
+  var funcResult = actionsFuncRegexp.exec(body);
+  if (!funcResult) { return null; }
+
+  var obj      = objResult[1].replace(/\$/g, '\\$');
+  var objBody  = objResult[2].replace(/\$/g, '\\$');
+  var funcbody = funcResult[1].replace(/\$/g, '\\$');
+
+  var result = reverseRegexp.exec(objBody);
+  var reverseKey = result && result[1].replace(/\$/g, '\\$');
+  result = sliceRegexp.exec(objBody);
+  var sliceKey = result && result[1].replace(/\$/g, '\\$');
+  result = spliceRegexp.exec(objBody);
+  var spliceKey = result && result[1].replace(/\$/g, '\\$');
+  result = swapRegexp.exec(objBody);
+  var swapKey = result && result[1].replace(/\$/g, '\\$');
+
+  var myreg = '(?:a=)?' + obj + '\\.(' +
+    [reverseKey, sliceKey, spliceKey, swapKey].join('|') + ')\\(a,(\\d+)\\)';
+  var tokenizeRegexp = new RegExp(myreg, 'g');
+  var tokens = [];
+  while ((result = tokenizeRegexp.exec(funcbody)) !== null) {
+    switch (result[1]) {
+      case swapKey:
+        tokens.push('w' + result[2]);
+        break;
+      case reverseKey:
+        tokens.push('r');
+        break;
+      case sliceKey:
+        tokens.push('s' + result[2]);
+        break;
+      case spliceKey:
+        tokens.push('p' + result[2]);
+        break;
+    }
+  }
+  return tokens;
+}
+
+function swapHeadAndPosition(arr, position) {
+  var first = arr[0];
+  arr[0] = arr[position % arr.length];
+  arr[position] = first;
+  return arr;
+}
+
+function decipherFormats(formats, tokens, debug) {
+      console.log("Youtube -> decipherFormats: decifrar");
+      formats.forEach(function(format) {
+        var sig = tokens && format.s ? decipher(tokens, format.s) : null;
+        // console.log(sig);
+        setDownloadURL(format, sig, debug);
+      });
+}
+
+function decipher(tokens, sig) {
+      sig = sig.split('');
+      var pos;
+      for (var i = 0, len = tokens.length; i < len; i++) {
+        var token = tokens[i];
+        switch (token[0]) {
+        case 'r':
+          sig = sig.reverse();
+          break;
+        case 'w':
+          pos = ~~token.slice(1);
+          sig = swapHeadAndPosition(sig, pos);
+          break;
+        case 's':
+          pos = ~~token.slice(1);
+          sig = sig.slice(pos);
+          break;
+        case 'p':
+          pos = ~~token.slice(1);
+          sig.splice(0, pos);
+          break;
+        }
+      }
+      return sig.join('');
+}
+
+function setDownloadURL(format, sig, debug) {
+    var url     = require('url');
+    var decodedUrl;
+    if (format.url) {
+      decodedUrl = format.url;
+    } else if (format.stream) {
+      if (format.conn) {
+        if (format.conn.indexOf('rtmp') === 0) {
+          format.rtmp = true;
+        }
+        decodedUrl = format.conn;
+        if (decodedUrl[decodedUrl.length - 1] !== '/') {
+          decodedUrl += '/';
+        }
+        decodedUrl += format.stream;
+      } else {
+        decodedUrl = format.stream;
+      }
+    } else {
+      if (debug) {
+        console.warn('download url not found for itag ' + format.itag);
+      }
+      return;
+    }
+
+    try {
+      decodedUrl = decodeURIComponent(decodedUrl);
+    } catch (err) {
+      if (debug) {
+        console.warn('could not decode url: ' + err.message);
+      }
+      return;
+    }
+
+    // Make some adjustments to the final url.
+    var parsedUrl = url.parse(decodedUrl, true);
+
+    // Deleting the `search` part is necessary otherwise changes to
+    // `query` won't reflect when running `url.format()`
+    delete parsedUrl.search;
+
+    var query = parsedUrl.query;
+    query.ratebypass = 'yes';
+    if (sig) {
+      query.signature = sig;
+    }
+
+    format.url = url.format(parsedUrl);
+}
+
+function decipherURL(url, tokens) {
+  return url.replace(/\/s\/([a-fA-F0-9\.]+)/, function(_, s) {
+    return '/signature/' + decipher(tokens, s);
+  });
+}
+
+function mergeFormats(info, formatsMap) {
+  info.formats.forEach(function(f) {
+    var cf = formatsMap[f.itag];
+    if (cf) {
+      for (var key in f) { cf[key] = f[key]; }
+    } else {
+      formatsMap[f.itag] = f;
+    }
+  });
+  info.formats = [];
+  for (var itag in formatsMap) { info.formats.push(formatsMap[itag]); }
+}
+
+
+function getM3U8(url, debug, callback) {
+  request(url, function(err, body) {
+    if (err) return callback(err);
+
+    var formats = {};
+    body
+      .split('\n')
+      .filter(function(line) {
+        return line.trim().length && line[0] !== '#';
+      })
+      .forEach(function(line) {
+        var itag = line.match(/\/itag\/(\d+)\//)[1];
+        if (!itag) {
+          if (debug) {
+            console.warn('No itag found in url ' + line);
+          }
+          return;
+        }
+        var meta = FORMATS[itag];
+        if (!meta && debug) {
+          console.warn('No format metadata for itag ' + itag + ' found');
+        }
+        var format = { itag: itag, url: line };
+        for (var key in meta) {
+          format[key] = meta[key];
+        }
+        formats[itag] = format;
+      });
+    callback(null, formats);
+  });
+}
+
+function request(url, callback) {
+  var xhttp;
+  xhttp=new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+    if (xhttp.readyState == 4 && xhttp.status == 200) {
+      callback(null, xhttp.response);
+    }else{
+      callback("error", null);
+    }
+  };
+  xhttp.open("GET", url, false);
+  xhttp.send();
+}
+
+function sortFormats(a, b) {
+  var ares = a.resolution ? parseInt(a.resolution.slice(0, -1), 10) : 0;
+  var bres = b.resolution ? parseInt(b.resolution.slice(0, -1), 10) : 0;
+  var afeats = ~~!!ares * 2 + ~~!!a.audioBitrate;
+  var bfeats = ~~!!bres * 2 + ~~!!b.audioBitrate;
+
+  function getBitrate(c) {
+    if (c.bitrate) {
+      var s = c.bitrate.split('-');
+      return parseFloat(s[s.length - 1], 10);
+    } else {
+      return 0;
+    }
+  }
+
+  function audioScore(c) {
+    var abitrate = c.audioBitrate || 0;
+    var aenc = audioEncodingRanks[c.audioEncoding] || 0;
+    return abitrate + aenc / 10;
+  }
+
+  if (afeats === bfeats) {
+    if (ares === bres) {
+      var avbitrate = getBitrate(a);
+      var bvbitrate = getBitrate(b);
+      if (avbitrate === bvbitrate) {
+        var aascore = audioScore(a);
+        var bascore = audioScore(b);
+        if (aascore === bascore) {
+          var avenc = videoEncodingRanks[a.encoding] || 0;
+          var bvenc = videoEncodingRanks[b.encoding] || 0;
+          return bvenc - avenc;
+        } else {
+          return bascore - aascore;
+        }
+      } else {
+        return bvbitrate - avbitrate;
+      }
+    } else {
+      return bres - ares;
+    }
+  } else {
+    return bfeats - afeats;
+  }
+}
+
+
+
+
+
+var jsvarStr = '[a-zA-Z_\\$][a-zA-Z_0-9]*';
+var reverseStr = ':function\\(a\\)\\{' +
+  '(?:return )?a\\.reverse\\(\\)' +
+'\\}';
+var sliceStr = ':function\\(a,b\\)\\{' +
+  'return a\\.slice\\(b\\)' +
+'\\}';
+var spliceStr = ':function\\(a,b\\)\\{' +
+  'a\\.splice\\(0,b\\)' +
+'\\}';
+var swapStr = ':function\\(a,b\\)\\{' +
+  'var c=a\\[0\\];a\\[0\\]=a\\[b%a\\.length\\];a\\[b\\]=c(?:;return a)?' +
+'\\}';
+var actionsObjRegexp = new RegExp(
+  'var (' + jsvarStr + ')=\\{((?:(?:' +
+    jsvarStr + reverseStr + '|' +
+    jsvarStr + sliceStr   + '|' +
+    jsvarStr + spliceStr  + '|' +
+    jsvarStr + swapStr +
+  '),?\\n?)+)\\};'
+);
+var actionsFuncRegexp = new RegExp('function(?: ' + jsvarStr + ')?\\(a\\)\\{' +
+    'a=a\\.split\\(""\\);\\s*' +
+    '((?:(?:a=)?' + jsvarStr + '\\.' + jsvarStr + '\\(a,\\d+\\);)+)' +
+    'return a\\.join\\(""\\)' +
+  '\\}'
+);
+var reverseRegexp = new RegExp('(?:^|,)(' + jsvarStr + ')' + reverseStr, 'm');
+var sliceRegexp   = new RegExp('(?:^|,)(' + jsvarStr + ')' + sliceStr, 'm');
+var spliceRegexp  = new RegExp('(?:^|,)(' + jsvarStr + ')' + spliceStr, 'm');
+var swapRegexp    = new RegExp('(?:^|,)(' + jsvarStr + ')' + swapStr, 'm');
+
+var audioEncodingRanks = {
+  mp3: 1,
+  vorbis: 2,
+  aac: 3,
+  opus: 4,
+  flac: 5,
+};
+
+var videoEncodingRanks = {
+  'Sorenson H.283': 1,
+  'VP8': 3,
+  'MPEG-4 Visual': 2,
+  'VP9': 4,
+  'H.264': 5,
+};
+
+
 var FORMATS={
       '5': {
         container: 'flv',
