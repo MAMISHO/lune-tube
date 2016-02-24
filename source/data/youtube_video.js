@@ -335,8 +335,7 @@ enyo.kind({
       console.log(inResponse);
     },
 
-    youtubeGetBody: function(){
-      console.log("Peticion de Body");
+    youtubeDecryptLocalService: function(){
       var url = "https://www.youtube.com/watch";
       var request = new enyo.Ajax({
           url: url,
@@ -346,45 +345,99 @@ enyo.kind({
           overrideCallback: null
       });
 
-      request.response(enyo.bind(this, "youtubeGetBodyResponse"));
+      request.response(enyo.bind(this, "youtubeDecryptLocalServiceResponse"));
       request.error(enyo.bind(this, "youtubeGetBodyError"));
       return request.go({v:this.video_id_try});
     },
 
-    youtubeGetBodyResponse: function(inRequest, inResponse){
+    youtubeDecryptLocalServiceResponse: function(inRequest, inResponse){
       if(!inResponse) return;
-      // console.log(inResponse);
+      if(inRequest) return inResponse;
+
       var opts = {};
-      var callback={};
-      console.log("YoutubeVideo -> youtubeGetBodyResponse: Resvibe el body");
-      // console.log(inResponse);
-      console.log("YoutubeVideo -> youtubeGetBodyResponse: Sacamos los params");
       var description = getVideoDescription(inResponse);
       var jsonStr = between(inResponse, 'ytplayer.config = ', '</script>');
-      // console.log(jsonStr);
 
       if (jsonStr) {
+
         var config = this.parseJSON(jsonStr);
-        console.log("YoutubeVideo -> youtubeGetBodyResponse: Hay config");
-        console.log(config);
         if (!config) {
-          return callback(new Error('could not parse video page config'));
+          return {error: "No se puden obtener videos"};
         }
-        this.gotConfig(opts, description, config, function(err, formats){ 
-          console.log("Finalizado");
-          console.log(formats);
-        });
+
+        this.gotConfig(opts, description, config, enyo.bind(this, "callbackFromYT"));
+
       }else{
         console.log("YoutubeVideo -> youtubeGetBodyResponse: No hay jsonSTR del body");
       }
+    },
 
-      // return inResponse;
+    callbackFromYT: function(err, info){
+      if(err) return {error:true, message:"No se ha encontrado videos"};
+
+      var formats = info.formats;
+        var videos = [];
+
+        for (var i = 0; i < formats.length; i++) {
+          var v = {
+            resolution : "SD-3GP",
+            duration: info.length_seconds,
+            poster: info.thumbnail_url,
+            status: "ok",
+            title: info.title,
+            url: formats[i].url
+          };
+
+          switch(formats[i].itag){
+
+            case "18":
+              v.resolution = "SD-MP4";
+              if (formats[i].type && formats[i].type.indexOf(';') !== -1) {
+                    v.type = formats[i].type.split(';', 1)[0];
+                }
+
+            break;
+            case "22":
+              v.resolution = "HD-MP4";
+              if (formats[i].type && formats[i].type.indexOf(';') !== -1) {
+                    v.type = formats[i].type.split(';', 1)[0];
+                }
+                
+            break;
+            case "43":
+              v.resolution = "SD-WEBM";
+              if (formats[i].type && formats[i].type.indexOf(';') !== -1) {
+                    v.type = formats[i].type.split(';', 1)[0];
+                }
+                
+            break;
+            default :
+              if (formats[i].type && formats[i].type.indexOf(';') !== -1) {
+                    v.type = formats[i].type.split(';', 1)[0];
+                }
+
+            break;
+          }
+
+          videos.push(v);
+        }
+
+        if(videos.length > 0){
+        
+          return this.bubble("onStartPlayVideo",videos);
+        }else{
+
+          return {error:true, message:"No se ha encontrado videos"};
+        }
+      
+
     },
 
     youtubeGetBodyError: function(){
       if(!inResponse) return;
-      console.log("Error decipher");
+      console.log("Error decrypt");
       console.log(inResponse);
+      return inResponse;
     },
 
     parseJSON: function (body) {
@@ -442,16 +495,14 @@ enyo.kind({
         .map(function(val) { return parseInt(val, 10); })
         ;
       }
-
+      
       info.formats = parseFormats(info);
       info.description = description;
-      console.log(info);
 
       if (info.formats[0] && info.formats[0].s || info.dashmpd || info.hlsvp) {
-        this.getTokens(config.assets.js, opts.debug, function(err, tokens) {
-          if (err) return callback(err);
 
-          console.log("regresa al gotinfo");
+        return this.getTokens(config.assets.js, opts.debug, function(err, tokens) {
+          if (err) return callback(err);
 
           decipherFormats(info.formats, tokens, opts.debug);
 
@@ -469,8 +520,8 @@ enyo.kind({
             }
             info.formats.sort(sortFormats);
             // console.log(info);
-            callback(null, info);
-            return;
+            return callback(null, info);
+            
           }
 
           if (info.dashmpd) {
@@ -500,7 +551,7 @@ enyo.kind({
           return;
         }
         decipherFormats(info.formats, null, opts.debug);
-        callback(null, info);
+        return callback(null, info);
       }
     },
 
@@ -517,43 +568,27 @@ enyo.kind({
       }
 
       if (cachedTokens) {
-        callback(null, cachedTokens);
+
+        return callback(null, cachedTokens);
       } else {
+
         html5playerfile = 'http:' + html5playerfile;
-        console.log("Llega al else" + html5playerfile);
 
+        request(html5playerfile, function(err, body) {
 
-        // CArgar body con enyo
-        var ajax = new enyo.Ajax({
-            url: html5playerfile,
-            method: "GET",
-            cacheBust: false,
-            callbackName: null,
-            overrideCallback: null
+          var tokens = extractActions(body,function(err, tokens){
+            if(err) return;
+
+            if (!tokens || !tokens.length) {
+              callback(
+                new Error('Could not extract signature deciphering actions'));
+              return;
+            }
+            
+            return callback(null, tokens);
+          });
+
         });
-
-        ajax.response(function(inRequest, inResponse){
-          if(!inResponse) return;
-          console.log("Hay body html5");
-          // console.log(inResponse);
-          var body = inResponse;
-          var tokens = extractActions(body);
-          if (!tokens || !tokens.length) {
-            callback(
-              new Error('Could not extract signature deciphering actions'));
-            return;
-          }
-
-          // cache.set(key, tokens);
-          callback(null, tokens);
-
-          // return inResponse;
-        });
-        ajax.error(function(inRequest, inResponse){
-          if(!inResponse) return;
-          console.log("Hay error al tare el body html5");
-        });
-        return ajax.go();
       }
     }
 });

@@ -163,6 +163,7 @@ enyo.kind({
         /*if(inEvent.originator.name === "button"){
             console.log("mostrar menu y quitar estylo");
         }else{*/
+            // console.log(this.videoList[inEvent.index]);
             this.bubble("onStartVideo",this.videoList[inEvent.index]);
         // }
     },

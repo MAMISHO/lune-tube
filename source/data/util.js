@@ -1,5 +1,3 @@
-
-
 function between(haystack, left, right) {
   var pos;
   pos = haystack.indexOf(left);
@@ -23,6 +21,7 @@ function getVideoDescription(html) {
 }
 
 function parseFormats(info, debug) {
+
 	var qs       = require('querystring');
   var formats = [];
   if (info.url_encoded_fmt_stream_map) {
@@ -75,11 +74,12 @@ function loadScript(src, callback)
 }
 
 
-function extractActions(body) {
+function extractActions(body, callback) {
+  
   var objResult = actionsObjRegexp.exec(body);
-  if (!objResult) { return null; }
+  if (!objResult) { return callback("error no object", null); }
   var funcResult = actionsFuncRegexp.exec(body);
-  if (!funcResult) { return null; }
+  if (!funcResult) { return callback("Error no function", null); }
 
   var obj      = objResult[1].replace(/\$/g, '\\$');
   var objBody  = objResult[2].replace(/\$/g, '\\$');
@@ -114,7 +114,8 @@ function extractActions(body) {
         break;
     }
   }
-  return tokens;
+
+  return callback(null, tokens);
 }
 
 function swapHeadAndPosition(arr, position) {
@@ -125,10 +126,8 @@ function swapHeadAndPosition(arr, position) {
 }
 
 function decipherFormats(formats, tokens, debug) {
-      console.log("Youtube -> decipherFormats: decifrar");
       formats.forEach(function(format) {
         var sig = tokens && format.s ? decipher(tokens, format.s) : null;
-        // console.log(sig);
         setDownloadURL(format, sig, debug);
       });
 }
@@ -267,9 +266,9 @@ function request(url, callback) {
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
       callback(null, xhttp.response);
-    }else{
-      callback("error", null);
-    }
+    }/*else{
+      callback("error de request", null);
+    }*/
   };
   xhttp.open("GET", url, false);
   xhttp.send();

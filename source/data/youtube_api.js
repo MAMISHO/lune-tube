@@ -228,7 +228,7 @@ enyo.kind({
 				v.image = data[i].snippet.thumbnails.default.url;
 				v.title = data[i].snippet.title;
 				v.chanel = data[i].snippet.channelTitle;
-				v.views = "",
+				v.views = "";
 				v.time = data[i].snippet.publishedAt.split("T")[0];
 				v.description = data[i].snippet.description;
 				

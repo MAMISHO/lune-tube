@@ -10,6 +10,7 @@ enyo.kind({
 	handlers: {
     	onLoadMore: "loadMore",
     	onStartVideo: "startVideo",
+    	onStartPlayVideo: "startPlayVideo",
     	onSearchEvent:"searchEvent",
     	onSearchFromUrl: "searchFromUrl",
     	onShowMainMenu: "showMainMenu",
@@ -365,11 +366,10 @@ enyo.kind({
 	// se alamacena un numero de intentos para hacer una segunda solicitud a la api de youtube
 	//Para videos que no con la opcion embebed a false
 	startVideo: function(inSender, video){
-		
+
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
-			// console.log("entra");
 			this._videoIdCurrent = video_id;
 			this.numberOfTries++; //numero de intentos de reproducir
 			this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
@@ -378,41 +378,46 @@ enyo.kind({
 	},
 
 	startPlayVideo: function(inResponse, video){
-		if(video.status === "fail" && this.numberOfTries > 0){
-			// second try
-			console.log("seccond try");
+
+		if(video.status === "fail" && this.numberOfTries > 0){// second try
 			
+
 			if(this.numberOfTries === 1){ // restricted conutry
+				console.log("seccond try");
 				this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
 				this.numberOfTries++;
 				return;
 			}else if(this.numberOfTries === 2){
-				this.$.yt.youtubeDecipherService().response(this, "startPlayVideo");
-				this.$.yt.youtubeGetBody().response(this, "decipherVideo");
+				console.log("third try");
+				// this.$.yt.youtubeDecipherService().response(this, "startPlayVideo"); //Service online or local NODE.JS
+				this.$.yt.youtubeDecryptLocalService().response(this,"decipherVideo");
 				this.numberOfTries++;
 				return;
 			}else{
 				this.numberOfTries=0;
 			}
 		}
-		// console.log(video);
+
 		this.numberOfTries = 0;
+
 		if(!video[0].restricted){
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
 			// this.$.videoDetailGroup.show();
 			this.videoDetailGroupReset(false);
 		}
+
 		this.$.player.setVideoId(video);
 		this.$.panel.setIndex(1);
+		return true;
 	},
 
 	decipherVideo: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log("Views -> decipherVideo: Llega al Controler");
-		return;
-		// this.$.yt.youtubeDecipherService(inResponse).response(this, "startPlayVideo");
-		// this.numberOfTries=0;
+
+		var a = this.$.yt.youtubeDecryptLocalServiceResponse(null, inResponse);
+		this.numberOfTries=0;
+		return true;
 	},
 
 	searchEvent: function(inSender, q){

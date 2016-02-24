@@ -82,9 +82,10 @@ enyo.kind({
 	            {ontap:"aboutTap", classes:"menu-option-item", components:[
 	              	// {kind:"Image", src:"assets/home-icon.png"},
 	               	{name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
-						{allowHtml:true, content:"<b>LuneTube v0.2.0<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
+						{allowHtml:true, content:"<b>LuneTube v0.2.1<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
 			    	]},
-	            	{content: "( About APP )", style:"display: inline-block"}
+	            	{content: "( About APP )", style:"display: inline-block"},
+	            	{content: "( DEMO )", ontap: "openVideoDemo"}
 	            ]},
 	        ]},
 	    ]},
@@ -194,7 +195,6 @@ enyo.kind({
 
 	loginChanged: function(){
 		if(this.login){
-			console.log("esta logado");
 			this.$.listChannel.show();
 			this.$.loginGroup.hide();
 			this.$.loginButton.setContent("Logout");
@@ -309,5 +309,35 @@ enyo.kind({
 		this.$.info.hide();
         this.$.listChannel.hide();
         this.$.loginGroup.hide();
+	},
+
+	openVideoDemo: function(inSender, inEvent){
+		var video = {
+						chanel: "MAMISHO",
+						channel_id: "UCF2KdjvDbpZGm5EOje4xUWA",
+						contentDetails: {
+							caption: false,
+							definition: "hd",
+							dimension: "2d",
+							duration: "PT5M9S",
+							licensedContent: false
+						},
+						description: "This is LuneTube a youtube client APP for #webOS and #LuneOS. LuneTube is Beta.",
+						image: "https://i.ytimg.com/vi/j0t3Ot-4h54/default.jpg",
+						statistics: {
+							commentCount: 2,
+							dislikeCount: 0,
+							favoriteCount: 0,
+							likeCount: 4,
+							viewCount: 51
+						},
+						time: "2016-02-20",
+						title: "LuneTube for webOS and LuneOS - Youtube APP",
+						video_id: "j0t3Ot-4h54",
+						views: ""
+					};
+		this.bubble("onStartVideo",video);
+		this.bubble("onShowMenuOption", this);
+		return;
 	}
 });
