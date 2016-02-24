@@ -260,18 +260,46 @@ function getM3U8(url, debug, callback) {
   });
 }
 
-function request(url, callback) {
+/*function request(url, callback) {
+  enyo.log("Utils -> request: Inicia configuracion de REQUEST");
   var xhttp;
   xhttp=new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (xhttp.readyState == 4 && xhttp.status == 200) {
+      enyo.log("Utils -> request: Se devuelve el callback");
       callback(null, xhttp.response);
-    }/*else{
-      callback("error de request", null);
-    }*/
+    }else{
+      // callback("error de request", null);
+      enyo.log("Utils -> Solicitando el REQUEST");
+    }
   };
   xhttp.open("GET", url, false);
   xhttp.send();
+  enyo.log("Utils -> request: Finaliza configuracion de REQUEST");
+}*/
+
+function request(url, callback){
+  var ajax = new enyo.Ajax({
+            url: url,
+            method: "GET",
+            cacheBust: false,
+            callbackName: null,
+            overrideCallback: null,
+            sync: true
+        });
+
+        ajax.response(function success(inRequest, inResponse){
+          if(!inResponse){
+            return callback("error del request", null);  
+          } 
+          return callback(null, inResponse);
+        });
+        ajax.error(function error(inRequest, inResponse){
+          if(!inResponse) return callback("error del request", null); 
+          return callback(null, inResponse);
+        });
+        return ajax.go();
+
 }
 
 function sortFormats(a, b) {

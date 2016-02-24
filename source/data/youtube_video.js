@@ -295,23 +295,14 @@ enyo.kind({
     },
 
     youtubeDecipherService: function(body){
-      console.log("Se envia decrypt");
       var url = "http://localhost:3000/";
       // var url = "https://fast-peak-30985.herokuapp.com";
       // var url = "https://www.youtube.com/watch";
-      // var formData = new FormData();
 
-      // formData.append("user", body);
       var param = {user:JSON.stringify(body)};
       var request = new enyo.Ajax({
           url: url,
-          method: "GET",
-          // postBody: formData,
-          // user:body,
-          // contentType: 'application/x-www-form-urlencoded',
-          // cacheBust: false,
-          // callbackName: null,
-          // overrideCallback: null
+          method: "GET"
       });
 
       request.response(enyo.bind(this, "youtubeDecipherServiceResponse"));
@@ -322,9 +313,7 @@ enyo.kind({
 
     youtubeDecipherServiceResponse: function(inRequest, inResponse){
       if(!inResponse) return;
-      console.log("successful decipher");
-      console.log(inResponse.length);
-      console.log(inResponse);
+      
       this.video_id_try = "";
       return inResponse.videos;
     },
@@ -356,10 +345,10 @@ enyo.kind({
 
       var opts = {};
       var description = getVideoDescription(inResponse);
+
       var jsonStr = between(inResponse, 'ytplayer.config = ', '</script>');
 
       if (jsonStr) {
-
         var config = this.parseJSON(jsonStr);
         if (!config) {
           return {error: "No se puden obtener videos"};
@@ -467,6 +456,7 @@ enyo.kind({
       ];
 
       var info = config.args;
+
       if (info.status === 'fail') {
         var msg = info.errorcode && info.reason ?
           'Code ' + info.errorcode + ': ' + info.reason : 'Video not found';
@@ -518,10 +508,9 @@ enyo.kind({
               callback(new Error('No formats found'));
               return;
             }
+
             info.formats.sort(sortFormats);
-            // console.log(info);
             return callback(null, info);
-            
           }
 
           if (info.dashmpd) {
