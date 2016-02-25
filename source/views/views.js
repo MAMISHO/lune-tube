@@ -710,7 +710,7 @@ enyo.kind({
 
 	getCurrentOsPlatform: function(){
 		// var userAgent = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
-		var userAgent = navigator.userAgent.match(/(LuneOS|webOS|hpwOS|Android)/g);
+		var userAgent = navigator.userAgent.match(/(LuneOS|webOS|hpwOS)/g);
 		if(userAgent){
 			for (var i = 0; i < userAgent.length; i++) {
 				if(userAgent[i] === "LuneOS"){
