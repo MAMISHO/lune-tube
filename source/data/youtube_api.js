@@ -254,30 +254,42 @@ enyo.kind({
 	/*private*/
 	refreshToken: function(){
 		console.log("Se va a refrescar el token con:");
-		console.log(myApiKey.refresh_token);
-		var formData = new FormData();
+		console.log(myApiKey);
+		/*var formData = new FormData();
 
 		formData.append("client_id", myApiKey.client_id);
 		formData.append("client_secret", myApiKey.client_secret);
 		formData.append("refresh_token", myApiKey.refresh_token);
-		formData.append("grant_type", "refresh_token");
+		formData.append("grant_type", "refresh_token");*/
 
+		var postBody = {
+					client_id: myApiKey.client_id,	
+					client_secret: myApiKey.client_secret,
+					refresh_token: myApiKey.refresh_token,
+					grant_type: "refresh_token",
+				};
 
 		var request = new enyo.Ajax({
-			url: "https://accounts.google.com/o/oauth2/token",
-			method: "POST",
-			postBody: formData,
-			cacheBust: false,
+            url: "https://accounts.google.com/o/oauth2/token",
+            method: "POST",
+            // postBody: formData,
+            postBody: postBody,
+            contentType: 'application/x-www-form-urlencoded',
+            cacheBust: false,
             callbackName: null,
             overrideCallback: null
-		});
+        });
 
+		// console.log(formData);
+		// console.log(request);
 		request.response(enyo.bind(this, "refreshTokenResponse"));
 		request.error(enyo.bind(this, "processErrorRefreshToken"));
 		return request.go();
 	},
 
 	refreshTokenResponse: function(inRequest, inResponse){
+		// console.log(inRequest);
+		// console.log(inResponse);
 		if(!inResponse) return;
 		// console.log(inResponse);
 		if(inResponse.access_token){
@@ -291,9 +303,15 @@ enyo.kind({
 			// document.cookie="session_youtube=";
 			// document.cookie="session_youtube=" + JSON.stringify(ck);
 			// var time = (ck.expires_in) / (24*60*60*1000);
+			// var min = (60*1000/(24*60*60*1000));
 			enyo.setCookie("youtube_token", ck.access_token, {"Max-Age":ck.expires_in});
 			enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":360});
 			enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":360});
+
+			/*enyo.setCookie("youtube_token", ck.access_token, {"Max-Age":min});
+			enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":min});
+			enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":min});*/
+
 			myApiKey.access_token = ck.access_token;
 			myApiKey.refresh_token = ck.refresh_token;
 			myApiKey.login = true;

@@ -236,23 +236,34 @@ enyo.kind({
 	},
 
 	authorizationToken: function(){
-		var formData = new enyo.FormData();
+		// var formData = new enyo.FormData();
+		// console.log(myApiKey);
 
-		formData.append("code", this.$.token.getValue());
+		/*formData.append("code", this.$.token.getValue());
 		formData.append("client_id", myApiKey.client_id);
 		formData.append("client_secret", myApiKey.client_secret);
 		formData.append("redirect_uri", myApiKey.redirect_uri);
-		formData.append("grant_type", myApiKey.grant_type);
+		formData.append("grant_type", myApiKey.grant_type);*/
 
+		var postBody = {
+					code: this.$.token.getValue(),
+					client_id: myApiKey.client_id,	
+					client_secret: myApiKey.client_secret,
+					redirect_uri: myApiKey.redirect_uri,
+					grant_type: myApiKey.grant_type,
+				};
 		var ajax = new enyo.Ajax({
             url: "https://accounts.google.com/o/oauth2/token",
             method: "POST",
-            postBody: formData,
+            // postBody: formData,
+            postBody: postBody,
+            contentType: 'application/x-www-form-urlencoded',
             cacheBust: false,
             callbackName: null,
             overrideCallback: null
         });
-
+        
+		// console.log(ajax);
         ajax.response(enyo.bind(this, "authorizationTokenResponse"));
         ajax.error(enyo.bind(this, "authorizationTokenError"));
 		ajax.go();
@@ -270,6 +281,12 @@ enyo.kind({
 		enyo.setCookie("youtube_token", ck.access_token, {"Max-Age":ck.expires_in});
 		enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":360});
 		enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":360});
+		
+		/*var min = (60*1000*30/(24*60*60*1000));
+		enyo.setCookie("youtube_token", ck.access_token, {"Max-Age":min});
+		enyo.setCookie("youtube_refresh", ck.refresh_token, {"expires":min});
+		enyo.setCookie("session_youtube", JSON.stringify(ck), {"expires":min});*/
+
 		myApiKey.access_token = ck.access_token;
 		myApiKey.refresh_token = ck.refresh_token;
 		myApiKey.login = true;

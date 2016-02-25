@@ -257,7 +257,7 @@ enyo.kind({
 	receiveResults: function(inRequest, inResponse){
 		if(!inResponse) return;
 		
-		// console.log(inResponse);
+		console.log(inResponse);
 		
 		if(inResponse.error){
 			console.log(inResponse.error);
@@ -510,6 +510,8 @@ enyo.kind({
 
 	getMychannelresults: function(inRequest, inResponse){
 		if(!inResponse) return;
+		console.log("1");
+		// console.log(inResponse);
 		this._myChannel = inResponse.items[0].contentDetails;
 		var dataChannel = inResponse.items[0].snippet;
 		this.$.menuPanel.setImageUser(dataChannel.thumbnails.default.url);
@@ -518,12 +520,19 @@ enyo.kind({
 
 	getMyPlaylistResults: function(inRequest, inResponse){
 		if(!inResponse) return;
+		console.log("2");
+		// console.log(inResponse);
+		// console.log(this._myChannel);
 		this.$.menuPanel.setPlaylistUser(inResponse);
 		// this._myPlaylist=in;
 		this.$.videoList.setPlaylist(inResponse);
 		this.$.videoListRelated.setPlaylist(inResponse);
-		this.$.videoList.setRelatedPlaylists(this._myChannel.relatedPlaylists);
-		this.$.videoListRelated.setRelatedPlaylists(this._myChannel.relatedPlaylists);
+		if(this._myChannel){
+			if(this._myChannel.relatedPlaylists){
+				this.$.videoList.setRelatedPlaylists(this._myChannel.relatedPlaylists);
+				this.$.videoListRelated.setRelatedPlaylists(this._myChannel.relatedPlaylists);
+			}
+		}
 		return;
 	},
 
