@@ -33,7 +33,7 @@ enyo.kind({
         	{kind:"FittableRows",
             style:"position: absolute;bottom: 5px",
             components:[
-                {tag:"p", name:"channel", content:""},
+                {tag:"p", name:"channel", content:"", classes:"list-item-channel"},
                 // {tag:"p", name:"views", content:""},
                 {tag:"p", name:"viewsTime", content:"", classes:"list-item-view-time", allowHtml: true}
             ]}
