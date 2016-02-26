@@ -155,15 +155,20 @@ enyo.kind({
     windowParamsChange: function(inSender, inEvent){
 
     	if(enyo.webos.launchParams()){
+
     		console.log(PalmSystem.launchParams);
     		var launchParams = {};
+    		
     		if(typeof PalmSystem.launchParams === "string"){
+    			
     			if(PalmSystem.launchParams.length>0){
     				launchParams = JSON.parse(PalmSystem.launchParams);
     			}else{
     				return true;
     			}
+
     		}else{
+
     			launchParams = JSON.parse(PalmSystem.launchParams);
     		}
 
@@ -171,8 +176,18 @@ enyo.kind({
 
     		if(launchParams.target){
     			var video_id = launchParams.target.match("v=([a-zA-Z0-9\_\-]+)&?");
+    			
     				if(video_id){
-    					
+
+	    				this.startVideo(inSender, {video_id:video_id[1]});
+	    				this.$.listPanels.setIndex(1);
+	    				return true;
+    				}
+
+    				video_id = launchParams.target.split("youtu.be/");
+    				
+    				if(video_id){
+
 	    				this.startVideo(inSender, {video_id:video_id[1]});
 	    				this.$.listPanels.setIndex(1);
     				}
