@@ -119,19 +119,21 @@ openLuneTubeUrl: function(inSender, inEvent){
 	this.$.openLuneTube.send({ id: "com.emsoft.lunetube", params:params});
 },
 ```
-En el ejemplo anetrior podemos ver que no es necesario enviar todos los parámetros.
+En el ejemplo anterior podemos ver que no es necesario enviar todos los parámetros.
 Recuerda usar el servicio de applicationManager para poder hacer llamadas a otras aplicaciones.
 
 ## Prioridad de los parámetros
-los siguientes están ordenados de prioridad mayor a menor.
+los siguientes están ordenados con prioridad de mayor a menor.
 
-1. target : Parámetro pode defecto de webOS, si se desea enviar una url se puede usar también éste parámetro.
+1. target : Parámetro por defecto de webOS. Si se desea enviar una url se puede usar también éste parámetro.
 
-2. url : pasámos urls de youtube.
+2. url : URL del video de youtube. Soporta las distintas versiones de URL de youtube.
 
-3. videoId: si tenemos acceso a las IDs de los vídeos, podemos enviar solo al Id para reproducir el recurso.
+3. videoId: Si tenemos acceso a las IDs de los vídeos, podemos enviar solo la ID para reproducir el recurso.
 
-4. video: Permite reproducir videos de otras fuentes. NO está soportado aún, pero estará disponible en futuras versiones. El parámetro es un objeto JSON compuesto por los siguientes parámetros.
+4. video: Permite reproducir vídeos de otras fuentes. NO está soportado aún, pero estará disponible en futuras versiones. El parámetro es un objeto JSON compuesto por los siguientes parámetros.
 
-..* src : url del recurso, no soporta recursos embebidos, es necesario que sea la dirección directa del recurso. Esta es una URL válida [http://www.quirksmode.org/html5/videos/big_buck_bunny.mp4](http://www.quirksmode.org/html5/videos/big_buck_bunny.mp4)
-..* type: Fromato del vídeo. Los formatos soportados son los especificados por la W3C
+  * src : url del recurso, no soporta recursos embebidos, es necesario que sea la dirección directa del recurso. Esta es una URL válida [http://www.quirksmode.org/html5/videos/big_buck_bunny.mp4](http://www.quirksmode.org/html5/videos/big_buck_bunny.mp4)
+
+
+  * type: Fromato del vídeo. Los formatos soportados son los especificados por la W3C
