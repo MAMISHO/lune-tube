@@ -357,7 +357,7 @@ enyo.kind({
         this.gotConfig(opts, description, config, enyo.bind(this, "callbackFromYT"));
 
       }else{
-        console.log("YoutubeVideo -> youtubeGetBodyResponse: No hay jsonSTR del body");
+        console.log("YoutubeVideo -> youtubeGetBodyResponse: No hay jsonStr del body");
       }
     },
 

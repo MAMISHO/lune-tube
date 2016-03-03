@@ -38,7 +38,7 @@ enyo.kind({
 		onLoadMoreComments: "loadMoreComments"
 	},
 	components:[
-		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
+		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu enyo-fit', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
 			{kind:"LuneTube.Menu", name:"menuPanel"},
 			{fit:true, classes:"enyo-fit", components:[
 				{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false, realtimeFit:true, onTransitionFinish: "panelChanged", components: [
@@ -72,7 +72,8 @@ enyo.kind({
 								{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2, style:"margin: 0 12%"},
 								{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3, style:"margin: 0 12%"},
 							]}
-						]}
+						]},
+
 					]},
 					{name: 'content_player',fit: true, doubleTapEnabled: true, ondoubletap: "doubleTap", components: [
 							{kind: "Player", name:"player"}
@@ -80,6 +81,9 @@ enyo.kind({
 				]}
 			]}
 		]},
+		/*{kind:"Pullout", name:"Pullout", classes:"pullout", components:[
+			{kind:"LuneTube.Menu", name:"menuPanel"},
+		]},*/
 		{name: "messagePopup", classes: "onyx-sample-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
 			{name:"boxNotification", content:"", allowHtml:true}
 		]},
@@ -272,7 +276,7 @@ enyo.kind({
 	receiveResults: function(inRequest, inResponse){
 		if(!inResponse) return;
 		
-		console.log(inResponse);
+		// console.log(inResponse);
 		
 		if(inResponse.error){
 			console.log(inResponse.error);
@@ -525,7 +529,7 @@ enyo.kind({
 
 	getMychannelresults: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log("1");
+		// console.log("1");
 		// console.log(inResponse);
 		this._myChannel = inResponse.items[0].contentDetails;
 		var dataChannel = inResponse.items[0].snippet;
@@ -535,7 +539,7 @@ enyo.kind({
 
 	getMyPlaylistResults: function(inRequest, inResponse){
 		if(!inResponse) return;
-		console.log("2");
+		// console.log("2");
 		// console.log(inResponse);
 		// console.log(this._myChannel);
 		this.$.menuPanel.setPlaylistUser(inResponse);

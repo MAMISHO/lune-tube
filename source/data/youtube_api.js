@@ -56,7 +56,7 @@ enyo.kind({
 				var v = {};
 				v.video_id = data[i].id.videoId;
 				v.channel_id = data[i].snippet.channelId;
-				v.image = data[i].snippet.thumbnails.default.url;
+				v.image = data[i].snippet.thumbnails.medium.url;
 				v.title = data[i].snippet.title;
 				v.chanel = data[i].snippet.channelTitle;
 				v.views = "",
@@ -224,20 +224,19 @@ enyo.kind({
 				}else{
 					v.video_id = data[i].id.videoId;
 				}
+				
 				v.channel_id = data[i].snippet.channelId;
-				v.image = data[i].snippet.thumbnails.default.url;
 				v.title = data[i].snippet.title;
 				v.chanel = data[i].snippet.channelTitle;
 				v.views = "";
 				v.time = data[i].snippet.publishedAt.split("T")[0];
 				v.description = data[i].snippet.description;
 				
-				/*var vevo = v.chanel.search("VEVO");
-				if(vevo === -1){
-					videos.push(v);
-				}*/
+				if(data[i].snippet.thumbnails){
+					v.image = data[i].snippet.thumbnails.medium.url;
+				}
 
-				if(data[i].snippet.type !== "subscription" && data[i].snippet.type !== "playlistItem" && ant !== v.video_id)
+				if(data[i].snippet.type !== "subscription" && data[i].snippet.type !== "playlistItem" && ant !== v.video_id && v.image)
 					videos.push(v);
 				ant = v.video_id;
 			}
@@ -465,7 +464,7 @@ enyo.kind({
 					var v = {};
 					v.video_id = data[i].snippet.resourceId.videoId;
 					v.channel_id = data[i].snippet.channelId;
-					v.image = data[i].snippet.thumbnails.default.url;
+					v.image = data[i].snippet.thumbnails.medium.url;
 					v.title = data[i].snippet.title;
 					v.chanel = data[i].snippet.channelTitle;
 					v.views = "",

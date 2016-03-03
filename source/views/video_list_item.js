@@ -3,7 +3,8 @@ enyo.kind({
     kind: "FittableColumns",
     // classes:"list-item-webos",
     // classes: "list-item",
-    style:"height:103px",
+    // style:"height:103px",
+    style:"height:83px;padding-left: 5px",
     handlers:{
         ontap:"tap"
     },

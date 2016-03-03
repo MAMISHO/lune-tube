@@ -3,6 +3,7 @@ enyo.depends(
 	"menu.js",
 	"player.js",
 	"playlist.js",
+	"pullout.js",
 	"search.js",
 	"views.js",
 	"video_info.js",

@@ -2,7 +2,7 @@ enyo.kind({
     name:"LuneTube.Menu",
     kind: "FittableRows",
     // classes:"enyo-fit",
-    fit:true,
+    // fit:true,
     published: {
         status:"",
         imageUser: "assets/icon_user.png",
@@ -17,7 +17,7 @@ enyo.kind({
     components: [
     	{classes:"header", style:"text-align:right", components:[
     		{name:"aboutAPP", content:"LuneTube", classes:"header-loc", style:"vertical-align: middle"},		            	
-			{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"vertical-align: middle"}
+			// {kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"vertical-align: middle"}
 		]},
 		{kind: 'Scroller',fit:true, horizontal:"hidden", touch: true, components: [
 			{name:"loginGroup", kind: "onyx.Groupbox", style:"margin: 10px 5px", components: [
@@ -79,10 +79,10 @@ enyo.kind({
 	                {name:"loginButton", content: "Login", style:"display: inline-block"}
 	            ]},
 	            {classes: "onyx-menu-divider"},
-	            {ontap:"aboutTap", classes:"menu-option-item", components:[
+	            {ontap:"aboutTap", classes:"menu-option-item", style:"text-align: center", components:[
 	              	// {kind:"Image", src:"assets/home-icon.png"},
 	               	{name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
-						{allowHtml:true, content:"<b>LuneTube v0.2.1<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
+						{allowHtml:true, content:"<b>LuneTube v0.2.3<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
 			    	]},
 	            	{content: "( About APP )", style:"display: inline-block"},
 	            	{content: "( DEMO )", ontap: "openVideoDemo"}

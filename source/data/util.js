@@ -13,6 +13,7 @@ function getVideoDescription(html) {
 	var Entities = require('html-entities').AllHtmlEntities;
   var regex = /<p.*?id="eow-description".*?>(.+?)<\/p>[\n\r\s]*?<\/div>/im;
   var description = html.match(regex);
+  // console.log(description);
   return description ? new Entities().decode(description[1]
     .replace(/\n/g, ' ')
     .replace(/\s*<\s*br\s*\/?\s*>\s*/gi, '\n')

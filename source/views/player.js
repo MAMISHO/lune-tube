@@ -34,6 +34,8 @@ enyo.kind({
 			// autoplay:true,
 			onPlaybackControlsTapped: "controlsTapped",
 			onFullScreen:"fullScreen",
+			onLoadHD: 'loadHD',
+			onLoadSD: 'loadSD',
 			infoComponents: [
 				{kind: "moon.VideoInfoBackground", orient: "left", background: true, fit: true, components: [
 					{kind: "moon.VideoInfoHeader",subSubTitle: "Lunetube >>"}
@@ -45,13 +47,14 @@ enyo.kind({
 					{name:"backButton",kind: "moon.IconButton", classes:"moon-icon-video-round-controls-style", ontap:"backtoList", components:[
 						{kind:"Image", src:"assets/back-icon.png"}
 					]},
-					{content:"SD", name:"sdButton", classes:"quality-option-selected", ontap:"loadSD"},
-					{content:"HD", name:"hdButton", ontap:"loadHD"},
+					// {content:"SD", name:"sdButton", classes:"quality-option-selected", ontap:"loadSD"},
+					// {content:"HD", name:"hdButton", ontap:"loadHD"},
 					/*{name:"fullScreen",kind: "moon.IconButton", classes:"", ontap:"fullScreen", components:[
 						{kind:"Image", src:"assets/video-player/icon_fullscreen.png"}
 					]},*/
 					{name:"showInfo",kind: "moon.IconButton", classes:"", ontap:"showVideoInfo", components:[
-						{content: "i", style:"color: #fff"}
+						// {content: "i", style:"color: #fff"}
+						{name:"info",kind:"Image", src:"assets/icon-info.png"}
 					]}
 				]},
 			],
@@ -70,7 +73,7 @@ enyo.kind({
 		{from:".$.player.showFFRewindControls", to:".$.ffrewToggleButton.value", oneWay:false}
 	],
 	status:false, //false when is paused | true when is playing
-	isFullScreen:false,
+	// isFullScreen:false,
 	controlsTapped: function() {
 		// this.$.tapDialog.show();
 	},
@@ -93,9 +96,6 @@ enyo.kind({
 */	videoIdChanged: function(inSender, inEvent) {
 	
 		this.$.player.unload();
-		// Set source by sources array
-		// console.log(this.videoId);
-		// this.$.player.setPoster("assets/video-poster.png");
 		this.$.player.setPoster("");
 		this.sources = [];
 		this.sd = null;
@@ -110,28 +110,18 @@ enyo.kind({
 				if(poster[0]){
 					this.$.player.setPoster(poster[0] + "hqdefault" + poster[1]);
 				}
-				// else{
-					
-				// }
 
 				this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].title + " " + this.videoId[i].restricted);
 				this.$.player.showFSControls();
-				// enyo.job('nexVideo', this.bubble("onVideoFinished",this), 4000);
-				// enyo.job('nexVideo', this.noPlayVideoRestrcited(), 4000);
 				this.startJob("videoRestricted", function() { this.bubble("onVideoFinished",this); }, 3000);
-				// break;
 				return;
 			}
 			
 			
 			if(this.videoId[i].resolution === "SD-MP4"){
-				// this.sources.push({src: this.videoId[i].url, type: this.videoId[i].type});
-				// this.quality = this.videoId[i].resolution;
 				this.sd = {src: this.videoId[i].url, type: this.videoId[i].type};
-				// break;
 			}
 			if(this.videoId[i].resolution === "HD-MP4"){
-				// this.quality = this.videoId[i].resolution;
 				this.hd = {src: this.videoId[i].url, type: this.videoId[i].type};
 			}
 			if(this.videoId[i].title != this.$.videoInfoHeader.getSubSubTitle()){
@@ -142,28 +132,25 @@ enyo.kind({
 		this.$.player.setAutoplay(true);
 
 		if(this.sd){
-			// console.log("load SD");
 			this.sources.push(this.sd);
-			this.$.hdButton.removeClass("quality-option-selected");
-			this.$.sdButton.addClass("quality-option-selected");
 			this.quality = "SD-MP4";			
 		}else{
 			if(this.hd){
-				// console.log("load HD");
 				this.sources.push(this.hd);
-				this.$.sdButton.removeClass("quality-option-selected");
-				this.$.hdButton.addClass("quality-option-selected");
 				this.quality = "HD-MP4";	
 			}
 		}
 		// this.$.player.unload();
+		// console.log(this.$.player.$.slider);
+		this.$.player.$.slider.setQuality(this.quality);
 		this.$.player.setSources(this.sources);
 	},
 	
 	showControlsPlayer: function(inSender, inEvent){
-		// console.log(inEvent.originator.name);
+		// console.log(this.$.player.$.slider);
 		var control = inEvent.originator.name;
-		if(control != "tapArea" && control != "sdButton" && control != "hdButton" & control != "commentItem"){
+		// console.log(control);
+		if(control != "tapArea" && control != "sdButton" && control != "hdButton" && control != "commentItem" && control != "info" && control != "image"){
 			if(this.$.player.isOverlayShowing()){
 				this.$.player.playPause();
 				return;
@@ -180,11 +167,10 @@ enyo.kind({
 			this.sources = [];
 			this.sources.push(this.hd);
 			this.quality = "HD-MP4";
-			this.$.sdButton.removeClass("quality-option-selected");
-			this.$.hdButton.addClass("quality-option-selected");
 			this.$.player.unload();//comementar para dispositivos mas potentes
 			this.$.player.setSources(this.sources);
 		}
+		return true;
 	},
 
 	loadSD: function(inSender, inEvent){
@@ -195,11 +181,10 @@ enyo.kind({
 			this.sources = [];
 			this.sources.push(this.sd);
 			this.quality = "SD-MP4";
-			this.$.hdButton.removeClass("quality-option-selected");
-			this.$.sdButton.addClass("quality-option-selected");
 			this.$.player.unload();//comementar para dispositivos mas potentes
 			this.$.player.setSources(this.sources);
 		}
+		return true;
 	},
 
 	backtoList: function(inSender, inEvent){
@@ -239,26 +224,8 @@ enyo.kind({
 	},
 
 	fullScreen: function(inSender, inEvent){
-		// console.log(inEvent);
-		// inEvent.preventDefault();
-		this.isFullScreen = !this.isFullScreen;
-		// console.log("fullScreen " + this.isFullScreen);
-		webos.setFullScreen(this.isFullScreen);
-
-		/*var elem = document.getElementById("app_player_player_video");
-		if(this.isFullScreen){
-			if (elem.requestFullscreen) {
-			  elem.requestFullscreen();
-			} else if (elem.msRequestFullscreen) {
-			  elem.msRequestFullscreen();
-			} else if (elem.mozRequestFullScreen) {
-			  elem.mozRequestFullScreen();
-			} else if (elem.webkitRequestFullscreen) {
-			  elem.webkitRequestFullscreen();
-			}
-		}*/
+		webos.setFullScreen(inEvent.$.imageFullscreen.fullscreen);
 		return true;
-		// this.$.player.play();
 	},
 
 	showVideoInfo: function(inSender, inEvent){

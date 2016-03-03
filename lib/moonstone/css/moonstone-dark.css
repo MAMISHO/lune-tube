@@ -3740,6 +3740,8 @@
   background-color: #cf0652;
   position: absolute;
   top: 0;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
 }
 .moon-video-transport-slider-bg-bar {
   height: 100%;
@@ -3775,29 +3777,39 @@
 }
 .moon-video-transport-slider-indicator-wrapper.start {
   left: 0px;
+  height: 10px;
 }
 .moon-video-transport-slider-indicator-wrapper.end {
   right: 0px;
+  height: 10px;
 }
 .moon-video-transport-slider-indicator-bar-left {
   position: absolute;
   left: 49.5%;
   top: 25px;
-  width: 2px;
-  height: 30px;
+  width: 5px;
+  height: 10px;
+  max-height: 10px;
   background-color: #ffffff;
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+  opacity: 0.5;
 }
 .moon-video-transport-slider-indicator-bar-right {
   position: absolute;
   left: 49.5%;
   top: 25px;
-  width: 2px;
-  height: 30px;
+  width: 5px;
+  height: 10px;
+  max-height: 10px;
   background-color: #ffffff;
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+  opacity: 0.5;
 }
 .moon-video-transport-slider-indicator-text {
   position: absolute;
-  width: 100%;
+  width: auto;
   height: 30px;
   top: 23px;
   font-size: 30px;
@@ -4074,7 +4086,7 @@
 .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight.pressed.moon-icon-video-round-controls-style,
 .moon-video-fullscreen-control .moon-icon.moon-icon-button.spotlight:active.moon-icon-video-round-controls-style {
   color: #ffffff;
-  background-color: #cf0652;
+  /*background-color: #cf0652;*/
 }
 .moon-video-player-control-buttons.disabled > * {
   pointer-events: none;
