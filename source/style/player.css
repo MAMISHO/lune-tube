@@ -211,3 +211,21 @@ img#app_player_image.enyo-image{
 	border: 2px solid red;
 	padding: 7px 10px !important;
 }
+.onyx-picker{
+	background-color: rgba(247, 247, 247, 0.53) !important;
+	text-align: center;
+	font-weight: bolder;
+	font-size: 1.2em;
+}
+.onyx-picker .onyx-menu-item.selected, .onyx-picker .onyx-menu-item.active, .onyx-picker .onyx-menu-item:active:hover{
+	background-color: transparent;	
+	padding-bottom: 20px;
+}
+.onyx-menu-item.selected{
+	background-color: rgba(51, 51, 51, 0.56);
+	
+}
+.onyx-picker .onyx-menu-item{
+	color: white;
+	padding-bottom: 20px;
+}
