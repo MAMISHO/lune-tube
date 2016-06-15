@@ -1,0 +1,21 @@
+{
+	"enyo": "./enyo",
+	"packagejs": "./package.js",
+	"assets": [
+		"./icon.png",
+		"./index.html",
+		"./assets",
+		"./resources",
+		"./appinfo.json",
+		"./framework_config.json"
+	],
+	"libs": [
+		"./lib/onyx",
+		"./lib/layout",
+		"./lib/moonstone",
+		"./lib/enyo-webos",
+		"./lib/enyo-ilib",
+		"./lib/webos-lib",
+		"./lib/mochi"
+	]
+}

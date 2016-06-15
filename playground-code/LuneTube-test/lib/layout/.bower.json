@@ -1,0 +1,13 @@
+{
+  "name": "layout",
+  "homepage": "https://github.com/enyojs/layout",
+  "_release": "2.5.1.1",
+  "_resolution": {
+    "type": "tag",
+    "tag": "2.5.1.1",
+    "commit": "5cd84b312ec6f8ba5aa3e654249f1a16ff456476"
+  },
+  "_source": "git://github.com/enyojs/layout.git",
+  "_target": "2.5.1.1",
+  "_originalSource": "enyojs/layout"
+}

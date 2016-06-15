@@ -1,0 +1,25 @@
+{
+	"id":			"com.emsoft.lunetube",
+	"version":		"0.2.4",
+	"vendor":		"mamisho",
+	"type":			"web",
+	"main":			"index.html",
+	"title":		"LuneTube",
+	"icon":			"icon.png",
+	"uiRevision":	2,
+	"noWindow":		false,
+	"keywords": ["Videos", "Movies", "Youtube"],
+	"splashicon": "assets/icon_splash.png",
+	"splashBackground": "assets/splashBackground.png", 
+	"mimeTypes": [
+			{ "urlPattern": "^((https:\\/\\/|http:\\/\\/)(www\\.)?(youtube|yimg|youtu)\\.([A-Za-z]{2,4}|[A-Za-z]{2}\\.[A-Za-z]{2})\\/(watch\\?v=)?[A-Za-z0-9\\-_]{6,12}(&[A-Za-z0-9\\-_]{1,}=[A-Za-z0-9\\-_]{1,})*)|(youtu\\.be)\\/[A-Za-z0-9\\-_]{6,12}:" },
+			{ "urlPattern": "^lunetube:" }
+		],
+	"universalSearch":{
+		"action":{ 
+			"displayName": "Search video",
+			"url":"com.emsoft.lunetube",
+			"launchParam": {"params":{"searchTerm":"#{searchTerms}"}}
+		}
+	}
+}

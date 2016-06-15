@@ -1,0 +1,13 @@
+{
+  "name": "onyx",
+  "homepage": "https://github.com/enyojs/onyx",
+  "_release": "2.5.1.1",
+  "_resolution": {
+    "type": "tag",
+    "tag": "2.5.1.1",
+    "commit": "53602091c002166f2da2d55d20985a419712d732"
+  },
+  "_source": "git://github.com/enyojs/onyx.git",
+  "_target": "2.5.1.1",
+  "_originalSource": "enyojs/onyx"
+}
