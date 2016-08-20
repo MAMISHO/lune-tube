@@ -26,6 +26,7 @@ enyo.kind({
 	    	url: url,
 	    	method: "GET",
 	    	cache: false,
+        jsonp: true,
 	    	cacheBust: false,
             callbackName: null,
             overrideCallback: null
