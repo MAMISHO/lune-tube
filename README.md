@@ -10,7 +10,7 @@ crear aplicaciones de alto nivel con tecnologías web, si quieres saber mas sobr
 te invito a visitar http://enyojs.com/get-enyo/.
 
 ## Youtube API
-LA aplicación se sirve de la API v3 de youtube, permitiendo las sguiente funciones:
+LA aplicación se sirve de la API v3 de youtube, permitiendo las siguientes funciones:
 * Realizar búsquedas de vídeos
 * Reproducir vídeos sin firma restringida de youtube (Se esta trabajando para dar soporte)
 * Iniciar sessión de usuario
