@@ -24,12 +24,29 @@ var myApiErrors={
 	login:"Login required"
 };
 
-var defaultRegionCode = new ilib.Locale("en-US");
+
+/*Instrucciones para obtener la localización del dispositivo*/
+
+var defaultRegionCode = getLocation();
 var loc = ilib.getLocale(); //other locations
 var localeInfo = new ilib.LocaleInfo(loc);
-// var regionCode = loc.split("-").pop().toUpperCase();
 var regionCode = defaultRegionCode.region;
 
-/*if(webos){ //tested on webos && LuneOS
-    regionCode = webos.locales.UI.region;
-}*/
+function getLocation(){
+    var language = window.navigator.userLanguage || window.navigator.language;
+    if(language){
+
+        if (typeof language === 'string') {
+            var languageArray = language.split("-");
+            var tempLocation = languageArray.pop();
+            var tempLanguage = languageArray.pop();
+
+            return new ilib.Locale(tempLanguage + "-" + tempLocation.toUpperCase()); 
+        }else{
+            return new ilib.Locale("en-US");    
+        }
+
+    }else{
+        return new ilib.Locale("en-US");
+    }
+}

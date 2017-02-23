@@ -150,7 +150,7 @@ enyo.kind({
 		// console.log(this.$.player.$.slider);
 		var control = inEvent.originator.name;
 		// console.log(control);
-		if(control != "tapArea" && control != "sdButton" && control != "hdButton" && control != "commentItem" && control != "info" && control != "image"){
+		if(control != "tapArea" && control != "sdButton" && control != "hdButton" && control != "commentItem" && control != "info" && control != "image" && control !="videoInfo"){
 			if(this.$.player.isOverlayShowing()){
 				this.$.player.playPause();
 				return;

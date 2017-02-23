@@ -1,7 +1,8 @@
 enyo.depends(
+	"cache.js",
 	"db.js",
 	"data.js",
+	"util.js",
 	"youtube_api.js",
-	"youtube_video.js",
-	"util.js"
+	"youtube_video.js"
 );

@@ -146,14 +146,17 @@ enyo.kind({
 				this.$.menuPanel.setLogin(myApiKey.login);
 		}
 		
-		
+		/*Start webOS/ luneos config*/
 		currentOsPlatform = this.getCurrentOsPlatform();
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
-		webos.setWindowOrientation("free");
+		// webos.setWindowOrientation("free");
 
 		if(currentOsPlatform){
+			webos.setWindowOrientation("free");
+    		regionCode = webos.localeInfo().localeRegion.toUpperCase(); //async, maybe is default at the first time
 			this.windowParamsChange();
 		}
+		/*End webOS / luneOS config*/
     },
 
     windowParamsChange: function(inSender, inEvent){
@@ -343,6 +346,9 @@ enyo.kind({
 
 	// recive las estadisticas de los videos de la consulta actual y los actualiza en la lista de videos
 	receiveStatistics: function(inSender, statistics){
+
+		var videosAUX;
+
 		for (var i = 0; i < statistics.length;  i++) {
 			for (var j = 0; j < this.videos.length; j++) {
 				if(statistics[i].id === this.videos[j].video_id){
@@ -354,7 +360,13 @@ enyo.kind({
 		}
 		// console.log(statistics);
 		// console.log(this.videos);
-		this.$.videoList.setVideoList(JSON.parse(JSON.stringify(this.videos)));
+
+		try {
+          videosAUX = JSON.parse(this.videos);
+        } catch (err) {
+          videosAUX = JSON.parse(JSON.stringify(this.videos)); 
+        }
+		this.$.videoList.setVideoList(videosAUX);
 	},
 
 	receiveStatisticsFromRelated: function(inSender, statistics){
@@ -389,14 +401,32 @@ enyo.kind({
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
+
+			/*	antes de realizar la peticion revisamos si ya tenemos los datos del
+				video en la cache
+			*/
+			var videoCached = cache.getVideo(video_id);
 			this._videoIdCurrent = video_id;
-			this.numberOfTries++; //numero de intentos de reproducir
-			this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
+			
+			if(videoCached){
+				// console.log("sacado de la cache: " + video_id);
+				return this.startPlayVideo(this, videoCached);
+
+			}else{ /*En el caso de no tener el video en la cache, lanzamos la petición*/
+				
+				this.numberOfTries++; //numero de intentos de reproducir
+				return this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
+				// this.$.yt.youtubeDecryptLocalService(video_id).response(this,"decipherVideo");
+			}
+
 		}
 		return true;
 	},
 
 	startPlayVideo: function(inResponse, video){
+
+		/*after 0.2.5 just we use youtubeDecryptLocal for all transactiosn*/
+		/*we need to implement cache version for webos*/
 
 		if(video.status === "fail" && this.numberOfTries > 0){// second try
 			
@@ -420,14 +450,28 @@ enyo.kind({
 		this.numberOfTries = 0;
 
 		if(!video[0].restricted){
+			if(video[0].descriptionHtml){
+				this.$.videoInfo.setVideoDescription(video[0].descriptionHtml);
+			}
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
 			// this.$.videoDetailGroup.show();
 			this.videoDetailGroupReset(false);
 		}
 
+		/*If the video has a html description we replaced*/
+		// console.log(video);
+		// this.$.videoInfo.setVideoDescription(video[0].descriptionHtml);
+
 		this.$.player.setVideoId(video);
 		this.$.panel.setIndex(1);
+
+		/*Si el video no salió de la cache la insertamos*/
+		var videoCached = cache.getVideo(this._videoIdCurrent);
+		if(!videoCached){
+			// console.log("cacheado por primera vez: " + this._videoIdCurrent);
+			cache.setVideo(this._videoIdCurrent, video);
+		}
 		return true;
 	},
 
@@ -763,7 +807,7 @@ enyo.kind({
 	},
 	launchBrowser: function(inSender, inResponse)
 	{
-	    this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": "http://www.google.com"}});
+	    this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": "https://www.google.com"}});
 	},
 
 	doubleTap: function(inSender, inEvent){

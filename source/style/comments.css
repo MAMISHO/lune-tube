@@ -83,7 +83,7 @@
 .like-comment{
 	width: 24px;
 	max-width: 24px;
-	height: 24px;
+	height: 24px !important;
 	max-height: 24px;
 	margin: 0 10px 0 10px;
 }

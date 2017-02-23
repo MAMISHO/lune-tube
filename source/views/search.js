@@ -70,7 +70,7 @@ enyo.kind({
     },
     
     autoComplete: function(query){
-        var url_base = "http://suggestqueries.google.com/";
+        var url_base = "https://suggestqueries.google.com/";
             var method = "complete/search";
             var params={
                 key: "AI39si7ZLU83bKtKd4MrdzqcjTVI3DK9FvwJR6a4kB_SW_Dbuskit-mEYqskkSsFLxN5DiG1OBzdHzYfW0zXWjxirQKyxJfdkg",

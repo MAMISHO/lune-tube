@@ -178,7 +178,8 @@ enyo.kind({
 			regionCode: regionCode,
 			part: "snippet, contentDetails",
 			home: true,
-			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
+			// mine: true,
+			//fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
 		};
 
 		if(this.nextPage){
@@ -253,7 +254,7 @@ enyo.kind({
 	/*private*/
 	refreshToken: function(){
 		console.log("Se va a refrescar el token con:");
-		console.log(myApiKey);
+		// console.log(myApiKey);
 		/*var formData = new FormData();
 
 		formData.append("client_id", myApiKey.client_id);

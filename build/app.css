@@ -9079,11 +9079,16 @@ img#app_player_image.enyo-image{
 	/*padding: 5px;*/
 }
 .statistics-content{
-	margin-top: 10px;
+	/*margin-top: 10px;
 	display: inline-block;
 	margin-bottom: 50px;
 	width: 50%;
+	text-align: center;*/
 	text-align: center;
+	padding-top: 10px;
+}
+.statistics-content > div{
+	width: 40%;
 }
 /*.statistics-content >div,img{
 	vertical-align: text-top;
@@ -9115,7 +9120,8 @@ img#app_player_image.enyo-image{
 .info-description{
 	padding: 5px;
 	/*padding-bottom: 50px;*/
-	height: 100%;
+	/*height: 100%;*/
+	height: 70%;
 	/*min-height: 1000px;*/
 }
 

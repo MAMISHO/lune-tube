@@ -1,3 +1,4 @@
+cache = new Cache();
 enyo.kind({
     name: "YoutubeVideo",
     kind: enyo.Component,
@@ -21,7 +22,7 @@ enyo.kind({
       // console.log(video_id);
       this._videoId = video_id;
       this.video_id_try = video_id;
-    	var url = "http://www.youtube.com/get_video_info";
+    	var url = "https://www.youtube.com/get_video_info";
 	    var ajax = new enyo.Ajax({
 	    	url: url,
 	    	method: "GET",
@@ -324,7 +325,7 @@ enyo.kind({
       console.log(inResponse);
     },
 
-    youtubeDecryptLocalService: function(){
+    youtubeDecryptLocalService: function(video_id){
       var url = "https://www.youtube.com/watch";
       var request = new enyo.Ajax({
           url: url,
@@ -336,7 +337,11 @@ enyo.kind({
 
       request.response(enyo.bind(this, "youtubeDecryptLocalServiceResponse"));
       request.error(enyo.bind(this, "youtubeGetBodyError"));
-      return request.go({v:this.video_id_try});
+      if(video_id){
+        return request.go({v:video_id});
+      }else{
+        return request.go({v:this.video_id_try});
+      }
     },
 
     youtubeDecryptLocalServiceResponse: function(inRequest, inResponse){
@@ -349,11 +354,23 @@ enyo.kind({
       var jsonStr = between(inResponse, 'ytplayer.config = ', '</script>');
 
       if (jsonStr) {
-        var config = this.parseJSON(jsonStr);
+        
+        jsonStr = jsonStr.slice(0, jsonStr.lastIndexOf(';ytplayer.load'));
+        
+        var config;
+        try {
+          config = JSON.parse(jsonStr);
+          config.assets.js = 's.ytimg.com' + config.assets.js;
+        } catch (err) {
+          return callback(new Error('Error parsing config: ' + err.message));
+        }
+
+        // var config = this.parseJSON(jsonStr);
         if (!config) {
           return {error: "No se puden obtener videos"};
         }
 
+        
         this.gotConfig(opts, description, config, enyo.bind(this, "callbackFromYT"));
 
       }else{
@@ -362,8 +379,10 @@ enyo.kind({
     },
 
     callbackFromYT: function(err, info){
-      if(err) return {error:true, message:"No se ha encontrado videos"};
-
+      if(err) {
+        return {error:true, message:"No se ha encontrado videos"};
+      }
+      // console.log(info.description);
       var formats = info.formats;
         var videos = [];
 
@@ -374,7 +393,8 @@ enyo.kind({
             poster: info.thumbnail_url,
             status: "ok",
             title: info.title,
-            url: formats[i].url
+            url: formats[i].url,
+            descriptionHtml: info.description.join()
           };
 
           switch(formats[i].itag){
@@ -412,7 +432,6 @@ enyo.kind({
         }
 
         if(videos.length > 0){
-        
           return this.bubble("onStartPlayVideo",videos);
         }else{
 
@@ -454,6 +473,7 @@ enyo.kind({
         'fexp',
         'watermark'
       ];
+
 
       var info = config.args;
 
@@ -546,12 +566,14 @@ enyo.kind({
 
 
     getTokens: function(html5playerfile, debug, callback) {
+      
       var key, cachedTokens;
       var rs = /(?:html5)?player-([a-zA-Z0-9\-_]+)(?:\.js|\/)/
         .exec(html5playerfile);
       if (rs) {
+       
         key = rs[1];
-        // cachedTokens = cache.get(key);
+        cachedTokens = cache.getKey(key);
       } else {
         console.warn('could not extract html5player key:', html5playerfile);
       }
@@ -561,19 +583,26 @@ enyo.kind({
         return callback(null, cachedTokens);
       } else {
 
-        html5playerfile = 'http:' + html5playerfile;
-
+        html5playerfile = 'https://' + html5playerfile;
+       
         request(html5playerfile, function(err, body) {
-
+          if(err){
+            return err;
+          }
+          
           var tokens = extractActions(body,function(err, tokens){
-            if(err) return;
-
+            
+            if(err){
+              return;
+            }
+            
             if (!tokens || !tokens.length) {
               callback(
                 new Error('Could not extract signature deciphering actions'));
               return;
             }
-            
+
+            cache.setKey(key, tokens);
             return callback(null, tokens);
           });
 

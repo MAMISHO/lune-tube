@@ -14,11 +14,12 @@ function getVideoDescription(html) {
   var regex = /<p.*?id="eow-description".*?>(.+?)<\/p>[\n\r\s]*?<\/div>/im;
   var description = html.match(regex);
   // console.log(description);
-  return description ? new Entities().decode(description[1]
-    .replace(/\n/g, ' ')
-    .replace(/\s*<\s*br\s*\/?\s*>\s*/gi, '\n')
-    .replace(/<\s*\/\s*p\s*>\s*<\s*p[^>]*>/gi, '\n')
-    .replace(/<.*?>/gi, '')).trim() : '';
+  return description;
+  // return description ? new Entities().decode(description[1]
+  //  .replace(/\n/g, ' ')
+  //  .replace(/\s*<\s*br\s*\/?\s*>\s*/gi, '\n')
+  //  .replace(/<\s*\/\s*p\s*>\s*<\s*p[^>]*>/gi, '\n')
+  //  .replace(/<.*?>/gi, '')).trim() : '';
 }
 
 function parseFormats(info, debug) {
@@ -78,10 +79,18 @@ function loadScript(src, callback)
 function extractActions(body, callback) {
   
   var objResult = actionsObjRegexp.exec(body);
-  if (!objResult) { return callback("error no object", null); }
-  var funcResult = actionsFuncRegexp.exec(body);
-  if (!funcResult) { return callback("Error no function", null); }
+  if (!objResult) { 
+    
+    return callback("error no object", null); 
+  }
 
+  var funcResult = actionsFuncRegexp.exec(body);
+  if (!funcResult) {
+    
+    return callback("Error no function", null);
+  }
+
+  
   var obj      = objResult[1].replace(/\$/g, '\\$');
   var objBody  = objResult[2].replace(/\$/g, '\\$');
   var funcbody = funcResult[1].replace(/\$/g, '\\$');
@@ -115,7 +124,7 @@ function extractActions(body, callback) {
         break;
     }
   }
-
+  
   return callback(null, tokens);
 }
 
@@ -291,12 +300,20 @@ function request(url, callback){
 
         ajax.response(function success(inRequest, inResponse){
           if(!inResponse){
+            /*console.log(JSON.stringify(inRequest));
+            console.log(JSON.stringify(inResponse));
+            console.log("REQUEST -> functionDefinition : Error en la llamada ajax");*/
             return callback("error del request", null);  
           } 
+          /*console.log("REQUEST -> functionDefinition : Llamada success");
+          console.log(JSON.stringify(inResponse));*/
           return callback(null, inResponse);
         });
         ajax.error(function error(inRequest, inResponse){
-          if(!inResponse) return callback("error del request", null); 
+          // console.log("REQUEST -> functionDefinition : ERROR desde el servidor");
+          // console.log(JSON.stringify(inRequest));
+          // console.log(JSON.stringify(inResponse));
+          if(!inResponse) return callback("error del request", null);
           return callback(null, inResponse);
         });
         return ajax.go();
