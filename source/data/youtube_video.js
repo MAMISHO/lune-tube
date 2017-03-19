@@ -1,4 +1,4 @@
-cache = new Cache();
+cache = new YoutubeCache();
 enyo.kind({
     name: "YoutubeVideo",
     kind: enyo.Component,
@@ -55,83 +55,8 @@ enyo.kind({
 
     startVideoResponse: function(inRequest, inResponse){
     	if(!inResponse) return;
-    	// console.log(inResponse);
-      // console.log(inRequest);
       return this.parseYoutubeVideoInfo(inResponse);
     },
-
-    /*decodeVideo: function(videoInfo){
-    	console.log(videoInfo.responseText);
-    	var params={};
-    	var videoInfoSplit = videoInfo.split("&");
-  		var streams;
-  		var i=0;
-  		for (i = 0; i < videoInfo.length; i++) {
-  			var paramPair = videoInfoSplit[i].split("=");
-  			if (paramPair[0] === "url_encoded_fmt_stream_map") {
-  				streams = decodeURIComponent(paramPair[1]);
-  				break;
-  			}
-  		}
-
-  		if (!streams) {
-  			var msg = "YouTube videoInfo parsing: url_encoded_fmt_stream_map not found";
-  			console.log(msg);
-  			return;
-  		}
-
-  		streamsSplit = streams.split("&");
-  		console.log(streamsSplit);
-
-		// Algunas lineas contienen dos valores separados por comas
-    	var newSplit = [];
-    	for (i = 0; i < streamsSplit.length; i++) {
-    		var secondSplit = streamsSplit[i].split(",");
-    		newSplit.push.apply(newSplit, secondSplit);
-    	}
-
-    	streamsSplit = newSplit;
-    	console.log(streamsSplit);
-    				
-    	var url, sig, itag;
-    	var found = false;
-	
-	     var my_array = [];
-  	   for (i = 0; i < streamsSplit.length; i++) {
-    			var paramPair = streamsSplit[i].split("=");
-    			var obj = {};
-    			if (paramPair[0] === "url") {
-    				url = decodeURIComponent(paramPair[1]);
-    				obj.url = url;
-    			} else if (paramPair[0] === "sig") {
-    				sig = paramPair[1]; // do not decode, as we would have to encode it later (although decoding/encoding has currently no effect for the signature)
-    				obj.sig = sig;
-    			} else if (paramPair[0] === "itag") {
-    				itag = paramPair[1];
-    				obj.itag = itag;
-    			}
-    			my_array.push(obj);
-
-    			if ((i + 1) % 6 === 0 && itag === "18") { // 6 parameters per video; itag 18 is "MP4 360p", see http://userscripts.org/scripts/review/25105
-    				found = true;
-    				url += "&signature=" + sig;
-    				break;
-    			}
-  		  }
-    		console.log(my_array);
-    		if (found) {
-    			// console.log("video direct URL found: " + url);
-    			params.target = url;
-    			// console.log(params);
-    			return params.target;
-    			// $( "#results" ).append(JSON.stringify(params));
-    			// this.foundVideo(params);
-    		} else {
-    			var msg = "Couldn't find video in MP4 360p";
-    			console.log(msg);
-    			return;
-    		}
-    },*/
 
     parseYoutubeVideoInfo: function(response) {
     // Splits parameters in a query string.
@@ -172,6 +97,7 @@ enyo.kind({
     // console.log(params);
     // Now parse the available streams
     var streamsText = params.url_encoded_fmt_stream_map;
+    // console.log(streamsText);
     if (!streamsText)
       throw Error('No url_encoded_fmt_stream_map parameter');
     var streams = streamsText.split(',');
@@ -202,7 +128,7 @@ enyo.kind({
       '18', // 360p H.264
       '22' //720 HD
     ];
-
+    // console.log(streams);
     // Sort the array of stream descriptions in order of format
     // preference, so that the first item is the most preferred one
     streams.sort(function(a, b) {
@@ -214,6 +140,8 @@ enyo.kind({
     // console.log(streams);
     var results = [];
     var videoIsRestricted = false;
+    var imageHQ;
+
 
     for (i = 0; i < streams.length; i++) {
     	
@@ -260,6 +188,10 @@ enyo.kind({
     		      result.poster = params.thumbnail_url;
     		    }
 
+            if(params.iurl){
+              imageHQ = params.iurl;
+            }
+
             if (bestStream.s){
               videoIsRestricted = true;
               result.restricted = "This video is restricted by youtube. Soon we will support these videos.";
@@ -274,8 +206,15 @@ enyo.kind({
     // console.log(results);
     if(videoIsRestricted){
       // this.youtubeDecipherService(this._videoId);
-      return {status:"fail",signature:true};
+      // var posterTmp;
+      if(results.length > 0){
+        posterTmp = results.pop().poster;
+        return {status:"fail",signature:true, posterTmp: imageHQ};
+      }else{
+        return {status:"fail",signature:true};
+      }
     }else{
+      // console.log(results);
       return results;
     }
   },
@@ -346,7 +285,8 @@ enyo.kind({
 
     youtubeDecryptLocalServiceResponse: function(inRequest, inResponse){
       if(!inResponse) return;
-      if(inRequest) return inResponse;
+      // if(inRequest) return inResponse;
+      // console.log(inResponse);
 
       var opts = {};
       var description = getVideoDescription(inResponse);
@@ -394,8 +334,13 @@ enyo.kind({
             status: "ok",
             title: info.title,
             url: formats[i].url,
-            descriptionHtml: info.description.join()
+            descriptionHtml: ""
           };
+
+          if(info.description){
+            // v.descriptionHtml = info.description.join();
+            v.descriptionHtml = info.description[0];
+          }
 
           switch(formats[i].itag){
 
@@ -533,7 +478,7 @@ enyo.kind({
             return callback(null, info);
           }
 
-          if (info.dashmpd) {
+          if (info.dashmpd) { //revisar esta funcion y traer los modulos necesarios
             info.dashmpd = decipherURL(info.dashmpd, tokens);
             getDashManifest(info.dashmpd, opts.debug, function(err, formats) {
               if (err) return callback(err);

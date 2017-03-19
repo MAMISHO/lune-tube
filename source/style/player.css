@@ -171,9 +171,23 @@ img#app_player_image.enyo-image{
 }
 .moon-video-transport-slider-indicator-bar-left{
 	top: 0;
+	width: 5px;
+	height: 10px;
+	max-height: 10px;
+	background-color: #ffffff;
+	border-top-left-radius: 15px;
+	border-bottom-left-radius: 15px;
+	opacity: 0.5;
 }
 .moon-video-transport-slider-indicator-bar-right{
 	top:0;
+	width: 5px;
+	height: 10px;
+	max-height: 10px;
+	background-color: #ffffff;
+	border-top-right-radius: 15px;
+	border-bottom-right-radius: 15px;
+	opacity: 0.5;
 }
 .moon-video-transport-slider-indicator-text{
 	left:auto;
@@ -196,6 +210,16 @@ img#app_player_image.enyo-image{
 	color: #cf0652;
 	opacity: 0.6;
 }
+
+/*control tap area*/
+.lunetube-fix-touch{
+	height: 35px;
+	top: -15px;
+}
+
+/*end slider*/
+
+
 /*Botones de resolución*/
 .player-resolution{
 	/*position: absolute;right: 50px;top: 20px;*/
@@ -228,4 +252,10 @@ img#app_player_image.enyo-image{
 .onyx-picker .onyx-menu-item{
 	color: white;
 	padding-bottom: 20px;
+}
+
+/*spinner for platforms*/
+.lunetube-spinner{
+	background-color: rgba(0, 0, 0, 0.60);
+	border: 3px solid #333;
 }

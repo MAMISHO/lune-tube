@@ -34,7 +34,10 @@ enyo.kind({
                 ]},
                 // {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", style:"height: 24px;vertical-align: bottom"}
             ]},
-		{kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", 
+		{kind: "List", name:"list", fit: true,
+        // touch: true,
+        touchOverscroll: false,
+        onSetupItem: "setupItem", 
         // classes:"enyo-fit", 
         components: [
             /*{name:"commentUser", kind:"FittableColumns", classes:"comment-text my-comment-box", components:[

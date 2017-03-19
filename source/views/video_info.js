@@ -11,27 +11,16 @@ enyo.kind({
         
     },
     components: [
-        /*{kind: 'Scroller',fit:true, horizontal:"hidden", touch: true,layoutKind: enyo.FittableRowsLayout, components: [
 
-            {content: "title", name:"title", classes:"info-title"},
-            {content: "channel", name:"channel", classes:"info-channel"},
-            {name:"description", classes:"info-description", allowHtml:true, fit:true,content: "Lorem"},
-            {tag:"div", classes:"statistics-content", components:[
-                {kind: "Image", src: "assets/icon-like.png", ontap: "iconTapped", style:"margin-right:5px;"},
-                {tag:"br"},
-                {content: "", name: "likes", classes:"info-likes"}
+            {content: "title", name:"title", classes:"info-title"},            
+            {kind: "FittableColumns", components:[
+                {content: "channel", name:"channel", classes:"info-channel", fit:true},
+                {content: "", name:"views", classes:"info-views"}
             ]},
-            {tag:"div", classes:"statistics-content", components:[
-                {kind: "Image", src: "assets/icon-unlike.png", ontap: "iconTapped"},
-                {tag:"br"},
-                {content: "", name: "dislikes", classes:"info-dislikes"}
-            ]}
-        ]}*/
-        // {kind: "FittableRows", components: [
-            {content: "title", name:"title", classes:"info-title"},
-            {content: "channel", name:"channel", classes:"info-channel"},
-            {kind: 'Scroller',fit:true, horizontal:"hidden", touch: true,layoutKind: enyo.FittableRowsLayout, components: [
-                {name:"description", allowHtml:true, fit:true, content: "Lorem"},
+            {kind: 'Scroller',fit:true, horizontal:"hidden",
+                touchOverscroll: false,
+                layoutKind: enyo.FittableRowsLayout, components: [
+                    {name:"description", allowHtml:true, fit:true, content: "Lorem", classes:"info-description-text"},
             ]},
             {kind: "FittableColumns", classes:"statistics-content", components:[
                 {tag:"div", components:[
@@ -62,6 +51,7 @@ enyo.kind({
             if(this.videoDetails.statistics){
                 this.$.likes.setContent(this.videoDetails.statistics.likeCount);
                 this.$.dislikes.setContent(this.videoDetails.statistics.dislikeCount);
+                this.$.views.setContent("Views " + this.videoDetails.statistics.viewCount);
             }
             this.render();
 		}

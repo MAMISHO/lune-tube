@@ -12,6 +12,7 @@ enyo.kind({
 	],
 	_tryLogincound:0,
 	_nextPageComments:"",
+	myPlaylist:[],
 	create:function() {
 		this.inherited(arguments);
 	},
@@ -27,7 +28,7 @@ enyo.kind({
 		};
 		// console.log(localeInfo.info.locale);
 			if(typeof inSearchText === "string"){
-				if(inRelated == null){		// sin videos relacionados				
+				if(inRelated === null){		// sin videos relacionados				
 					params.q = inSearchText;
 				}else{						//peticion de videos relacionados
 					params.relatedToVideoId = inRelated;
@@ -57,6 +58,7 @@ enyo.kind({
 				v.video_id = data[i].id.videoId;
 				v.channel_id = data[i].snippet.channelId;
 				v.image = data[i].snippet.thumbnails.medium.url;
+				v.image_high = data[i].snippet.thumbnails.high.url;
 				v.title = data[i].snippet.title;
 				v.chanel = data[i].snippet.channelTitle;
 				v.views = "",
@@ -142,7 +144,7 @@ enyo.kind({
 		};
 
 		// console.log(localeInfo);
-		if(inRelated == null){		// sin videos relacionados				
+		if(inRelated ===null){		// sin videos relacionados				
 				params.q = inSearchText;
 		}else{						//peticion de videos relacionados
 			params.relatedToVideoId = inSearchText;
@@ -229,6 +231,7 @@ enyo.kind({
 				v.channel_id = data[i].snippet.channelId;
 				v.title = data[i].snippet.title;
 				v.chanel = data[i].snippet.channelTitle;
+				v.image_high = data[i].snippet.thumbnails.high.url;
 				v.views = "";
 				v.time = data[i].snippet.publishedAt.split("T")[0];
 				v.description = data[i].snippet.description;
@@ -291,7 +294,7 @@ enyo.kind({
 		// console.log(inRequest);
 		// console.log(inResponse);
 		if(!inResponse) return;
-		// console.log(inResponse);
+		console.log(inResponse);
 		if(inResponse.access_token){
 			myApiKey.access_token = inResponse.access_token;
 			var ck = {
@@ -369,10 +372,10 @@ enyo.kind({
 			maxResults: 50,
 			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
 		};
-		/*console.log(nextPage);
+		console.log(nextPage);
 		if(nextPage){
 			params.pageToken = nextPage;
-		}*/
+		}
 
 		var request = new enyo.Ajax({
             // url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=50&mine=true",
@@ -389,24 +392,31 @@ enyo.kind({
         return request.go(params);
 	},
 
+	/*
+		Este método recibe la respuesta de la petición ajax con los playlist del usurios
+		Si el playlist tiene mas de 50 elementos, se hará una llamada recursiva hasta recuperar
+		todos los elementos del playlis.
+	*/
 	getMyPlaylistResponse: function(inRequest, inResponse){
 		if(!inResponse) return;
-		/*console.log(inResponse);
-		if(!inResponse.nextPageToken){
-			console.log("no hay nada");
-		}
+
 		var totalPlaylist = inResponse.pageInfo;
-		if(totalPlaylist.totalResults > totalPlaylist.resultsPerPage && inResponse.items.length === totalPlaylist.resultsPerPage){
+		// if(totalPlaylist.totalResults > totalPlaylist.resultsPerPage && inResponse.items.length === totalPlaylist.resultsPerPage){
+		if(inResponse.nextPageToken){			
+			this.myPlaylist = this.myPlaylist.concat(inResponse.items);
 			this.getMyPlaylist(inResponse.nextPageToken);
 		}else{
+			var playlist = this.myPlaylist.concat(inResponse.items);
+			inResponse.items = playlist;
+			return this.bubble("onReciveAllPlaylist", inResponse);
 			// return inResponse;
-		}*/
+		}
 		/*if(inResponse.nextPageToken && ii === 0){
 
 			this.getMyPlaylist(inResponse.nextPageToken);
 			ii++;
 		}*/
-		return inResponse;
+		// return inResponse;
 	},
 
 	getMyPlaylistResponseError: function(inRequest, inResponse){
@@ -466,6 +476,7 @@ enyo.kind({
 					v.video_id = data[i].snippet.resourceId.videoId;
 					v.channel_id = data[i].snippet.channelId;
 					v.image = data[i].snippet.thumbnails.medium.url;
+					v.image_high = data[i].snippet.thumbnails.high.url;
 					v.title = data[i].snippet.title;
 					v.chanel = data[i].snippet.channelTitle;
 					v.views = "",

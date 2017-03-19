@@ -3,7 +3,8 @@
         "enyo": false,
         "$L": false,
         "moon": false,
-        "ilib": false
+        "ilib": false,
+        "console": false
     },
     "es3": true,
     "evil": false,

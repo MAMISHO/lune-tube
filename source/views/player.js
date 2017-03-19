@@ -5,7 +5,8 @@ enyo.kind({
 	handlers: {
     	// onRequestTimeChange: "testTime"
     	onStart:"startVideo",
-    	onPlay:"statusPlay"
+    	onPlay:"statusPlay",
+    	onPause: "pauseVideo"
     	// onloadedmetadata:"loadedMetaData",
     	// onloadeddata: "loadedData"
 	},
@@ -14,7 +15,8 @@ enyo.kind({
         quality: "",
         hd: null,
         sd: null,
-        currentTime:0
+        currentTime:0,
+        posterTmp:""
     },
 	components: [
 		{
@@ -73,7 +75,7 @@ enyo.kind({
 		{from:".$.player.showFFRewindControls", to:".$.ffrewToggleButton.value", oneWay:false}
 	],
 	status:false, //false when is paused | true when is playing
-	// isFullScreen:false,
+	_isFullScreen : false,
 	controlsTapped: function() {
 		// this.$.tapDialog.show();
 	},
@@ -82,6 +84,13 @@ enyo.kind({
 	},
 	unload: function() {
 		this.$.player.unload();
+	},
+	posterTmpChanged: function(){
+		this.$.player.setPoster(this.posterTmp);
+	},
+
+	startVideoPlay: function(){
+		this.$.player.startVideoPlaying();
 	},
 	/*load: function() {
 		this.$.player.unload();
@@ -96,7 +105,7 @@ enyo.kind({
 */	videoIdChanged: function(inSender, inEvent) {
 	
 		this.$.player.unload();
-		this.$.player.setPoster("");
+		// this.$.player.setPoster("");
 		this.sources = [];
 		this.sd = null;
 		this.hd = null;
@@ -128,6 +137,7 @@ enyo.kind({
 				this.$.videoInfoHeader.setSubSubTitle(this.videoId[0].title);
 			}
 		}
+		console.log(this.videoId);
 
 		this.$.player.setAutoplay(true);
 
@@ -162,12 +172,19 @@ enyo.kind({
 	loadHD: function(inSender, inEvent){
 		
 		if((this.quality === "SD-MP4") && this.hd){
-			this.$.player.setPoster("");
+			if(enyo.platform.webos < 4){
+				this.$.player.setPoster("");	
+			}
+			
 			this.currentTime = this.$.player.getVideo().getCurrentTime();
 			this.sources = [];
 			this.sources.push(this.hd);
 			this.quality = "HD-MP4";
-			this.$.player.unload();//comementar para dispositivos mas potentes
+
+			if(enyo.platform.webos < 4){
+				this.$.player.unload();//comementar para dispositivos mas potentes	
+			}
+			
 			this.$.player.setSources(this.sources);
 		}
 		return true;
@@ -176,12 +193,18 @@ enyo.kind({
 	loadSD: function(inSender, inEvent){
 
 		if(this.sd && this.quality === "HD-MP4"){
-			this.$.player.setPoster("");
+			if(enyo.platform.webos < 4){
+				this.$.player.setPoster("");	
+			}
 			this.currentTime = this.$.player.getVideo().getCurrentTime();
 			this.sources = [];
 			this.sources.push(this.sd);
 			this.quality = "SD-MP4";
-			this.$.player.unload();//comementar para dispositivos mas potentes
+			
+			if(enyo.platform.webos < 4){
+				this.$.player.unload();//comementar para dispositivos mas potentes	
+			}
+			
 			this.$.player.setSources(this.sources);
 		}
 		return true;
@@ -205,7 +228,14 @@ enyo.kind({
 		return true;
 	},
 
+
+	// at firtsly we need to see if android platform is running
+	// and make some optimization for backgrund mode.
+
 	playVideo: function(inSender, inEvent){
+
+		
+
 		if(this.status){
 			// this.$.player.setPoster("");
 			this.$.player.play();
@@ -220,11 +250,50 @@ enyo.kind({
 
 	statusPlay: function(inSender, inEvent){
 		this.status = true;
-		// this.$.player.setPoster("");
+		if(enyo.platform.webos < 4){
+			this.$.player.setPoster("");
+		}
+		return true;
+		
 	},
 
+	getVideoStatus: function(){
+		return !this.$.player.getVideo().isPaused();
+	},
+
+
+    /*
+        Documentation for android
+        the next function is implemented using the follows plugins
+        cordova-plugin-fullscreen -> https://www.npmjs.com/package/cordova-plugin-fullscreen
+        cordova-plugin-screen-orientation  -> https://www.npmjs.com/package/cordova-plugin-screen-orientation
+    */
 	fullScreen: function(inSender, inEvent){
-		webos.setFullScreen(inEvent.$.imageFullscreen.fullscreen);
+        if(currentOsPlatform){ // webos or luneos
+            this._isFullScreen = inEvent.$.imageFullscreen.fullscreen;
+            webos.setFullScreen(inEvent.$.imageFullscreen.fullscreen);
+            
+        }
+        if(cordova){
+        console.log("Is full screen?" + this._isFullScreen);
+            if(this._isFullScreen === false){
+                AndroidFullScreen.immersiveMode(function(){
+                    screen.lockOrientation('landscape');
+                    console.log("Landscape success");
+                },
+                function(error){console.log(error);});
+                this._isFullScreen = true;
+            }else{
+
+                AndroidFullScreen.showSystemUI(function(){
+                    //screen.lockOrientation('portrait');
+                    screen.unlockOrientation();
+                    console.log("Portrait sudcess");
+                },
+                function(error){console.log(error);});
+                this._isFullScreen = false;
+            }
+        }
 		return true;
 	},
 

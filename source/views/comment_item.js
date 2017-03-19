@@ -21,7 +21,7 @@ enyo.kind({
             {tag:"img",name:"image", attributes:{src:""}, draggable:false},
             {tag:"p", name:"user", classes:"comment-user", content:""},
         ]},
-        {tag:"p", name:"comment",classes:"comment-text", content:"", style:"padding: 0;margin: 0;width:100%", components:[
+        {tag:"p", name:"comment",classes:"comment-text", content:"", style:"padding: 0;padding-left: 5px;margin: 0;width:100%", components:[
 
         ]},
         /*{name:"myComment",kind: "mochi.InputDecorator", style:"vertical-align: bottom; width: 94%;position: relative", components: [
@@ -39,7 +39,12 @@ enyo.kind({
     },
 
     imageChanged: function(){
-		this.$.image.setAttribute("src", this.image);
+        var imgTmp = this.getImage().replace("/s28-", "/s88-"); //get image with more resolution
+        if(imgTmp){
+            this.$.image.setAttribute("src", imgTmp);
+        }else{
+            this.$.image.setAttribute("src", this.image);
+        }
 	},
 
 	commentChanged: function(){

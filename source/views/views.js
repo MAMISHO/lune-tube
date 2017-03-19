@@ -2,6 +2,7 @@ enyo.kind({
 	name: "App",
 	kind: "FittableRows",
 	fit: true,
+	classes:"enyo-fit",
 	published:{
 		query_history: "",
 		query: "",
@@ -23,6 +24,7 @@ enyo.kind({
     	// onGetStatisticsFromRelated: "receiveStatisticsFromRelated",
     	// events from menu
     	onShowMenuOption: "showMenuOption",
+    	onReciveAllPlaylist: "getMyPlaylistResults",
     	onLoadPlaylist: "loadPlaylist",
     	onHomeRequest: "homeRequest",
     	onLoadHistory: "loadPlaylistById",
@@ -38,8 +40,10 @@ enyo.kind({
 		onLoadMoreComments: "loadMoreComments"
 	},
 	components:[
+		{fit:true, classes:"enyo-fit", components:[
 		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu enyo-fit', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
-			{kind:"LuneTube.Menu", name:"menuPanel"},
+			// {kind:"LuneTube.Menu", name:"menuPanel"},
+			{content:"menu"},
 			{fit:true, classes:"enyo-fit", components:[
 				{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false, realtimeFit:true, onTransitionFinish: "panelChanged", components: [
 					{layoutKind: "FittableRowsLayout", components: [
@@ -84,19 +88,49 @@ enyo.kind({
 		/*{kind:"Pullout", name:"Pullout", classes:"pullout", components:[
 			{kind:"LuneTube.Menu", name:"menuPanel"},
 		]},*/
+		{kind: "Pullout",
+		 fit:true,
+		 classes: "pullout enyo-fit", onDropPin: "dropPin", onShowTraffic: "showTraffic", onMapTypeSelect: "mapTypeSelect", onBookmarkSelect: "bookmarkSelect", components: [
+			/*{classes: "pullout-menu", defaultKind: "onyx.IconButton", components: [
+				// {src: "images/menu-icon-info.png", panel: "info", ontap: "togglePullout"},
+				// {src: "images/menu-icon-bookmark.png", panel: "bookmark", ontap: "togglePullout"},
+				// {src: "images/menu-icon-mylocation.png", ontap: "findCurrentLocation"}
+				{content: "1"},
+				{content: "2"},
+				{content: "3"},
+			]}*/
+			{kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
+		]},
+		]},
 		{name: "messagePopup", classes: "onyx-sample-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
 			{name:"boxNotification", content:"", allowHtml:true}
 		]},
 		{kind:"AppMenu", onSelect: "appMenuItemSelected", components: [
 			{content:"Paste", ontap: "doPasteText"},
-			{content:"Copy", ontap: "doCopyText"}
+			{content:"Copy", ontap: "doCopyText"},
+			{content:"Lock screen", ontap:"doLockScreen"}
 		]},
 
 		// Componentes que no se ven
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
-		{kind: "enyo.Signals", onactivate: "handleActivate", ondeactivate: "handleDeactivate", onmenubutton: "handleMenuButton", onApplicationRelaunch: "windowParamsChange", onlowmemory:"handleLowMemory", onWindowParamsChange: "windowParamsChange"}
+		{kind: "enyo.Signals",
+			onactivate: "handleActivate",
+			ondeactivate: "handleDeactivate",
+			onmenubutton: "handleMenuButton",
+			onApplicationRelaunch: "windowParamsChange",
+			onlowmemory:"handleLowMemory",
+			onWindowParamsChange: "windowParamsChange",
+			onorientationchange: "orientationChanged",
+			onbackbutton: "backPanel",
+			ondeviceready: "cordovaReady",
+			onpause: "onPause",
+			onresule: "onResume",
+			onvolumedownbutton: "volumeDownButton",
+			onvolumeupbutton: "volumeUpButton"
+
+		}
 	],
 	videos:[],
 	videosRelated:[],
@@ -105,6 +139,7 @@ enyo.kind({
 	_videoIdCurrent:null,
 	// _platform: "webOS",
 	_platform: "",
+	_volume:null,
 	create:function() {
         this.inherited(arguments);
 
@@ -151,10 +186,15 @@ enyo.kind({
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		// webos.setWindowOrientation("free");
 
-		if(currentOsPlatform){
+		if(currentOsPlatform){ //is is webos or luneos platform
+
 			webos.setWindowOrientation("free");
     		regionCode = webos.localeInfo().localeRegion.toUpperCase(); //async, maybe is default at the first time
 			this.windowParamsChange();
+
+		}else{//cordova platforms support. Also see cordovaReady function in this scritp
+
+			enyo.dispatcher.listen(window, 'orientationchange');
 		}
 		/*End webOS / luneOS config*/
     },
@@ -402,6 +442,13 @@ enyo.kind({
 		this.$.videoInfo.setVideoDetails(video);
 		if(this._videoIdCurrent !== video_id){
 
+			this.$.player.unload();
+			if(video.image_high){
+				this.$.player.setPosterTmp(video.image_high);
+			}
+			this.$.panel.setIndex(1);
+			this.$.player.startVideoPlay();
+
 			/*	antes de realizar la peticion revisamos si ya tenemos los datos del
 				video en la cache
 			*/
@@ -427,6 +474,12 @@ enyo.kind({
 
 		/*after 0.2.5 just we use youtubeDecryptLocal for all transactiosn*/
 		/*we need to implement cache version for webos*/
+
+		/*if(video.posterTmp && this.numberOfTries === 1){
+			// this.$.player.startVideoPlay();
+			this.$.player.setPosterTmp(video.posterTmp);
+			// this.$.panel.setIndex(1);
+		}*/
 
 		if(video.status === "fail" && this.numberOfTries > 0){// second try
 			
@@ -472,6 +525,31 @@ enyo.kind({
 			// console.log("cacheado por primera vez: " + this._videoIdCurrent);
 			cache.setVideo(this._videoIdCurrent, video);
 		}
+
+
+		/*actualizamos el video que se esta reproduciendo en la lista*/
+		console.log(this.videos);
+		var index = 0;
+		/*if(!!Object.assign){ // si el navegador soporta ES6
+			index = this.videos.findIndex(x => x.video_id === this._videoIdCurrent);
+		}else{
+			for (var i = this.videos.length - 1; i >= 0; i--) {
+				if(this.videos[i].video_id === this._videoIdCurrent){
+					index = i;
+					break;
+				}
+			}
+		}*/
+
+		for (var i = this.videos.length - 1; i >= 0; i--) {
+				if(this.videos[i].video_id === this._videoIdCurrent){
+					index = i;
+					break;
+				}
+			}
+
+		this.$.videoList.updateSelectedVideo(index);
+
 		return true;
 	},
 
@@ -520,7 +598,7 @@ enyo.kind({
 
 	showMenuOption: function(inSender, inEvent){
 		// this.$.menuOption.show();
-		if(this.$.mainPanel.getIndex() === 0){	//cerrar
+		/*if(this.$.mainPanel.getIndex() === 0){	//cerrar
 			this.$.menuPanel.removeClass("menu-panel");
 			this.$.mainPanel.setIndex(1);
 			// this.$.aboutAPP.setContent("");
@@ -528,7 +606,9 @@ enyo.kind({
 			this.$.menuPanel.addClass("menu-panel");
 			this.$.mainPanel.setIndex(0);
 			// this.$.aboutAPP.setContent("LuneTube");
-		}
+		}*/
+
+		this.$.pullout.toggle();
 		return true;
 	},
 
@@ -583,6 +663,7 @@ enyo.kind({
 
 	getMyPlaylistResults: function(inRequest, inResponse){
 		if(!inResponse) return;
+		if(inResponse.items.length < inResponse.pageInfo.totalResults) return;
 		// console.log("2");
 		// console.log(inResponse);
 		// console.log(this._myChannel);
@@ -683,11 +764,13 @@ enyo.kind({
 	},
 
 	panelChanged: function(){
-		/*if(this.$.panel.getIndex()>0){
-			webos.setFullScreen(true);
+		if(this.$.panel.getIndex()>0){
+			// webos.setFullScreen(true);
+			this.$.pullout.hide();
 		}else{
-			webos.setFullScreen(false);
-		}*/
+			// webos.setFullScreen(false);
+			this.$.pullout.show();
+		}
 	},
 
 	//otros items del menu APP de webos
@@ -811,8 +894,132 @@ enyo.kind({
 	},
 
 	doubleTap: function(inSender, inEvent){
-		console.log("Ha legado el evento doble");
+		console.log("Ha llegado el evento doble");
+		return true;
 	},
+
+	doLockScreen: function(inSender, inEvent){
+		console.log("Se solicita bloqueo de pantalla");
+		return true;
+	},
+
+	/*************************
+	*      Android events    *
+	**************************/
+
+	orientationChange: function(inSender, inEvent){
+        /*console.log("cambia la orientación");
+        console.log(inSender);
+        console.log(inEvent);*/
+        return true;
+    },
+
+    backPanel: function(inSender, inEvent){
+        /*console.log("Presionan el boton Atras");
+        console.log(inSender);
+        console.log(inEvent);*/
+        if(this.$.mainPanel.getIndex()===0){
+        	this.$.mainPanel.setIndex(1);
+        }else{
+        	this.$.panel.setIndex(0);
+        }
+        return true;
+    },
+
+    /*se activa el modo background
+    Se hace uso de la libreria
+    Cordova Background Plugin -> https://github.com/katzer/cordova-plugin-background-mode
+    */
+
+    cordovaReady: function(inSender, inEvent){
+		cordova.plugins.backgroundMode.setDefaults({
+		    title: "LuneTube",
+		    text: "Playing",
+		    icon: 'icon', // this will look for icon.png in platforms/android/res/drawable|mipmap
+		    color: "Cf0652", // hex format like 'F14F4D'
+		    resume: true,
+		    hidden: true,
+		    bigText: true
+		});
+		this._volume = cordova.plugins.VolumeControl;
+		// this.$.menuPanel.setDevice("android");
+        return true;
+    },
+
+    onPause: function(inSender, inEvent){
+
+   			if(this.$.player.getVideoStatus()){
+   				cordova.plugins.backgroundMode.enable();
+		        cordova.plugins.backgroundMode.on('activate', function() {
+		   			cordova.plugins.backgroundMode.disableWebViewOptimizations();
+				});
+   			}else{
+   				cordova.plugins.backgroundMode.disable();
+   			}
+		
+    	return true;
+    },
+
+    onResume: function(inSender, inEvent){
+
+    },
+
+    volumeUpButton: function(inSender, inEvent){
+		// console.log("llega el evento de volumeUpButton");
+		if(this._volume !== null){
+
+    		this._volume.getVolume(
+				function getVolSuccess(v){ // usamos el cambio de tipos a number
+					v -= 1;
+					v += 7;
+					var vol = 7;
+					vol += v;
+					console.log(typeof vol);
+					return cordova.plugins.VolumeControl.setVolume(vol);	
+				},
+				function getVolError(){
+					//Manage Error
+					console.log("error");
+			    }
+			);
+    	}
+		return true;
+	},
+
+    volumeDownButton: function(inSender, inEvent){
+    	// console.log("llega el evento de volumeDownButton");
+    	if(this._volume !== null){
+    		this._volume.getVolume(
+				function getVolSuccess(v){	// usamos el cambio de tipos a number
+					v -= 1;
+					var vol = 6;
+					vol = v - vol;
+					console.log(typeof v);
+					return cordova.plugins.VolumeControl.setVolume(v);	
+				},
+				function getVolError(){
+					//Manage Error
+					console.log("error");
+			    }
+			);
+    	}
+    	return true;
+    },
+
+	getSystemVolume: function(callback){
+		this._volume.getVolume(
+			function getVolumeSuccess(v){
+				console.log(v);
+
+				return callback(null, parseInt(v)); //relsolvemos el cambio de tipos
+			},
+			function getVolumeError(){
+				//Manage Error
+				console.log("error");
+				return callback("there is error", null);
+		    }
+		);
+	}
 
 
 	/*windowRotated: function(inSender, inEvent){

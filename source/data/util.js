@@ -367,6 +367,45 @@ function sortFormats(a, b) {
 }
 
 
+function getDashManifest(url, debug, callback) {
+  var formats = {};
+  var currentFormat = null;
+  var expectUrl = false;
+  var sax = require('sax');  
+
+  var parser = sax.parser(true);
+  parser.onerror = callback;
+  parser.onopentag = function(node) {
+    if (node.name === 'Representation') {
+      var itag = node.attributes.id;
+      var meta = FORMATS[itag];
+      if (!meta && debug) {
+        console.warn('No format metadata for itag ' + itag + ' found');
+      }
+      currentFormat = { itag: itag };
+      for (var key in meta) {
+        currentFormat[key] = meta[key];
+      }
+      formats[itag] = currentFormat;
+    }
+    expectUrl = node.name === 'BaseURL';
+  };
+  parser.ontext = function(text) {
+    if (expectUrl) {
+      currentFormat.url = text;
+    }
+  };
+  parser.onend = function() { callback(null, formats); };
+
+  request(url, function(err, res){
+    if(err){
+      return console.log(err);
+    }
+    parser.write(res).close();
+    parser.close.bind(parser);
+
+  });
+}
 
 
 

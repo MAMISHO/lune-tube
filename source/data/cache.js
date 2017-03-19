@@ -1,5 +1,5 @@
 enyo.kind({
-	name: "Cache",
+	name: "YoutubeCache",
 	kind: enyo.Component,
 	published: {
 		/*data:{

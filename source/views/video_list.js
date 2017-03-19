@@ -19,9 +19,12 @@ enyo.kind({
         onCreatePlaylist: ''
     },
     components: [
-        {kind: "List", name:"list", fit: true, touch: true, onSetupItem: "setupItem", classes:"enyo-fit",
+        {kind: "List", name:"list", fit: true,
+        // touch: true,
+        onSetupItem: "setupItem", classes:"enyo-fit",
         // enableSwipe: true,
         // onSetupSwipeItem: "setupSwipeItem",
+        touchOverscroll: false,
          components: [
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"VideoListItem", name:"videoItem"}    
@@ -164,8 +167,14 @@ enyo.kind({
             console.log("mostrar menu y quitar estylo");
         }else{*/
             // console.log(this.videoList[inEvent.index]);
-            this.bubble("onStartVideo",this.videoList[inEvent.index]);
+            return this.bubble("onStartVideo",this.videoList[inEvent.index]);
         // }
+    },
+
+    updateSelectedVideo: function(index){
+        
+        this.selected = index;
+        this.$.list.select(this.selected);
     },
 
     loadMore: function(inSender, inEvent){
