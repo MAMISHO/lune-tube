@@ -28,7 +28,7 @@ enyo.kind({
 		};
 		// console.log(localeInfo.info.locale);
 			if(typeof inSearchText === "string"){
-				if(inRelated === null){		// sin videos relacionados				
+				if(!inRelated){		// sin videos relacionados				
 					params.q = inSearchText;
 				}else{						//peticion de videos relacionados
 					params.relatedToVideoId = inRelated;
@@ -144,7 +144,7 @@ enyo.kind({
 		};
 
 		// console.log(localeInfo);
-		if(inRelated ===null){		// sin videos relacionados				
+		if(!inRelated){		// sin videos relacionados				
 				params.q = inSearchText;
 		}else{						//peticion de videos relacionados
 			params.relatedToVideoId = inSearchText;

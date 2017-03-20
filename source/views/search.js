@@ -54,6 +54,7 @@ enyo.kind({
         }
 
         this.$.acid.completeSearch();
+        this.$.searchQuery.blur();
         return true;
     },
 
