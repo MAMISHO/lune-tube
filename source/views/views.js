@@ -112,8 +112,11 @@ enyo.kind({
 		]},
 
 		// Componentes que no se ven
+		// My api de youtube
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
+
+		// Captura eventos de wwebOS
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
 		{kind: "enyo.Signals",
 			onactivate: "handleActivate",
@@ -130,7 +133,25 @@ enyo.kind({
 			onvolumedownbutton: "volumeDownButton",
 			onvolumeupbutton: "volumeUpButton"
 
-		}
+		},
+
+		/*Pantalla*/
+		{kind: "LunaService",
+			 name: "psDisplay",
+		     service: "palm://com.palm.display/control/",
+		     method: "status",
+		     onSuccess: "requestDisplayStatusSuccess",
+		     onFailure: "requestDisplayStatusFailure",
+		     onResponse: "gotResponse",
+		     subscribe: true
+		},
+
+		/**/
+		{name: "psMediaStatus", kind: "LunaService", service: "palm://com.palm.audio/", method: "media/status", onSuccess: "onSuccess_RequestMediaStatus", onFailure: "onFailure_RequestMediaStatus", subscribe: true},
+		{name: "psAVRCPStatus", kind: "LunaService", service: "palm://com.palm.keys/", method: "media/status", onSuccess: "onSuccess_RequestAVRCPStatus", onFailure: "onFailure_RequestAVRCPStatus", subscribe: true},
+		{name: "psHeadsetStatus", kind: "LunaService", service: "palm://com.palm.keys/headset/", method: "status", onSuccess: "onSuccess_RequestHeadsetStatus", onFailure: "onFailure_RequestHeadsetStatus", subscribe: true},
+		{name: "psBroadcaster", kind: "LunaService", service: "palm://com.palm.service.mediabroadcast/", method: "registerBroadcaster", onSuccess: "onSuccess_SetBroadcaster", onFailure: "onFailure_SetBroadcaster", subscribe: true},
+		{name: "psUpdateBroadcaster", kind: "LunaService", service: "palm://com.palm.service.mediabroadcast/", method: "update", onSuccess: "onSuccess_SetBroadcaster", onFailure: "onFailure_SetBroadcaster"},
 	],
 	videos:[],
 	videosRelated:[],
@@ -141,21 +162,24 @@ enyo.kind({
 	_platform: "",
 	_volume:null,
 	create:function() {
-        this.inherited(arguments);
+		this.inherited(arguments);
+	},
 
-        // enyo.load("https://s.ytimg.com/yts/jsbin/html5player-de_DE-vflR89yTY/html5player.js");
+	rendered:function() {
+        this.inherited(arguments);
 
         this.$.mainPanel.setIndex(1);
         this.$.listPanels.setIndex(0);
-		var cookie = enyo.getCookie("session_youtube");
 
+		var cookie = enyo.getCookie("session_youtube");
 		var youtube_token = enyo.getCookie("youtube_token");
 		var youtube_refresh = enyo.getCookie("youtube_refresh");
 
 
+		var token = {};
 		if(youtube_token && youtube_refresh){
 			console.log("token vigente");
-			var token = JSON.parse(cookie);
+			token = JSON.parse(cookie);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
 
@@ -163,7 +187,7 @@ enyo.kind({
 
 		}else if(!youtube_token && youtube_refresh){
 			console.log("token expirado, se refresaca el token");
-			var token = JSON.parse(cookie);
+			 token = JSON.parse(cookie);
 				myApiKey.access_token = token.access_token;
 				myApiKey.refresh_token = token.refresh_token;
 				myApiKey.login = false;
@@ -191,6 +215,19 @@ enyo.kind({
 			webos.setWindowOrientation("free");
     		regionCode = webos.localeInfo().localeRegion.toUpperCase(); //async, maybe is default at the first time
 			this.windowParamsChange();
+			
+			if(window.PalmSystem){
+				console.log("Entra a modo background");
+				PalmSystem.keepAlive(true);
+				enyo.webos.keyboard.setResizesWindow(false);
+
+				this.RequestHeadsetStatus();
+				this.RequestAVRCPStatus();
+				
+				this.$.psBroadcaster.send();
+				this.$.psMediaStatus.send({});
+
+			}
 
 		}else{//cordova platforms support. Also see cordovaReady function in this scritp
 
@@ -767,8 +804,15 @@ enyo.kind({
 		if(this.$.panel.getIndex()>0){
 			// webos.setFullScreen(true);
 			this.$.pullout.hide();
+			// enyo.webos.keyboard.forceHide();
+			if(enyo.platform.webos < 4){
+				PalmSystem.keyboardHide();
+			}
 		}else{
 			// webos.setFullScreen(false);
+			if(window.cordova){
+				screen.unlockOrientation();
+			}
 			this.$.pullout.show();
 		}
 	},
@@ -793,7 +837,9 @@ enyo.kind({
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){
-			this.$.player.pauseVideo();
+			console.log("prueba video no se pausa");
+			// this.$.player.pauseVideo(); //force background plaing
+			this.$.player.playVideo();
 		}
 		return true;
 	},
@@ -1019,7 +1065,190 @@ enyo.kind({
 				return callback("there is error", null);
 		    }
 		);
-	}
+	},
+
+
+/*Webos services*/
+
+	onSuccess_RequestMediaStatus: function(inService, inRespose){
+		this.log(inService);
+		this.log(inResponse);
+	},
+
+	RequestHeadsetStatus: function () // Subscribes to headset status service. Used for AVRCP and headset button controls.
+	{
+		this.log();
+		
+		if(window.PalmSystem)
+		{
+			this.log(this.$.psHeadsetStatus);
+			this.$.psHeadsetStatus.send({});
+		}
+		
+	},
+
+	onSuccess_RequestHeadsetStatus: function (sender, response)
+	{
+		this.log();
+		this.log(response);
+		//this.log(response.action);
+		
+		if(response.key === "headset_button" && response.state)
+		{
+			
+			switch (response.state)
+			{
+				case "single_click":
+					this.playPause();
+					break;
+				
+				case "double_click":
+					this.onClickNext();
+					break;
+			}
+			
+		}
+		
+
+	},
+
+	onFailure_RequestHeadsetStatus: function (sender, response)
+	{
+		this.log(response);
+		
+
+	},
+
+
+	RequestAVRCPStatus: function () // Subscribes to headset status service. Used for AVRCP and headset button controls.
+	{
+		this.log();
+		
+		if(window.PalmSystem)
+		{
+			this.$.psAVRCPStatus.send({});
+		}
+		
+	},
+	
+	onSuccess_RequestAVRCPStatus: function (sender, response)
+	{
+		this.log();
+		this.log(response);
+		
+		if(response.state === "down")
+		{
+				
+			switch (response.key)
+			{
+				case "next":
+					this.onClickNext();
+					break;
+					
+				case "prev":
+					this.onClickPrev();
+					break;
+					
+				case "pause":
+					this.playPause(false);
+					break;
+					
+				case "stop":
+					this.log("stop not supported");
+					this.playPause(false);
+					break;
+					
+				case "play":
+					this.playPause(true);
+					break;
+	
+				case "nextAndPlay":
+					this.log("nextAndPlays not supported");
+					
+					break;			
+					
+				case "togglePausePlay":
+					this.log("togglePausePlay");
+					this.playPause();
+					break;
+					
+				case "repeat-all":
+					this.$.Playback.setRepeatMode(1);
+					break;
+				case "repeat-track":
+					this.$.Playback.setRepeatMode(2);
+					break;
+				case "repeat-none":
+					this.$.Playback.setRepeatMode(0);
+					break;
+				case "shuffle-on":
+					this.$.Playback.shufflePlaylist(true);
+
+					break;
+				case "shuffle-off":
+					this.$.Playback.shufflePlaylist(false);
+
+					break;
+					
+				default:
+					this.log("Unknown AVRCP event: " + response.key);
+					break;
+					
+			}
+		
+		}	
+		
+		
+		
+		
+
+	},
+	
+	onFailure_RequestAVRCPStatus: function (sender, response)
+	{
+		this.log(response);
+		
+
+	},
+
+	RequestMediaStatus: function (sender, callback) // Subscribes to media status service. Currently used for setting volume slider when system media volume is changed with the HW volume rocker.
+	{
+		this.log();
+		//return true;
+		
+		this.cbMediaStatus = callback;		
+		
+		if(window.PalmSystem)
+		{
+			var req = this.$.psMediaStatus.send({});
+			req.callback = callback;
+		}
+		
+	},
+	
+	onSuccess_RequestMediaStatus: function (sender, response, request)
+	{
+		this.log();
+		
+		this.log(response.action);
+		
+		//changed for changing volume
+		//enabled for plugging in headphones
+		if(response.action === "changed" || response.action === "enabled")
+		{
+			//this.cbMediaStatus(response.volume);
+			request.callback(response.volume);
+		}
+		
+
+	},
+
+		onFailure_RequestMediaStatus: function (sender, response)
+	{
+		this.log(response);
+		
+
+	},
 
 
 	/*windowRotated: function(inSender, inEvent){

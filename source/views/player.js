@@ -233,10 +233,11 @@ enyo.kind({
 	// and make some optimization for backgrund mode.
 
 	playVideo: function(inSender, inEvent){
-
+		console.log("playVideo : " + this.status);
 		
 
 		if(this.status){
+			console.log("dentro del status");
 			// this.$.player.setPoster("");
 			this.$.player.play();
 		}
@@ -244,11 +245,19 @@ enyo.kind({
 
 	pauseVideo: function(inSender, inEvent){
 		// this.$.player.setPoster("");
+		console.log("se pausa desde el player");
 		this.status = !this.$.player.getVideo().isPaused();
 		this.$.player.pause();
 	},
 
 	statusPlay: function(inSender, inEvent){
+		this.log("******************************************");
+		this.log(inSender);
+		this.log("******************************************");
+		this.log(inEvent);
+		this.log("******************************************");
+		this.log();
+		console.log("MAndan a cambiar el estado del player");
 		this.status = true;
 		if(enyo.platform.webos < 4){
 			this.$.player.setPoster("");
@@ -277,8 +286,9 @@ enyo.kind({
         if(cordova){
         console.log("Is full screen?" + this._isFullScreen);
             if(this._isFullScreen === false){
+            	screen.lockOrientation('landscape');
                 AndroidFullScreen.immersiveMode(function(){
-                    screen.lockOrientation('landscape');
+                    
                     console.log("Landscape success");
                 },
                 function(error){console.log(error);});
