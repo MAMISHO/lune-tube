@@ -1,0 +1,26 @@
+{
+	"id":			"com.emsoft.lunetube",
+	"version":      "0.4.0",
+	"title":		"LuneTube",
+	"versions": {
+		"0.4.0" : {
+			"url" : {
+				"ipk" : "https://app.box.com/shared/static/2vojnffubfsi9hajxsqpdfj6xs3g1zzf.ipk",
+				"apk" : "https://app.box.com/shared/static/c20nnkdpdc726m0f645lj3urn4r1tntp.apk"
+			},
+			"changelog": [
+				"Add support for bluetooth headsets",
+				"Bug fixes"
+			]
+		},
+		"0.3.0" : {
+			"url": {
+				"ipk" : "https://app.box.com/shared/static/u776gx862dx8od3x5g4mfyuxhd6kv5d1.ipk",
+				"apk" : "https://app.box.com/shared/static/enbzeqhcw97fulx13oliph1yvz8t5jp9.apk"
+			},
+			"changelog": [
+				"Fix range touch in var"
+			]
+		}
+	}
+}
