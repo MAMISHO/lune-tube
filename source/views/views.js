@@ -102,8 +102,8 @@ enyo.kind({
 			{kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
 		]},
 		]},
-		{name: "messagePopup", classes: "onyx-sample-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
-			{name:"boxNotification", content:"", allowHtml:true}
+		{name: "messagePopup", classes: "onyx-sample-popup info-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
+			{name:"boxNotification", content:"", allowHtml:true, classes:"info-version"}
 		]},
 		{kind:"AppMenu", onSelect: "appMenuItemSelected", components: [
 			{content:"Paste", ontap: "doPasteText"},
@@ -115,6 +115,7 @@ enyo.kind({
 		// My api de youtube
 		{kind:"YoutubeApi", name: "youtube"},
 		{kind:"YoutubeVideo", name: "yt"},
+		{kind:"WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion"},
 
 		// Captura eventos de wwebOS
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
@@ -163,6 +164,7 @@ enyo.kind({
 	_volume:null,
 	create:function() {
 		this.inherited(arguments);
+		this.$.watchVersion.getNewVersion();
 	},
 
 	rendered:function() {
@@ -1243,14 +1245,50 @@ enyo.kind({
 
 	},
 
-		onFailure_RequestMediaStatus: function (sender, response)
+    onFailure_RequestMediaStatus: function (sender, response)
 	{
 		this.log(response);
 		
 
 	},
 
+	//se informa de una nueva versión
+	thereIsNewVersion: function(inEvent, inSender){
+		console.log("popup : mostrar nueva version");
+		console.log(inSender);
 
+		var version = inSender.version;
+		var new_version = inSender.versions[version];
+		var urls = new_version.url;
+		var changelog = new_version.changelog;
+		var url = "";
+		var changes = "";
+
+		if(enyo.platform.webos){
+			url = urls.ipk;
+		}else if(enyo.platform.android){
+			url = urls.apk;
+		}
+
+		if(changelog.length > 0){
+			var node_div = document.createElement("div");
+			var node_ul  = document.createElement("ul");
+			for (var i = 0; i < changelog.length; i++) {
+				var node_li = document.createElement("li");
+				var node_span = document.createElement("span");
+				node_span.append(changelog[i]);
+				node_li.append(node_span);
+				node_ul.append(node_li);
+			}
+			node_div.append(node_ul);
+			changes = node_div.innerHTML;
+		}
+		
+
+		this.$.boxNotification.setContent("<h2 class='info-title'>There is a new version </h2><h3 class='info-title'><a class='info-get-version' href='" +  url+ "'>LuneTube v" + version+ "</a></h3><div class='box-center box'>" + changes + "</div>");
+    	this.$.messagePopup.show();
+    	return true;
+	}
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");
 		return true;

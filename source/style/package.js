@@ -1,6 +1,7 @@
 enyo.depends(
 	//"Theme.less",	// To theme Onyx, uncomment this line, and follow the steps described in Theme.less
 	"app.css",
+	"changelog.css",
 	"comments.css",
 	"main.css",
 	"menu.css",
