@@ -41,12 +41,15 @@ enyo.kind({
 	},
 	components:[
 		{fit:true, classes:"enyo-fit", components:[
-		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu enyo-fit', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", components: [
+		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu enyo-fit', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", index:1,  components: [
 			// {kind:"LuneTube.Menu", name:"menuPanel"},
-			{content:"menu"},
+			{content:""},//old menu
 			{fit:true, classes:"enyo-fit", components:[
+
 				{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false, realtimeFit:true, onTransitionFinish: "panelChanged", components: [
+
 					{layoutKind: "FittableRowsLayout", components: [
+
 						{kind: "LuneTube.Search", name:"search"},
 						{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
 							// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
@@ -57,10 +60,13 @@ enyo.kind({
 								{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist", onCreatePlaylist:"createPlaylist"},
 								// {tag:"div", components:[
 								{layoutKind: "FittableRowsLayout", components: [
+
 									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap", name: "groupButtonVideoInfo"},
 									{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
+
 										{kind:"CommentList", name:"commentList"},
 										{kind: "videoInfo", name: "videoInfo"}
+
 									]}
 								]}
 							]}	
@@ -106,18 +112,18 @@ enyo.kind({
 			{name:"boxNotification", content:"", allowHtml:true, classes:"info-version"}
 		]},
 		{kind:"AppMenu", onSelect: "appMenuItemSelected", components: [
-			{content:"Paste", ontap: "doPasteText"},
-			{content:"Copy", ontap: "doCopyText"},
+			{content:"Paste text", ontap: "pasteLink"},
+			// {content:"Copy", ontap: "doCopyText"},
 			{content:"Lock screen", ontap:"doLockScreen"}
 		]},
 
-		// Componentes que no se ven
+		// Hiden domponents
 		// My api de youtube
-		{kind:"YoutubeApi", name: "youtube"},
-		{kind:"YoutubeVideo", name: "yt"},
-		{kind:"WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion"},
+		{kind: "YoutubeApi", name: "youtube"},
+		{kind: "YoutubeVideo", name: "yt"},
+		{kind: "WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion"},
 
-		// Captura eventos de wwebOS
+		/*Aplication events*/
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
 		{kind: "enyo.Signals",
 			onactivate: "handleActivate",
@@ -126,7 +132,7 @@ enyo.kind({
 			onApplicationRelaunch: "windowParamsChange",
 			onlowmemory:"handleLowMemory",
 			onWindowParamsChange: "windowParamsChange",
-			onorientationchange: "orientationChanged",
+			onorientationchange: "orientationChange",
 			onbackbutton: "backPanel",
 			ondeviceready: "cordovaReady",
 			onpause: "onPause",
@@ -136,7 +142,7 @@ enyo.kind({
 
 		},
 
-		/*Pantalla*/
+		/*Screen Services*/
 		{kind: "LunaService",
 			 name: "psDisplay",
 		     service: "palm://com.palm.display/control/",
@@ -147,12 +153,22 @@ enyo.kind({
 		     subscribe: true
 		},
 
-		/**/
+		/*Audio Service*/
 		{name: "psMediaStatus", kind: "LunaService", service: "palm://com.palm.audio/", method: "media/status", onSuccess: "onSuccess_RequestMediaStatus", onFailure: "onFailure_RequestMediaStatus", subscribe: true},
 		{name: "psAVRCPStatus", kind: "LunaService", service: "palm://com.palm.keys/", method: "media/status", onSuccess: "onSuccess_RequestAVRCPStatus", onFailure: "onFailure_RequestAVRCPStatus", subscribe: true},
 		{name: "psHeadsetStatus", kind: "LunaService", service: "palm://com.palm.keys/headset/", method: "status", onSuccess: "onSuccess_RequestHeadsetStatus", onFailure: "onFailure_RequestHeadsetStatus", subscribe: true},
 		{name: "psBroadcaster", kind: "LunaService", service: "palm://com.palm.service.mediabroadcast/", method: "registerBroadcaster", onSuccess: "onSuccess_SetBroadcaster", onFailure: "onFailure_SetBroadcaster", subscribe: true},
 		{name: "psUpdateBroadcaster", kind: "LunaService", service: "palm://com.palm.service.mediabroadcast/", method: "update", onSuccess: "onSuccess_SetBroadcaster", onFailure: "onFailure_SetBroadcaster"},
+
+		/*Internet Services*/
+
+		{name: "internetStatus", kind: "LunaService", service: "palm://com.palm.connectionmanager/",
+			method     : "getStatus",
+		    onSuccess  : "internetStatusFinished",
+		    onFailure  : "internetStatusFail",
+		    onResponse : "internetGotResponse",
+    		subscribe  : true
+		},
 	],
 	videos:[],
 	videosRelated:[],
@@ -160,11 +176,13 @@ enyo.kind({
 	_myChannel:null,
 	_videoIdCurrent:null,
 	// _platform: "webOS",
-	_platform: "",
+	_platform: null,
 	_volume:null,
+	_android_is_ready: false,
+	_isInternetConnectionAvailable: false,
 	create:function() {
 		this.inherited(arguments);
-		this.$.watchVersion.getNewVersion();
+		this.internetGetStatus();
 	},
 
 	rendered:function() {
@@ -173,7 +191,48 @@ enyo.kind({
         this.$.mainPanel.setIndex(1);
         this.$.listPanels.setIndex(0);
 
-		var cookie = enyo.getCookie("session_youtube");
+        this.loginAndLoadData(); //login
+		
+		/*Start webOS/ luneos config*/
+		currentOsPlatform = this.getCurrentOsPlatform();
+		console.log("Hi " + currentOsPlatform + " --> starting debug");
+		// webos.setWindowOrientation("free");
+
+		if(currentOsPlatform){ //is is webos or luneos platform
+
+			webos.setWindowOrientation("free");
+    		regionCode = webos.localeInfo().localeRegion.toUpperCase(); //async, maybe is default at the first time
+			this.windowParamsChange();
+			
+			if(window.PalmSystem){
+				console.log("Entra a modo background");
+				PalmSystem.keepAlive(true);
+				enyo.webos.keyboard.setResizesWindow(false);
+
+				this.RequestHeadsetStatus();
+				this.RequestAVRCPStatus();
+				// this.internetGetStatus();
+				
+				this.$.psBroadcaster.send();
+				this.$.psMediaStatus.send({});
+
+
+			}
+
+		}else{//cordova platforms support. Also see cordovaReady function in this scritp
+
+			enyo.dispatcher.listen(window, 'orientationchange', this.bindSafely(this.orientationChange));
+			enyo.dispatcher.listen(window, 'offline', this.bindSafely(this.onOffline));
+			enyo.dispatcher.listen(window, 'online', this.bindSafely(this.onOnline));
+		}
+
+		// this.$.watchVersion.startJob("checkupdates", enyo.bind(this, "checkupdates"),2000, "low");
+		// enyo.job("jobName", enyo.bind(this, "checkupdates"), 2000, "low");		
+		/*End webOS / luneOS config*/
+    },
+
+    loginAndLoadData: function(){
+    	var cookie = enyo.getCookie("session_youtube");
 		var youtube_token = enyo.getCookie("youtube_token");
 		var youtube_refresh = enyo.getCookie("youtube_refresh");
 
@@ -206,36 +265,10 @@ enyo.kind({
 				this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
 				this.$.menuPanel.setLogin(myApiKey.login);
 		}
-		
-		/*Start webOS/ luneos config*/
-		currentOsPlatform = this.getCurrentOsPlatform();
-		console.log("Hi " + currentOsPlatform + " --> starting debug");
-		// webos.setWindowOrientation("free");
 
-		if(currentOsPlatform){ //is is webos or luneos platform
 
-			webos.setWindowOrientation("free");
-    		regionCode = webos.localeInfo().localeRegion.toUpperCase(); //async, maybe is default at the first time
-			this.windowParamsChange();
-			
-			if(window.PalmSystem){
-				console.log("Entra a modo background");
-				PalmSystem.keepAlive(true);
-				enyo.webos.keyboard.setResizesWindow(false);
-
-				this.RequestHeadsetStatus();
-				this.RequestAVRCPStatus();
-				
-				this.$.psBroadcaster.send();
-				this.$.psMediaStatus.send({});
-
-			}
-
-		}else{//cordova platforms support. Also see cordovaReady function in this scritp
-
-			enyo.dispatcher.listen(window, 'orientationchange');
-		}
-		/*End webOS / luneOS config*/
+		/*look for update*/
+		this.checkupdates();
     },
 
     windowParamsChange: function(inSender, inEvent){
@@ -247,7 +280,7 @@ enyo.kind({
     		
     		if(typeof PalmSystem.launchParams === "string"){
     			
-    			if(PalmSystem.launchParams.length>0){
+    			if(PalmSystem.launchParams.length > 0){
     				launchParams = JSON.parse(PalmSystem.launchParams);
     			}else{
     				return true;
@@ -287,6 +320,7 @@ enyo.kind({
     		if(params.videoId){
 
     			if(params.videoId.trim().length > 0){
+
     				newVideo.video_id = params.videoId.trim();
     				this.startVideo(inSender, newVideo);
     				this.$.listPanels.setIndex(1);
@@ -295,20 +329,14 @@ enyo.kind({
 			}
 
     		if(params.url){
-    			if(params.url.trim().length > 0){
-    				var match = params.url.match("v=([a-zA-Z0-9\_\-]+)&?")[1];
-    				if(match){
-    					newVideo.video_id = match;
-	    				this.startVideo(inSender, newVideo);
-	    				this.$.listPanels.setIndex(1);
-    				}
-    			}
+    			this.playVideoFromUrl(params.url);
     			return true;
     		}
 
     		if(params.searchTerm){
-    			this.search(params.searchTerm);
-    			this.$.search.setSearchTerm(params.searchTerm);
+    			/*this.search(params.searchTerm);
+    			this.$.search.setSearchTerm(params.searchTerm);*/
+    			this.playVideoFromUrl(params.searchTerm);
     			return true;
     		}
 
@@ -321,6 +349,7 @@ enyo.kind({
 
     refreshTokenFinish: function(inSender, inEvent){
     	myApiKey.login =  true;
+    	this.query_history = "";
     	this.loadHomeFeeds();
 		this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
 		this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
@@ -344,6 +373,7 @@ enyo.kind({
     },
 
     search: function(q) {
+
     	this.$.listPanels.setIndex(0);
     	// this.queryType = "keyword";
     	this.setQueryType("keyword");
@@ -377,9 +407,14 @@ enyo.kind({
 
 		// console.log(this.videos);
 		this.$.videoList.setVideoList(this.videos);
-		this.$.panel.setIndex(0);
+
+		
 		this.$.search.setSearching(false);
 		this.$.videoList.setSearching(false);
+
+		if(!this.$.player.getVideoStatus()){
+			this.$.panel.setIndex(0);	
+		}
 	},
 
 	receiveResultsRelated: function(inRequest, inResponse){
@@ -479,6 +514,7 @@ enyo.kind({
 
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
+
 		if(this._videoIdCurrent !== video_id){
 
 			this.$.player.unload();
@@ -524,17 +560,32 @@ enyo.kind({
 			
 
 			if(this.numberOfTries === 1){ // restricted conutry
-				console.log("seccond try");
-				this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
-				this.numberOfTries++;
+
+				
+				/*Youtuebe puede restringir un video en algunos paises pero ser públicos*/
+				if (video.errorcode === 150){//video restringido en el pais actual pero publico
+					console.log("seccond try");
+					this.$.yt.getVideoRestricted().response(this, "startPlayVideo");
+					this.numberOfTries++;
+
+				}else{ //video restringido en la primera llamada, no hace falta hacer la segunda
+					console.log("third try directo saltando la segunda");
+					this.$.yt.youtubeDecryptLocalService().response(this,"decipherVideo");
+					this.numberOfTries = 3;
+				}
+				
 				return;
+
 			}else if(this.numberOfTries === 2){
+
 				console.log("third try");
 				// this.$.yt.youtubeDecipherService().response(this, "startPlayVideo"); //Service online or local NODE.JS
 				this.$.yt.youtubeDecryptLocalService().response(this,"decipherVideo");
 				this.numberOfTries++;
 				return;
+
 			}else{
+
 				this.numberOfTries=0;
 			}
 		}
@@ -555,8 +606,9 @@ enyo.kind({
 		// console.log(video);
 		// this.$.videoInfo.setVideoDescription(video[0].descriptionHtml);
 
+		this.$.panel.next();
 		this.$.player.setVideoId(video);
-		this.$.panel.setIndex(1);
+		// this.$.panel.setIndex(1);
 
 		/*Si el video no salió de la cache la insertamos*/
 		var videoCached = cache.getVideo(this._videoIdCurrent);
@@ -601,6 +653,13 @@ enyo.kind({
 	},
 
 	searchEvent: function(inSender, q){
+
+		if(!this._isInternetConnectionAvailable){
+			this.$.videoList.setVideoList([]);
+			this.$.search.setSearching(false);
+			return true;
+		}
+
 		if(this.query_history !== q){
 			this.setQuery(q);
 		}else{
@@ -803,6 +862,7 @@ enyo.kind({
 	},
 
 	panelChanged: function(){
+		console.log("Cambia el panel");
 		if(this.$.panel.getIndex()>0){
 			// webos.setFullScreen(true);
 			this.$.pullout.hide();
@@ -812,7 +872,7 @@ enyo.kind({
 			}
 		}else{
 			// webos.setFullScreen(false);
-			if(window.cordova){
+			if(this._android_is_ready){
 				screen.unlockOrientation();
 			}
 			this.$.pullout.show();
@@ -913,7 +973,7 @@ enyo.kind({
 
 	getCurrentOsPlatform: function(){
 		// var userAgent = navigator.userAgent.match(/(webOS|hpwOS)[\s\/]([\d.]+)/);
-		var userAgent = navigator.userAgent.match(/(LuneOS|webOS|hpwOS)/g);
+		/*var userAgent = navigator.userAgent.match(/(LuneOS|webOS|hpwOS)/g);
 		if(userAgent){
 			for (var i = 0; i < userAgent.length; i++) {
 				if(userAgent[i] === "LuneOS"){
@@ -923,9 +983,53 @@ enyo.kind({
 					this._platform = "webOS";
 				}
 			}
+		}*/
+		if(enyo.platform.webos >= 4){
+			this._platform = "LuneOS";
+		}else if(enyo.platform.webos < 4){
+			this._platform = "webOS";
+		}else{
+			this._platform = null;
 		}
 		return this._platform;
 	},
+
+	pasteLink: function (){
+		webos.getClipboard(enyo.bind(this, "pasteText"));
+		return true;
+	},
+
+	pasteText: function(text){
+		console.log("pasteLink - " + text);
+		this.playVideoFromUrl(text);
+
+	},
+
+	playVideoFromUrl: function(text){
+		
+		var newVideo={};
+
+		if(text.trim().length > 0){
+
+    		var match = text.match("v=([a-zA-Z0-9\_\-]+)&?")[1];
+
+    		if(match){
+
+    			newVideo.video_id = match;
+	    		this.startVideo(text, newVideo);
+	    		this.$.listPanels.setIndex(1);
+
+    		}else{
+
+    			this.search(text);
+		    	this.$.search.setSearchTerm(text);
+		    	return true;
+
+    		}
+    	}
+    	return true;
+	},
+
 
 	// Experimental
 	launchFinished: function(inSender, inResponse) {
@@ -956,20 +1060,46 @@ enyo.kind({
 	**************************/
 
 	orientationChange: function(inSender, inEvent){
-        /*console.log("cambia la orientación");
-        console.log(inSender);
-        console.log(inEvent);*/
+        console.log("cambia la orientación");
+        // console.log(inSender);
+        // console.log(inEvent);
         return true;
     },
 
+    onOffline: function(inSender, inEvent){
+    	console.log("Views -> onOffilen : on esta conectado a internet");
+    	this._isInternetConnectionAvailable = false;
+    	this.notifyInternetsrtatus();
+    	return true;
+    },
+
+    onOnline: function(inSender, inEvent){
+    	console.log("Views -> onOnline : Esta conectado a internet");
+    	this._isInternetConnectionAvailable = true;
+    	this.notifyInternetsrtatus();
+    	return true;
+    },
+
+    /*home button
+	se usa cordova plugin add https://github.com/tomloprod/cordova-plugin-appminimize.git
+    */
+
     backPanel: function(inSender, inEvent){
-        /*console.log("Presionan el boton Atras");
-        console.log(inSender);
+    	console.log("\n--------------------------------------------------------");
+        console.log("Presionan el boton Atras");
+        /*console.log(inSender);
         console.log(inEvent);*/
-        if(this.$.mainPanel.getIndex()===0){
+        console.log(enyo.json.stringify(enyo.platform));
+        console.log(this.$.panel.getIndex());
+        if(this.$.mainPanel.getIndex() === 0){
         	this.$.mainPanel.setIndex(1);
         }else{
-        	this.$.panel.setIndex(0);
+        	if(!enyo.platform.webos && this.$.panel.getIndex() === 0){
+        		console.log("Es android y se manda a minimizar");
+        		window.plugins.appMinimize.minimize();
+        	}else{
+        		this.$.panel.setIndex(0);
+        	}
         }
         return true;
     },
@@ -979,7 +1109,35 @@ enyo.kind({
     Cordova Background Plugin -> https://github.com/katzer/cordova-plugin-background-mode
     */
 
+    /*intents
+	usa https://www.npmjs.com/package/cordova-plugin-intent
+    */
+
     cordovaReady: function(inSender, inEvent){
+    	
+    	// enyo.dispatcher.listen(window, 'offline', onOffline);
+		// enyo.dispatcher.listen(window, 'online', onOnline);
+		this._android_is_ready = true;
+
+		/*Start android intents*/
+
+		window.plugins.intent.getCordovaIntent(function (Intent) {
+        	console.log(Intent);
+		}, function () {
+			console.log('Error');
+		
+		});
+
+		window.plugins.intent.setNewIntentHandler(function (Intent) {
+        	console.log(Intent);
+    	});
+
+		//End android intents
+
+
+
+  	/*android backgrund mode config*/
+    	
 		cordova.plugins.backgroundMode.setDefaults({
 		    title: "LuneTube",
 		    text: "Playing",
@@ -989,6 +1147,9 @@ enyo.kind({
 		    hidden: true,
 		    bigText: true
 		});
+
+
+		/*android volume control*/
 		this._volume = cordova.plugins.VolumeControl;
 		// this.$.menuPanel.setDevice("android");
         return true;
@@ -1072,11 +1233,13 @@ enyo.kind({
 
 /*Webos services*/
 
-	onSuccess_RequestMediaStatus: function(inService, inRespose){
+// Audio
+
+/*	onSuccess_RequestMediaStatus: function(inService, inRespose){
 		this.log(inService);
 		this.log(inResponse);
 	},
-
+*/
 	RequestHeadsetStatus: function () // Subscribes to headset status service. Used for AVRCP and headset button controls.
 	{
 		this.log();
@@ -1257,37 +1420,81 @@ enyo.kind({
 		console.log("popup : mostrar nueva version");
 		console.log(inSender);
 
-		var version = inSender.version;
-		var new_version = inSender.versions[version];
-		var urls = new_version.url;
-		var changelog = new_version.changelog;
-		var url = "";
-		var changes = "";
-
-		if(enyo.platform.webos){
-			url = urls.ipk;
-		}else if(enyo.platform.android){
-			url = urls.apk;
-		}
-
-		if(changelog.length > 0){
-			var node_div = document.createElement("div");
-			var node_ul  = document.createElement("ul");
-			for (var i = 0; i < changelog.length; i++) {
-				var node_li = document.createElement("li");
-				var node_span = document.createElement("span");
-				node_span.append(changelog[i]);
-				node_li.append(node_span);
-				node_ul.append(node_li);
-			}
-			node_div.append(node_ul);
-			changes = node_div.innerHTML;
-		}
-		
-
-		this.$.boxNotification.setContent("<h2 class='info-title'>There is a new version </h2><h3 class='info-title'><a class='info-get-version' href='" +  url+ "'>LuneTube v" + version+ "</a></h3><div class='box-center box'>" + changes + "</div>");
+    	this.createComponent({
+					kind: "infoVersion",
+					container: this.$.boxNotification,
+					info: inSender
+		});
     	this.$.messagePopup.show();
     	return true;
+	},
+
+	checkupdates: function(){
+		console.log("Prepara para mandar a chequear actualización");
+		if(this._isInternetConnectionAvailable){
+			this.log("SE manda a chequear la version");
+			this.$.watchVersion.getNewVersion();
+		}
+	},
+
+
+// Internet
+
+	internetStatusFinished : function(inSender, inResponse){
+		console.log("Views : internetStatusFinished -> llega el evento a internetStatusFinished");
+		enyo.log("getStatus success, results=" + enyo.json.stringify(inResponse));
+	},
+
+	internetStatusFail : function(inSender, inResponse){
+		console.log("Views : internetStatusFail -> llega el evento a internetStatusFail");
+		enyo.log("getStatus failure, results=" + enyo.json.stringify(inResponse));
+	},
+
+	internetGetStatus : function(inSender, inResponse){
+		if (window.PalmSystem){
+			console.log("Views : internetGetStatus -> Solicita status de internet");
+			this.$.internetStatus.send({ "subscribe": true });
+		}else{
+			if(!enyo.platform.android && !enyo.platform.webos){
+
+				this._isInternetConnectionAvailable = navigator.onLine;
+				
+				if(!navigator.onLine){ //desktop version
+					this.$.videoList.setMessage('No network connection');
+				}
+			}
+		}
+		return true;
+	},
+
+	internetGotResponse: function(inSender, inResponse){
+		if (window.PalmSystem){
+			console.log("Is internet available : " + inResponse.isInternetConnectionAvailable);
+			this._isInternetConnectionAvailable = inResponse.isInternetConnectionAvailable;
+		}
+		this.notifyInternetsrtatus();
+		return true;
+	},
+
+	notifyInternetsrtatus: function(){
+		if(!this._isInternetConnectionAvailable){
+
+			this.$.videoList.setMessage("No network connection");
+
+			if(this.$.player.getVideoStatus()){
+				this.$.player.internetConnectionHandler(this._isInternetConnectionAvailable);
+			}
+
+		}else{
+			this.$.videoList.setMessage("");
+
+			if(this.$.player.getVideoStatus()){
+				this.queryChanged();
+				this.$.player.internetConnectionHandler(this._isInternetConnectionAvailable);
+			}else{
+				this.loginAndLoadData();
+			}
+		}
 	}
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");

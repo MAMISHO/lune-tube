@@ -224,6 +224,7 @@ enyo.kind({
 	startVideo: function(inSender, inEvent){
 		if(this.currentTime > 0){
 			this.$.player.setCurrentTime(this.currentTime);
+			// this.$.player.setCurrentTime(this.$.player.getVideo().getCurrentTime());
 		}
 		return true;
 	},
@@ -327,7 +328,36 @@ enyo.kind({
 		}
 
 		this.$.player.getVideo().setCurrentTime(seconds);
+	},
+
+	internetConnectionHandler: function(play_pause){ //play -> true : pause -> false
+		console.log("internetConnectionHandler : status del player " + this.getVideoStatus());
+		console.log("internetConnectionHandler : status local " + this.status);
+		if (play_pause && this.status){
+			console.log("internetConnectionHandler : recargar el buffer");
+			console.log(this.currentTime);
+			
+			// enyo.log("los sources son : " + enyo.json.stringify(this.sources));
+			
+			
+			if(enyo.platform.webos){
+
+				this.$.player.unload();
+				this.$.player.setSources(this.sources);
+
+			}else{
+
+				this.$.player.play();
+
+			}
+		}else if(!play_pause && this.status){
+
+			this.currentTime = this.$.player.getVideo().getCurrentTime();
+			console.log("se captura el time : " + this.currentTime);
+		}
+		
 	}
+
 
 	// Se lanza cuando los datos informativos del video son cargados
 	/*loadedMetaData: function(inSender, inEvent){

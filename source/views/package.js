@@ -1,5 +1,6 @@
 enyo.depends(
 	// "app.js",
+	"info_version.js",
 	"menu.js",
 	"player.js",
 	"playlist.js",

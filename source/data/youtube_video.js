@@ -18,7 +18,8 @@ enyo.kind({
         this.inherited(arguments);
     },
 
-    startVideo: function(video_id){
+    startVideo: function(video_id){ //first try
+      console.log("first try");
       // console.log(video_id);
       this._videoId = video_id;
       this.video_id_try = video_id;
@@ -26,23 +27,26 @@ enyo.kind({
 	    var ajax = new enyo.Ajax({
 	    	url: url,
 	    	method: "GET",
+        conntentype: "text/plain",
+        handleAs: "text",
 	    	cache: false,
 	    	cacheBust: false,
-            callbackName: null,
-            overrideCallback: null
+        callbackName: null,
+        overrideCallback: null
 	    });
 
 	    ajax.response(enyo.bind(this, "startVideoResponse"));
 	    return ajax.go({video_id:video_id});
     },
 
-    getVideoRestricted: function(){
-
+    getVideoRestricted: function(){ //second try
+      // console.log("Se envia akax 2");
       var url = "https://www.youtube.com/get_video_info";
       var ajax = new enyo.Ajax({
         url: url,
         method: "GET",
         conntentype: "text/plain",
+        handleAs: "text",
         cache: false,
         cacheBust: false,
         callbackName: null,
@@ -54,6 +58,7 @@ enyo.kind({
     },
 
     startVideoResponse: function(inRequest, inResponse){
+      // console.log(inResponse);
     	if(!inResponse) return;
       return this.parseYoutubeVideoInfo(inResponse);
     },
@@ -195,6 +200,7 @@ enyo.kind({
             if (bestStream.s){
               videoIsRestricted = true;
               result.restricted = "This video is restricted by youtube. Soon we will support these videos.";
+              break;
             }
     		    var r = result;
     		    results.push(r);
@@ -203,17 +209,18 @@ enyo.kind({
 
     // this.numberOfTries = 0;
     // this.video_id_try = "";
-    // console.log(results);
+
     if(videoIsRestricted){
       // this.youtubeDecipherService(this._videoId);
       // var posterTmp;
       if(results.length > 0){
         posterTmp = results.pop().poster;
-        return {status:"fail",signature:true, posterTmp: imageHQ};
+        return {status:"fail", signature:true, posterTmp: imageHQ};
       }else{
-        return {status:"fail",signature:true};
+        return {status:"fail", signature:true};
       }
     }else{
+
       // console.log(results);
       return results;
     }
@@ -264,11 +271,15 @@ enyo.kind({
       console.log(inResponse);
     },
 
-    youtubeDecryptLocalService: function(video_id){
+    youtubeDecryptLocalService: function(video_id){ //third tryç
+      // console.log("Se envia akax 3");
       var url = "https://www.youtube.com/watch";
       var request = new enyo.Ajax({
           url: url,
           method: "GET",
+          conntentype: "text/plain",
+          handleAs: "text",
+          cache: false,
           cacheBust: false,
           callbackName: null,
           overrideCallback: null
@@ -276,6 +287,7 @@ enyo.kind({
 
       request.response(enyo.bind(this, "youtubeDecryptLocalServiceResponse"));
       request.error(enyo.bind(this, "youtubeGetBodyError"));
+
       if(video_id){
         return request.go({v:video_id});
       }else{

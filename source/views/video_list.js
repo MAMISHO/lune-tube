@@ -7,7 +7,8 @@ enyo.kind({
         searching: false,
         showMore: true,
         isPlaylist: false,
-        relatedPlaylists: ''
+        relatedPlaylists: '',
+        message:""
     },
     handlers: {
         onShowVideoMenu: "showVideoMenu",
@@ -19,7 +20,17 @@ enyo.kind({
         onCreatePlaylist: ''
     },
     components: [
-        {kind: "List", name:"list", fit: true,
+        {kind:"Control", name: "spinnerContent", fit:true, classes:"enyo-fit", components:[
+            {kind: "mochi.Spinner", name:"listSpinner", classes: "mochi-large mochi-light", center: true,
+                style:"position: absolute;top: 50%", components:[
+                    {content:"", name: "listMessage", center: true,
+                    style: "text-align: center ;width: 50%;margin-left: 25%"
+                }
+                ]
+            },
+            
+        ]},
+        {kind: "List", name:"list",
         // touch: true,
         onSetupItem: "setupItem", classes:"enyo-fit",
         // enableSwipe: true,
@@ -103,6 +114,9 @@ enyo.kind({
     platformStyle:"",
     create:function() {
         this.inherited(arguments);
+        this.$.listSpinner.addClass('middle');
+        this.$.list.setFit(false);
+        this.$.spinnerContent.setFit(true);
         /*El siguiente código es necesario para la compatibilidad con webos*/
         //descomentar antes de desplegar 
 
@@ -116,9 +130,13 @@ enyo.kind({
         }else{
             this.platformStyle = "list-item";
         }*/
-        this.platformStyle = "list-item-webos";
 
-        this.playlistChanged();
+        /*if(enyo.platform.webos < 4){*/
+
+        
+            this.platformStyle = "list-item-webos";
+            this.playlistChanged();
+            this.messageChanged();
         // this.isPlaylistChanged();
     },
 
@@ -129,6 +147,17 @@ enyo.kind({
         /*if(this._isNewList){
             console.log(this._isNewList.video_id);
         }*/
+        if(this.videoList.length < 1){
+            this.$.list.hide();
+            this.$.spinnerContent.show();
+            return true;
+        }else{
+            this.$.list.setFit(true);
+            this.$.spinnerContent.setFit(false);
+            this.$.list.show();
+            this.$.spinnerContent.hide();
+        }
+        // return true;
         this.$.searchSpinner.hide();
         this.$.list.setCount(this.videoList.length);
         if(this.videoList[0]){
@@ -404,5 +433,9 @@ enyo.kind({
         this.doAddToPlaylist({snippet:this._videoToPlaylist});
         this.hidePopup();
         return true;
+    },
+
+    messageChanged: function(){
+        this.$.listMessage.setContent(this.message);
     }
 });

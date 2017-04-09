@@ -121,6 +121,13 @@
 	background-color: rgba(211,211,211, 0.9);
 }
 
+.list-spinner{
+	border: 1px solid red;
+	vertical-align: middle;
+	margin-top: 100%;
+	font-size: 3em;
+}
+
 /*mobile*/
 @media screen and (min-width: 480px) {
     .list-item {

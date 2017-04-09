@@ -1,8 +1,21 @@
 {
 	"id":			"com.emsoft.lunetube",
-	"version":      "0.4.0",
+	"version":      "0.4.1",
 	"title":		"LuneTube",
 	"versions": {
+		"0.4.1" : {
+			"url" : {
+				"ipk" : "https://app.box.com/shared/static/qmie7y6118m4vox0f7mw2shrx00k78kw.ipk",
+				"apk" : "https://app.box.com/shared/static/linu8cd6qgmaly6x456yre8a6gbf0kk1.apk"
+			},
+			"changelog": [
+				"Play automatically when paste youtube link (Just Type webos)",
+				"Bug Fixed on menu paste option for text on webos devices",
+				"Improve video playing on video restricted",
+				"Search updates automatically",
+				"Other minors bug fixes"
+			]
+		},
 		"0.4.0" : {
 			"url" : {
 				"ipk" : "https://app.box.com/shared/static/2vojnffubfsi9hajxsqpdfj6xs3g1zzf.ipk",

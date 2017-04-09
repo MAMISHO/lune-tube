@@ -40,6 +40,7 @@ enyo.kind({
 
     imageChanged: function(){
         var imgTmp = this.getImage().replace("/s28-", "/s88-"); //get image with more resolution
+        
         if(imgTmp){
             this.$.image.setAttribute("src", imgTmp);
         }else{

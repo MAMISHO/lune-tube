@@ -292,10 +292,13 @@ function request(url, callback){
   var ajax = new enyo.Ajax({
             url: url,
             method: "GET",
+            conntentype: "text/plain",
+            handleAs: "text",
+            cache: false,
             cacheBust: false,
             callbackName: null,
             overrideCallback: null,
-            sync: true
+            sync: false
         });
 
         ajax.response(function success(inRequest, inResponse){
@@ -316,7 +319,8 @@ function request(url, callback){
           if(!inResponse) return callback("error del request", null);
           return callback(null, inResponse);
         });
-        return ajax.go();
+        // return ajax.go();
+        ajax.go();
 
 }
 
