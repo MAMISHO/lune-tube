@@ -14,5 +14,7 @@ enyo.depends(
 	"comment_item.js",
 	"comment_list.js",
 	"comment_item_reply.js",
-	"MochiGroupButton.js"
+	"MochiGroupButton.js",
+	"webos_spinner.js",
+	"custom_video.js"
 );

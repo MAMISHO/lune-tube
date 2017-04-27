@@ -6,13 +6,14 @@ enyo.kind({
     	// onRequestTimeChange: "testTime"
     	onStart:"startVideo",
     	onPlay:"statusPlay",
-    	onPause: "pauseVideo"
+    	onPause: "pauseVideo",
+    	onVideoFinished: "videoFinished",
     	// onloadedmetadata:"loadedMetaData",
     	// onloadeddata: "loadedData"
 	},
 	published: {
         videoId: "",
-        quality: "",
+        quality: "360p", //calidad por defecto. Se modificará cuando se añada la posibilidad de guardar configuraciones
         hd: null,
         sd: null,
         currentTime:0,
@@ -24,11 +25,17 @@ enyo.kind({
 			kind: "moon.VideoPlayer",
 			preload: "auto",
 			fitToWindow:true,
+			autoCloseTimeout: 5000,
 			ontap:"showControlsPlayer",
+			showPlaybackControls:false, //si este es true los demás show deberían ser true
+			showPlayPauseControl: false,
+			showFFRewindControls: false,
+			showJumpControls: false,
 			pauseIcon: "icon_pause.png",
 			jumpBackIcon: "icon_skipbackward.png",
 			playIcon:"icon_play.png",
 			jumpForwardIcon: "icon_skipforward.png",
+			// disablePlaybackControls: false,
 			// sources: [
 			// 	{src: "http://clips.vorwaerts-gmbh.de/VfE_html5.mp4", type: "video/mp4"},
 			// ],
@@ -38,6 +45,7 @@ enyo.kind({
 			onFullScreen:"fullScreen",
 			onLoadHD: 'loadHD',
 			onLoadSD: 'loadSD',
+			onChangeResolution: 'changeResolution',
 			infoComponents: [
 				{kind: "moon.VideoInfoBackground", orient: "left", background: true, fit: true, components: [
 					{kind: "moon.VideoInfoHeader",subSubTitle: "Lunetube >>"}
@@ -104,16 +112,21 @@ enyo.kind({
 	},
 */	videoIdChanged: function(inSender, inEvent) {
 	
-		this.$.player.unload();
+		// this.$.player.unload();
+		if(enyo.platform.webos < 4){
+				this.$.player.unload();//comementar para dispositivos mas potentes	
+		}
 		// this.$.player.setPoster("");
-		this.sources = [];
-		this.sd = null;
-		this.hd = null;
+		this.sources = {};
+		// this.sd = null;
+		// this.hd = null;
 		this.currentTime=0;
+		
 
-		for (var i = 0; i < this.videoId.length; i++) {
+		
 
-			if(this.videoId[i].restricted){
+			if(this.videoId[0].restricted){ //tratamos si es un video restringido restringido
+
 				var poster = this.videoId[i].poster.split("default");
 			
 				if(poster[0]){
@@ -124,10 +137,21 @@ enyo.kind({
 				this.$.player.showFSControls();
 				this.startJob("videoRestricted", function() { this.bubble("onVideoFinished",this); }, 3000);
 				return;
+
 			}
+
+		for (var i = 0; i < this.videoId.length; i++) {
 			
-			
-			if(this.videoId[i].resolution === "SD-MP4"){
+			if(this.sources.hasOwnProperty(this.videoId[i].resolution)){
+
+				this.sources[this.videoId[i].resolution].push({src: this.videoId[i].url, type: this.videoId[i].type});
+
+			}else{
+
+				this.sources[this.videoId[i].resolution] = new Array({src: this.videoId[i].url, type: this.videoId[i].type});
+
+			}
+			/*if(this.videoId[i].resolution === "SD-MP4"){
 				this.sd = {src: this.videoId[i].url, type: this.videoId[i].type};
 			}
 			if(this.videoId[i].resolution === "HD-MP4"){
@@ -135,13 +159,23 @@ enyo.kind({
 			}
 			if(this.videoId[i].title != this.$.videoInfoHeader.getSubSubTitle()){
 				this.$.videoInfoHeader.setSubSubTitle(this.videoId[0].title);
-			}
+			}*/
 		}
-		console.log(this.videoId);
+
+		// console.log(this.videoId);
+		if(this.videoId[0].title != this.$.videoInfoHeader.getSubSubTitle()){
+			this.$.videoInfoHeader.setSubSubTitle(this.videoId[0].title);
+		}
 
 		this.$.player.setAutoplay(true);
 
-		if(this.sd){
+
+		/*por defecto se inserta la resolucion 360p definida en los parámetros púbicos
+			se mantendrá la resolución elegida por el usuario por toda la sesión si existe
+			caso sontrario se elegirá la primera existente
+		*/
+
+		/*if(this.sd){
 			this.sources.push(this.sd);
 			this.quality = "SD-MP4";			
 		}else{
@@ -149,11 +183,27 @@ enyo.kind({
 				this.sources.push(this.hd);
 				this.quality = "HD-MP4";	
 			}
-		}
+		}*/
+
 		// this.$.player.unload();
 		// console.log(this.$.player.$.slider);
-		this.$.player.$.slider.setQuality(this.quality);
-		this.$.player.setSources(this.sources);
+		// console.log(this.sources);
+		// this.loadHackWebos(this.sources);
+		
+		this.$.player.$.slider.setAvailableQualities(this.sources);
+
+		// this.$.player.setSources(this.sources);
+		if(!this.sources.hasOwnProperty(this.quality)){
+			var q = Object.keys(this.sources);
+			this.setQuality(q.shift());
+			// this.$.player.$.slider.setQuality(this.quality);
+			// this.$.player.setSources(this.sources[this.quality]);
+		// }else{
+			// this.$.player.setSources(this.sources[0]);
+		}
+		this.$.player.$.slider.setQuality(this.getQuality());
+		this.$.player.setSources(this.sources[this.getQuality()]);
+		// this.$.player.setVideoSource(this.sources[this.getQuality()]);
 	},
 	
 	showControlsPlayer: function(inSender, inEvent){
@@ -169,44 +219,85 @@ enyo.kind({
 		this.$.player.showFSControls();
 	},
 
-	loadHD: function(inSender, inEvent){
+	// loadHD: function(inSender, inEvent){
 		
-		if((this.quality === "SD-MP4") && this.hd){
-			if(enyo.platform.webos < 4){
-				this.$.player.setPoster("");	
-			}
+	// 	if((this.quality === "SD-MP4") && this.hd){
+	// 		if(enyo.platform.webos < 4){
+	// 			this.$.player.setPoster("");	
+	// 		}
 			
-			this.currentTime = this.$.player.getVideo().getCurrentTime();
-			this.sources = [];
-			this.sources.push(this.hd);
-			this.quality = "HD-MP4";
+	// 		this.currentTime = this.$.player.getVideo().getCurrentTime();
+	// 		this.sources = [];
+	// 		this.sources.push(this.hd);
+	// 		this.quality = "HD-MP4";
 
-			if(enyo.platform.webos < 4){
-				this.$.player.unload();//comementar para dispositivos mas potentes	
-			}
+	// 		if(enyo.platform.webos < 4){
+	// 			this.$.player.unload();//comementar para dispositivos mas potentes	
+	// 		}
 			
-			this.$.player.setSources(this.sources);
+	// 		this.$.player.setSources(this.sources);
+	// 	}
+	// 	return true;
+	// },
+
+	// loadSD: function(inSender, inEvent){
+
+	// 	if(this.sd && this.quality === "HD-MP4"){
+	// 		if(enyo.platform.webos < 4){
+	// 			this.$.player.setPoster("");	
+	// 		}
+	// 		this.currentTime = this.$.player.getVideo().getCurrentTime();
+	// 		this.sources = [];
+	// 		this.sources.push(this.sd);
+	// 		this.quality = "SD-MP4";
+			
+	// 		if(enyo.platform.webos < 4){
+	// 			this.$.player.unload();//comementar para dispositivos mas potentes	
+	// 		}
+			
+	// 		this.$.player.setSources(this.sources);
+	// 	}
+	// 	return true;
+	// },
+
+	changeResolution: function(inSender, inEvent){
+		// console.log("Player -> changeResolution: cambia resolución");
+
+		// console.log(inEvent.quality);
+
+		if (enyo.platform.webos < 4) {
+			this.$.player.setPoster("");
 		}
-		return true;
-	},
 
-	loadSD: function(inSender, inEvent){
+		this.currentTime = this.$.player.getVideo().getCurrentTime();
+		// this.sources = [];
+		// this.sources.push(this.sd);
+		// this.quality = "SD-MP4";
+		
+		this.setQuality(inEvent.quality);
 
-		if(this.sd && this.quality === "HD-MP4"){
-			if(enyo.platform.webos < 4){
-				this.$.player.setPoster("");	
-			}
-			this.currentTime = this.$.player.getVideo().getCurrentTime();
-			this.sources = [];
-			this.sources.push(this.sd);
-			this.quality = "SD-MP4";
-			
-			if(enyo.platform.webos < 4){
-				this.$.player.unload();//comementar para dispositivos mas potentes	
-			}
-			
-			this.$.player.setSources(this.sources);
+		if (enyo.platform.webos < 4) {
+			this.$.player.unload(); //comementar para dispositivos mas potentes	
 		}
+
+		
+		/*
+			Cuando es seleccionado el source del video es solo de audio se activa el reproductor
+			de audio para reproducir el recurso
+		*/
+		if(this.quality === 'Audi'){
+			this.$.player.pause();
+			// this.$.player.unload();
+			this.$.player.setVideoSource(this.sources[this.quality]);
+			this.$.player.$.audio.play();
+		}else{
+			this.$.player.$.audio.pause();
+			// this.$.player.setSources(this.sources[this.quality]);
+			this.$.player.play();
+		}
+		
+		// this.$.player.setSources(this.sources[this.quality]);	
+
 		return true;
 	},
 
@@ -229,16 +320,23 @@ enyo.kind({
 		return true;
 	},
 
+	videoFinished: function(inSender, inEvent){
+		console.log("Player -> videoFinished : cambia estado del status" + this.status);
+		this.currentTime = 0;
+		this.status = false;
+		console.log(" a "+  this.status);
+	},
+
 
 	// at firtsly we need to see if android platform is running
 	// and make some optimization for backgrund mode.
 
 	playVideo: function(inSender, inEvent){
-		console.log("playVideo : " + this.status);
+		// console.log("playVideo : " + this.status);
 		
 
 		if(this.status){
-			console.log("dentro del status");
+			// console.log("dentro del status");
 			// this.$.player.setPoster("");
 			this.$.player.play();
 		}
@@ -246,19 +344,19 @@ enyo.kind({
 
 	pauseVideo: function(inSender, inEvent){
 		// this.$.player.setPoster("");
-		console.log("se pausa desde el player");
+		// console.log("se pausa desde el player");
 		this.status = !this.$.player.getVideo().isPaused();
 		this.$.player.pause();
 	},
 
 	statusPlay: function(inSender, inEvent){
-		this.log("******************************************");
+		/*this.log("******************************************");
 		this.log(inSender);
 		this.log("******************************************");
 		this.log(inEvent);
 		this.log("******************************************");
 		this.log();
-		console.log("MAndan a cambiar el estado del player");
+		console.log("MAndan a cambiar el estado del player");*/
 		this.status = true;
 		if(enyo.platform.webos < 4){
 			this.$.player.setPoster("");
@@ -284,7 +382,7 @@ enyo.kind({
             webos.setFullScreen(inEvent.$.imageFullscreen.fullscreen);
             
         }
-        if(cordova){
+        if(window.cordova){
         console.log("Is full screen?" + this._isFullScreen);
             if(this._isFullScreen === false){
             	screen.lockOrientation('landscape');
@@ -342,20 +440,54 @@ enyo.kind({
 			
 			if(enyo.platform.webos){
 
-				this.$.player.unload();
-				this.$.player.setSources(this.sources);
+				// this.$.player.unload();
+				// this.$.player.setSources(this.sources);
 
 			}else{
 
-				this.$.player.play();
+				// this.$.player.play();
 
 			}
+
+			/*HACK*/
+			/*var p = document.getElementsByTagName("video")[0];
+			p.load();*/
+			enyo.$.app.$.player.$.player.$.video.play();
 		}else if(!play_pause && this.status){
 
 			this.currentTime = this.$.player.getVideo().getCurrentTime();
 			console.log("se captura el time : " + this.currentTime);
 		}
 		
+	},
+
+	loadHackWebos: function(sources){ //hacer con chace porque solo funciona cuando ya esta completo
+		var source = sources.pop();
+		var req = new XMLHttpRequest();
+		req.open('GET', source.src, true);
+		req.responseType = 'blob';
+
+		req.onload = function() {
+		   // Onload is triggered even on 404
+		   // so we need to check the status code
+		   if (this.status === 200) {
+		      var videoBlob = this.response;
+		      var vid = URL.createObjectURL(videoBlob); // IE10+
+		      // Video is now downloaded
+		      // and we can set it as source on the video element
+		      // video.src = vid;
+		      // enyo.$.app.$.player.$.player.$.video.play();
+		      console.log([{src:vid, type: source.type}]);
+		      enyo.$.app.$.player.$.player.setSources([{src:vid, type: source.type}]);
+		      setSources(this.sources);
+		   }
+		};
+
+		req.onerror = function() {
+		   // Error
+		};
+
+		req.send();
 	}
 
 

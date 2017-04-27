@@ -127,7 +127,23 @@
 	margin-top: 100%;
 	font-size: 3em;
 }
-
+.lunetube-list-load-more{
+	width:100%;
+	/*background-color:rgb(211,211,211);*/
+	position: relative;
+	height: 38px;
+	text-align: center;
+}
+.list-button-more{
+	/*background-color:rgb(211,211,211);*/
+	background-color: #cf0652;
+	border-top-left-radius: 15px;
+	border-top-right-radius: 15px;
+	height: 40px;
+}
+.list-button-more > div{
+	color: #fff;
+}
 /*mobile*/
 @media screen and (min-width: 480px) {
     .list-item {

@@ -14,9 +14,12 @@ enyo.kind({
       showMore: true
     },
     components: [
-        {name:"commentUser1", kind:"FittableColumns", classes:"comment-text my-comment-box", components:[
+        {name:"commentUser1", kind:"FittableColumns", classes:"comment-text my-comment-box",components:[
+
                 {tag:"img", name:"imageUser1", attributes:{src:""}, draggable:false, style:"vertical-align: top"},
+
                 {name:"myComment1",kind: "mochi.InputDecorator", style:"vertical-align: bottom; width: 76%;position: relative", components: [
+
                     {name:"comment", kind: "onyx.RichText",
                         classes:"mochi-animated",
                         style: "width: 89%",
@@ -27,61 +30,65 @@ enyo.kind({
                         selectOnFocus:true,
                         attributes:{"onfocus":enyo.bubbler, "onBlur": enyo.bubbler}
                     },
-                    {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped",
-                    style:"height: 24px;width:24px;vertical-align: bottom; position: absolute;right: 3px;bottom: 3px"
-                    },
+
+                    {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", classes: "send-comment-button"},
 
                 ]},
-                // {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", style:"height: 24px;vertical-align: bottom"}
+
             ]},
+        {kind:"Control", name: "spinnerContent",
+        fit:true, classes:"enyo-fit",
+        components:[
+            {kind: "mochi.Spinner", name:"listSpinner", classes: "mochi-large mochi-light lunetube-center-vertical", center: true, components:[
+                    {content:"", name: "listMessage", center: true,
+                    style: "text-align: center ;width: 50%;margin-left: 25%"
+                }
+            ]},
+            
+        ]},
 		{kind: "List", name:"list", fit: true,
         // touch: true,
         touchOverscroll: false,
         onSetupItem: "setupItem", 
-        // classes:"enyo-fit", 
+        classes:"enyo-fit", 
+        style:"margin-top: 57px",
         components: [
-            /*{name:"commentUser", kind:"FittableColumns", classes:"comment-text my-comment-box", components:[
-                {tag:"img", name:"imageUser", attributes:{src:""}, draggable:false, style:"vertical-align: top"},
-                {name:"myComment",kind: "mochi.InputDecorator", style:"vertical-align: bottom; width: 76%", components: [
-                    {name:"comment", kind: "onyx.RichText",
-                        // classes:"mochi-animated",
-                        style: "width: 89%",
-                        fit:true,
-                        allowHtml:false,
-                        placeholder: "Enter your comment", onchange:"inputChanged",
-                        ontap: "tapText",
-                        attributes:{"onfocus":enyo.bubbler, "onBlur": enyo.bubbler}
-                    },
-                    {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped",
-                    style:"height: 24px;width:24px;vertical-align: bottom; position: absolute;right: 3px;bottom: 3px"
-                    },
-
-                ]},
-                // {kind: "onyx.IconButton", src: "assets/send-comment.png", ontap:"sendTapped", style:"height: 24px;vertical-align: bottom"}
-            ]},*/
-
+            {kind: "FittableRows", components:[
             {kind:"CommentItem", name:"commentItem", onOpenReplies: "openReplies", onSetReply:"sendReply"},
-            {kind:"FittableColumns", name:"acttionButtons", style:"text-align: right;padding-right: 15px", components:[
+
+            {kind:"FittableColumns", name:"acttionButtons", classes:"comments-action-buttons", components:[
+
                 {name:"likeCount",content:"",style:"font-size: 11px;vertical-align: bottom"},
                 {kind: "Image", src: "assets/icon-like.png", ontap: "iconTapped", classes:"like-comment"},
                 {kind: "Image", src: "assets/icon-unlike.png", ontap: "iconTapped", classes: "like-comment"},
                 {name:"replyButton", kind: "Image", src: "assets/icon-reply.png", ontap: "replyComment", classes: "like-comment"},
                 {name:"cancelReplyButton",kind: "Image", src: "assets/icon_cancel.png", ontap: "cancelReplyComment", classes: "like-comment"},
+
             ]},
+
             {name: "repliesList", kind: "moon.Accordion", content: "Replies", ontap: "openCloseDrawer",open: false,components: [
+            
             ]},
+            
             {name: "more", style:"width:100%;background-color:rgb(211,211,211);position: relative;height: 38px;text-align: center",ontap: "loadMore", components: [
+
                     {name: "loadMoreSpinner", kind: "Image", src: "lib/mochi/images/spinner-large-light.gif", style:"height:48px"},//, style:"display: inline-block; position: absolute;top: 0; height:48px"},
                     {name: "loadMoreButton", kind: "mochi.Button", content: "Load More +", ontap:"buttonTapped"},
+
+            ]}
             ]}
         ]}
     ],
+    _oldComment: null,
     create:function() {
         this.inherited(arguments);
         this.imageUserChanged();
         this.$.loadMoreSpinner.hide();
         this.$.cancelReplyButton.hide();
         this.isReply = false;
+        this.$.spinnerContent.hide();
+        this.$.list.setFit(false);
+        this.$.spinnerContent.setFit(true);
         // this.userNameChanged();
         // this.commentsChanged();
     },
@@ -158,20 +165,44 @@ enyo.kind({
         }else{
             this.$.commentUser1.show();
         }
+
+        if(this.comments.length < 1){
+            this.$.list.hide();
+            this.$.spinnerContent.show();
+            return true;
+        }else{
+            // this.$.list.setFit(true);
+            // this.$.spinnerContent.setFit(false);
+            this.$.list.show();
+            this.$.spinnerContent.hide();
+        }
+
+        this.$.spinnerContent.hide();
+
         this.isReply = false;
         this.$.loadMoreSpinner.hide();
         this.$.loadMoreButton.show();
-        /*if(this.comments.length === 0){
-            var flag = {empty:true};
-            this.comments = [];
-            this.comments.push(flag);
-        }*/
-        // console.log(this.comments);
-        // console.log(this.comments.length);
-        // console.log(this.showMore);
+
         this.$.list.setCount(this.comments.length);
-    	this.$.list.refresh();
-        // this.render();
+
+        if(this._oldComment){ // comprueba que hay comentarios anteriores
+
+                if(this._oldComment.snippet.videoId === this.comments[0].snippet.videoId){
+                    console.log("refresca");
+                    this.$.list.refresh();
+
+                }else{
+                    console.log("resetea 1");
+                    this.$.list.reset();
+                }
+
+            }else{
+                console.log("resetea 2");
+                this.$.list.reset();    
+            }
+
+        this._oldComment = this.comments[0];
+
     },
 
     /*userNameChanged: function(){
@@ -187,15 +218,19 @@ enyo.kind({
         // this.$.comment.focus();
         // this.$.myComment.removeClass("mochi-focused");
     },*/
+
     imageUserChanged: function(){
         // this.$.imageUser.setSrc(this.imageUser);
         // this.$.imageUser.setAttribute("src", this.imageUser);
         this.$.imageUser1.setAttribute("src", this.imageUser);
     },
+
     sendTapped: function(inSender, inEvent){
 
 
         var comment = this.$.comment.getValue();
+        this.$.comment.setValue("");
+        this.$.comment.render();
 
         // Hack to plain text from Rich text
         var div = document.createElement("div");
@@ -207,14 +242,12 @@ enyo.kind({
             comment = comment.trim();
         }
 
-        if(this.isReply){
-            this.sendReply(this.lastReply, comment);
-            this.$.comment.setValue("");
-            return true;
-        }
-
         if(comment.length > 0){
 
+        if(this.isReply){
+            this.sendReply(this.lastReply, comment);
+            return true;
+        }
 
             var myComment = {
                 snippet:{
@@ -228,7 +261,7 @@ enyo.kind({
                 }
             };
             // console.log(myComment);
-            this.$.comment.setValue("");
+            
             if(this.comments[0].empty){
                 this.comments.shift();
             }
@@ -255,8 +288,8 @@ enyo.kind({
         c.snippet.snippet.parentId = this.comments[index].id;
         // console.log(c);
         this.bubble("onSetReply",c);
-        if(this.comments[index].replies){
-            var newReply = {
+
+        var newReply = {
                 snippet: 
                 {
                     authorProfileImageUrl: this.getImageUser(),
@@ -264,7 +297,14 @@ enyo.kind({
                     authorDisplayName: this.getUserName()
                 }
             };
+
+        if(this.comments[index].replies){ // si existen comentarios
+            
             this.comments[index].replies.comments.unshift(newReply);
+        }else{
+            var obj = {comments:[]};
+            this.comments[index].replies = obj;
+            this.comments[index].replies.comments.push(newReply);
         }
 
         // this.$.commentItem.hideTextBox();
@@ -272,6 +312,7 @@ enyo.kind({
         this.$.replyButton.show();
         this.$.list.renderRow(index);
         this.commentsChanged();
+        this.$.list.render();
         return true;
     },
 

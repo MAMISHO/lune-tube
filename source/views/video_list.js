@@ -21,13 +21,11 @@ enyo.kind({
     },
     components: [
         {kind:"Control", name: "spinnerContent", fit:true, classes:"enyo-fit", components:[
-            {kind: "mochi.Spinner", name:"listSpinner", classes: "mochi-large mochi-light", center: true,
-                style:"position: absolute;top: 50%", components:[
+            {kind: "mochi.Spinner", name:"listSpinner", classes: "mochi-large mochi-light lunetube-center-vertical", center: true, components:[
                     {content:"", name: "listMessage", center: true,
                     style: "text-align: center ;width: 50%;margin-left: 25%"
                 }
-                ]
-            },
+            ]},
             
         ]},
         {kind: "List", name:"list",
@@ -40,12 +38,12 @@ enyo.kind({
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"VideoListItem", name:"videoItem"}    
             ]},
-            {name: "more", style:"width:100%;background-color:rgb(211,211,211);position: relative;height: 38px;text-align: center;",ontap: "loadMore", components: [
+            {name: "more", classes:"lunetube-list-load-more",ontap: "loadMore", components: [
                 /*{kind:"onyx.Button", content:"Load More +", classes:"list-load-more", components:[
                     {content:"Load More + "},
                     {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;top: 0"}
                 ]}*/
-                {kind: "mochi.Button", content: "Load More +", ontap:"buttonTapped"},
+                {kind: "mochi.Button", content: "Load More +", ontap:"buttonTapped", classes:"list-button-more"},
                 {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", style:"display: inline-block; position: absolute;top: 0;height: 38px"}
             ]}
         ],
@@ -59,6 +57,7 @@ enyo.kind({
             // {content:"..."},
             {kind: "mochi.ContextualPopup", name:"menu",
             title:"Add To",
+            style:"left: 60px !important",
             floating:true,
             actionButtons:[
                     {content:"watch later", name:"later_button"},

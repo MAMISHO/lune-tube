@@ -33,6 +33,14 @@
 	margin-top: 0;
 	margin-bottom: 0;
 }
+.send-comment-button{
+	height: 24px; width:24px; vertical-align: bottom; position: absolute;right: 3px;bottom: 3px;
+}
+.comments-action-buttons{
+	/*text-align: right;padding-right: 15px; height: 24px;*/
+	width: 100%;
+	text-align: right;
+}
 .mochi-button-base{
 	margin: 0;
 	font-size: 13px !important;

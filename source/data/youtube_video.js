@@ -127,11 +127,20 @@ enyo.kind({
     //
     
     var formats = [
-      '17', // 144p 3GP
-      '36', // 240p 3GP
-      '43', // 360p WebM
-      '18', // 360p H.264
-      '22' //720 HD
+      '17',   // 144p 3GP
+      '36',   // 240p 3GP,
+      '133',  // 240p DASH-MP4
+      '43',   // 360p WebM
+      '18',   // 360p HD-H.264 (MP4)
+      '134',  // 360p HD-H.264 (DASH-MP4)
+      '44',   // 480p WebM
+      '135',  // 480p HD-DASH-MP4
+      '45',   // 720p WebM
+      '22',   // 720p HD-MP4
+      '136',  // 720p HD-DASH-MP4
+      '37',   // 1080p HD-MP4
+      '46',   // 1080p HD-WebM
+      '38',   // 3072p HD-MP4
     ];
     // console.log(streams);
     // Sort the array of stream descriptions in order of format
@@ -161,9 +170,17 @@ enyo.kind({
   	      // throw Error('No supported video formats');
   	      // console.log('No supported video formats');
   	    // }else{
+        //
+        // 
+            
+            if (bestStream.s){
+              videoIsRestricted = true;
+              result.restricted = "This video is restricted by youtube. Soon we will support these videos.";
+              break;
+            } 
           
           // send resolution
-            if(bestStream.itag === '22'){
+            /*if(bestStream.itag === '22'){
               result.resolution = "HD-MP4";
             }else if(bestStream.itag === '18'){
               result.resolution = "SD-MP4";
@@ -171,15 +188,16 @@ enyo.kind({
               result.resolution = "SD-WEBM";
             }else{
               result.resolution = "SD-3GP";
-            }
+            }*/
 
 
     		    result.url = bestStream.url + '&signature=' + (bestStream.sig || '');
-    		    result.type = bestStream.type;
+    		    // result.type = bestStream.type;
     		    // Strip codec information off of the mime type
-    		    if (result.type && result.type.indexOf(';') !== -1) {
+    		    
+            /*if (result.type && result.type.indexOf(';') !== -1) {
     		      result.type = result.type.split(';', 1)[0];
-    		    }
+    		    }*/
 
     		    if (params.title) {
     		      result.title = params.title.replace(/\+/g, ' ');
@@ -189,19 +207,16 @@ enyo.kind({
     		      result.duration = params.length_seconds;
     		    }
 
-    		    if (params.thumbnail_url) {
-    		      result.poster = params.thumbnail_url;
-    		    }
-
             if(params.iurl){
               imageHQ = params.iurl;
             }
 
-            if (bestStream.s){
-              videoIsRestricted = true;
-              result.restricted = "This video is restricted by youtube. Soon we will support these videos.";
-              break;
-            }
+            var quality = this.mapQualityVideo(bestStream);
+            result.resolution    = quality.resolution;
+            result.quality_label = quality.quality_label;
+            result.type          = quality.type;
+
+
     		    var r = result;
     		    results.push(r);
   		  }
@@ -335,7 +350,46 @@ enyo.kind({
         return {error:true, message:"No se ha encontrado videos"};
       }
       // console.log(info.description);
-      var formats = info.formats;
+
+      var formats_compatibles = [
+      '139',  //audio
+      '140',
+      '141',  
+      // '17',   // 144p 3GP
+      '160',  // 144p MP4
+      '264',  // 144p DASH-MP4
+      '36',   // 240p 3GP,
+      '133',  // 240p DASH-MP4
+      '43',   // 360p WebM
+      '18',   // 360p HD-H.264 (MP4)
+      '134',  // 360p HD-H.264 (DASH-MP4)
+      '44',   // 480p WebM
+      '135',  // 480p HD-DASH-MP4
+      '45',   // 720p WebM
+      '22',   // 720p HD-MP4
+      // '136',  // 720p HD-DASH-MP4
+      '37',   // 1080p HD-MP4
+      '46',   // 1080p HD-WebM
+      '38',   // 3072p HD-MP4
+    ];
+
+    //filtramos los formatos permitidos
+      var formats = info.formats.filter(function findFormatCompatible(v){
+                            if(v.itag){
+                                if(formats_compatibles.indexOf(v.itag) > -1){
+                                  return v;
+                                }
+                            }
+                            // return;
+                      // var x = v.itag ? formats.indexOf(a.itag): return ;
+                    });
+
+      // ordenamos los formatos para el player
+      formats.sort(function(a, b) {
+        var x = a.itag ? formats.indexOf(a.itag) : -1;
+        var y = b.itag ? formats.indexOf(b.itag) : -1;
+        return y - x;
+      });
         var videos = [];
 
         for (var i = 0; i < formats.length; i++) {
@@ -354,7 +408,7 @@ enyo.kind({
             v.descriptionHtml = info.description[0];
           }
 
-          switch(formats[i].itag){
+          /*switch(formats[i].itag){
 
             case "18":
               v.resolution = "SD-MP4";
@@ -383,7 +437,11 @@ enyo.kind({
                 }
 
             break;
-          }
+          }*/
+          var quality = this.mapQualityVideo(formats[i]);
+          v.resolution    = quality.resolution;
+          v.quality_label = quality.quality_label;
+          v.type          = quality.type;
 
           videos.push(v);
         }
@@ -565,5 +623,123 @@ enyo.kind({
 
         });
       }
+    },
+
+    mapQualityVideo: function(item){
+      var q = {
+                resolution:"",
+                quality_label:"",
+                type: ""
+              };
+
+      switch(item.itag){
+      // case '17':
+      case '160':
+      case '264':
+          if(item.quality){
+            q.resolution = '144p';
+          }
+
+          if(!item.quality_label){
+            q.quality_label = '144p';
+          }
+
+          if(item.resolution){
+            q.resolution = item.resolution;
+          }
+          break;
+      case '36':
+          if(item.quality){
+            q.resolution = '240p';
+          }
+
+          if(!item.quality_label){
+            q.quality_label = '240p';
+          }
+
+          if(item.resolution){
+            q.resolution = item.resolution;
+          }
+          break;
+      case '43':
+          if(item.quality){
+            q.resolution = '360p';
+          }
+
+          if(!item.quality_label){
+            q.quality_label = '360p';
+          }
+
+          if(item.resolution){
+            q.resolution = item.resolution;
+          }
+          break;
+      case '18':
+          if(item.quality){
+            q.resolution = '360p';
+          }
+
+          if(!item.quality_label){
+            q.quality_label = '360p';
+          }
+
+          if(item.resolution){
+            q.resolution = item.resolution;
+          }
+          break;
+      case '22':
+          if(item.quality){
+            q.resolution = '720p';
+          }
+
+          if(!item.quality_label){
+            q.quality_label = '720p';
+          }
+
+          if(item.resolution){
+            q.resolution = item.resolution;
+          }
+          break;
+      case '136':
+          if(item.quality){
+            q.resolution = '720p';
+          }
+
+          if(!item.quality_label){
+            q.quality_label = '720p';
+          }
+
+          if(item.resolution){
+            q.resolution = item.resolution;
+          }
+          break;
+      case '139':
+      case '140':
+      case '141':
+          // if(item.quality){
+            q.resolution = 'Audi';
+          // }
+
+          if(!item.quality_label){
+            q.quality_label = '100p';
+          }
+
+          /*if(item.resolution){
+            q.resolution = item.resolution;
+          }*/
+          break;
+      default:
+            q.quality_label = item.quality_label;
+            q.resolution = "Auto";
+      }
+
+      if(item.type){
+
+        // q.type = item.type.split(';', 1)[0];  
+        q.type = item.type;  
+      }
+      
+
+      return q;
     }
 });

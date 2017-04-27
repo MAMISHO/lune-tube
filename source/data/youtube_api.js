@@ -64,6 +64,10 @@ enyo.kind({
 				v.views = "",
 				v.time = data[i].snippet.publishedAt.split("T")[0];
 				v.description = data[i].snippet.description;
+
+				if(inResponse.nextPageToken){
+					v.nextPage = inResponse.nextPageToken;	
+				}
 				
 				/*var vevo = v.chanel.search("VEVO");
 				if(vevo === -1){
@@ -186,7 +190,7 @@ enyo.kind({
 
 		if(this.nextPage){
 			params.pageToken = this.nextPage;
-			params.maxResults = 50;
+			params.maxResults = 15;
 		}
 
 		var request = new enyo.Ajax({
@@ -238,6 +242,10 @@ enyo.kind({
 				
 				if(data[i].snippet.thumbnails){
 					v.image = data[i].snippet.thumbnails.medium.url;
+				}
+
+				if(inResponse.nextPageToken){
+						v.nextPage = inResponse.nextPageToken;	
 				}
 
 				if(data[i].snippet.type !== "subscription" && data[i].snippet.type !== "playlistItem" && ant !== v.video_id && v.image)
@@ -294,7 +302,7 @@ enyo.kind({
 		// console.log(inRequest);
 		// console.log(inResponse);
 		if(!inResponse) return;
-		console.log(inResponse);
+		// console.log(inResponse);
 		if(inResponse.access_token){
 			myApiKey.access_token = inResponse.access_token;
 			var ck = {
@@ -372,7 +380,7 @@ enyo.kind({
 			maxResults: 50,
 			fields: "etag,eventId,items,kind,nextPageToken,pageInfo,prevPageToken,tokenPagination,visitorId"
 		};
-		console.log(nextPage);
+		// console.log(nextPage);
 		if(nextPage){
 			params.pageToken = nextPage;
 		}
@@ -441,7 +449,7 @@ enyo.kind({
 		var params={
 			part: "id,snippet, status",
 			playlistId: id,
-			maxResults: 15,
+			maxResults: 50,
 		};
 
 		var request = new enyo.Ajax({
@@ -466,6 +474,7 @@ enyo.kind({
 			if( typeof inResponse === "string"){
 				return {error:"maxResults"};
 			}
+
 			this.nextPage = inResponse.nextPageToken;
 			var videos = [];
 			var data = inResponse.items;
@@ -483,6 +492,10 @@ enyo.kind({
 					v.time = data[i].snippet.publishedAt.split("T")[0];
 					v.description = data[i].snippet.description;
 					v.playlistItemId = data[i].id;
+
+					if(inResponse.nextPageToken){
+						v.nextPage = inResponse.nextPageToken;	
+					}
 					/*var vevo = v.chanel.search("VEVO");
 					if(vevo === -1){
 						videos.push(v);

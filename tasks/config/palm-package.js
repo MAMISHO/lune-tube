@@ -25,8 +25,10 @@ module.exports = function(grunt) {
         },
         android: {
             command: [
-                'rm -r /Users/developer/Desarrollo/movil/lune-tube/platforms/android/assets/www/build/',
-                'cp -r ./deploy/build/ /Users/developer/Desarrollo/movil/lune-tube/platforms/android/assets/www/build/'
+                'rm -r /Users/developer/Desarrollo/movil/lune-tube/www/*',
+                'cp -r ./deploy/* /Users/developer/Desarrollo/movil/lune-tube/www/',
+                '(cd /Users/developer/Desarrollo/movil/lune-tube; cordova build android)',
+                '(cd /Users/developer/Desarrollo/movil/lune-tube; cordova run android)'
             ].join('&&')
         },
         default:{

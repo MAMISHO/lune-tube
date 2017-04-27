@@ -33,9 +33,9 @@ enyo.kind({
     create:function() {
         this.inherited(arguments);
         // this.$.myComment.hide();
-        this.imageChanged();
+        /*this.imageChanged();
         this.commentChanged();
-        this.userChanged();
+        this.userChanged();*/
     },
 
     imageChanged: function(){

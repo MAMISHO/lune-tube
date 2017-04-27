@@ -180,9 +180,20 @@ enyo.kind({
 	_volume:null,
 	_android_is_ready: false,
 	_isInternetConnectionAvailable: false,
+	_loadCompleted: false,
 	create:function() {
 		this.inherited(arguments);
+		/*if (enyo.platform.webos < 4){
+			this.$.panel.realtimeFit = false;
+		}*/
 		this.internetGetStatus();
+		if(enyo.platform.safari){
+			console.log("Es safari");
+			// this.internetGetStatus();
+			enyo.dispatcher.listen(window, 'orientationchange', this.bindSafely(this.orientationChange));
+			enyo.dispatcher.listen(window, 'offline', this.bindSafely(this.onOffline));
+			enyo.dispatcher.listen(window, 'online', this.bindSafely(this.onOnline));
+		}
 	},
 
 	rendered:function() {
@@ -191,7 +202,7 @@ enyo.kind({
         this.$.mainPanel.setIndex(1);
         this.$.listPanels.setIndex(0);
 
-        this.loginAndLoadData(); //login
+        // this.loginAndLoadData(); //login
 		
 		/*Start webOS/ luneos config*/
 		currentOsPlatform = this.getCurrentOsPlatform();
@@ -215,16 +226,23 @@ enyo.kind({
 				
 				this.$.psBroadcaster.send();
 				this.$.psMediaStatus.send({});
-
+				this.internetGetStatus();
 
 			}
 
-		}else{//cordova platforms support. Also see cordovaReady function in this scritp
-
-			enyo.dispatcher.listen(window, 'orientationchange', this.bindSafely(this.orientationChange));
-			enyo.dispatcher.listen(window, 'offline', this.bindSafely(this.onOffline));
-			enyo.dispatcher.listen(window, 'online', this.bindSafely(this.onOnline));
 		}
+
+		// if(enyo.platform.safari){
+		// 	this.internetGetStatus();
+		// }
+
+		// else{//cordova platforms support. Also see cordovaReady function in this scritp
+
+			// enyo.dispatcher.listen(window, 'orientationchange', this.bindSafely(this.orientationChange));
+			// enyo.dispatcher.listen(window, 'offline', this.bindSafely(this.onOffline));
+			// enyo.dispatcher.listen(window, 'online', this.bindSafely(this.onOnline));
+		// }
+		// this.internetGetStatus();
 
 		// this.$.watchVersion.startJob("checkupdates", enyo.bind(this, "checkupdates"),2000, "low");
 		// enyo.job("jobName", enyo.bind(this, "checkupdates"), 2000, "low");		
@@ -232,6 +250,9 @@ enyo.kind({
     },
 
     loginAndLoadData: function(){
+
+    	if(this._loadCompleted) return true;
+
     	var cookie = enyo.getCookie("session_youtube");
 		var youtube_token = enyo.getCookie("youtube_token");
 		var youtube_refresh = enyo.getCookie("youtube_refresh");
@@ -269,6 +290,7 @@ enyo.kind({
 
 		/*look for update*/
 		this.checkupdates();
+		this._loadCompleted = true; //data is complete loaded
     },
 
     windowParamsChange: function(inSender, inEvent){
@@ -371,18 +393,23 @@ enyo.kind({
     	this.$.youtube.getActivities().response(this, "receiveResults");
     	this.videoDetailGroupReset(true);
     },
-
+    /**
+     * @q  {string} palabra de búsqueda
+     * @return {[type]}
+     */
     search: function(q) {
+		// if (/\S/.test(this.query)) {
 
-    	this.$.listPanels.setIndex(0);
-    	// this.queryType = "keyword";
-    	this.setQueryType("keyword");
-    	if(myApiKey.login){
-    		this.$.youtube.searchAuth(q).response(this, "receiveResults");
-    	}else{
-    		this.$.youtube.search(q).response(this, "receiveResults");
-    	}
-    	this.videoDetailGroupReset(true);
+			this.$.listPanels.setIndex(0);
+			// this.queryType = "keyword";
+			this.setQueryType("keyword");
+			if (myApiKey.login) {
+				this.$.youtube.searchAuth(q).response(this, "receiveResults");
+			} else {
+				this.$.youtube.search(q).response(this, "receiveResults");
+			}
+			this.videoDetailGroupReset(true);
+		// }
 	},
 
 	receiveResults: function(inRequest, inResponse){
@@ -390,12 +417,16 @@ enyo.kind({
 		
 		// console.log(inResponse);
 		
-		if(inResponse.error){
+		if(inResponse[0].nextPage){
+			this.$.videoList.setShowMore(true);
+		}else if (inResponse.error){
+			
 			console.log(inResponse.error);
 			this.$.videoList.setShowMore(false);
 			inResponse = [];
+
 		}else{
-			this.$.videoList.setShowMore(true);
+			this.$.videoList.setShowMore(false);
 		}
 
 		if(this.getQuery() !== this.query_history){
@@ -434,6 +465,7 @@ enyo.kind({
 			this.$.commentList.setShowMore(false);
 			// inResponse.items = [];
 		}else{
+
 			this.$.commentList.setShowMore(true);
 		}
 		
@@ -454,8 +486,18 @@ enyo.kind({
 		}
 
 		this.$.commentList.setComments(aux);
+
+		/*console.log(this.$.commentList.getUserName());
+		var userName = this.$.commentList.getUserName();
+		if(!userName){
+			this.$.commentList.setImageUser(this.$.menuPanel.getImageUser());
+			this.$.commentList.setUserName(this.$.menuPanel.getStatus());
+		}*/
 		this.$.commentList.setImageUser(this.$.menuPanel.getImageUser());
 		this.$.commentList.setUserName(this.$.menuPanel.getStatus());
+		// this.$.commentList.render();
+		// this.$.commentList.$.list.render();
+		
 	},
 
 	// recive las estadisticas de los videos de la consulta actual y los actualiza en la lista de videos
@@ -521,7 +563,8 @@ enyo.kind({
 			if(video.image_high){
 				this.$.player.setPosterTmp(video.image_high);
 			}
-			this.$.panel.setIndex(1);
+			// this.$.panel.setIndex(1);
+			this.$.panel.next();
 			this.$.player.startVideoPlay();
 
 			/*	antes de realizar la peticion revisamos si ya tenemos los datos del
@@ -537,8 +580,8 @@ enyo.kind({
 			}else{ /*En el caso de no tener el video en la cache, lanzamos la petición*/
 				
 				this.numberOfTries++; //numero de intentos de reproducir
-				return this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
-				// this.$.yt.youtubeDecryptLocalService(video_id).response(this,"decipherVideo");
+				// return this.$.yt.startVideo(video_id).response(this, "startPlayVideo");
+				this.$.yt.youtubeDecryptLocalService(video_id).response(this,"decipherVideo");
 			}
 
 		}
@@ -597,7 +640,10 @@ enyo.kind({
 				this.$.videoInfo.setVideoDescription(video[0].descriptionHtml);
 			}
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
-			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
+			this.$.commentList.setComments([]);
+			this.$.infoCommentPanel.setIndex(1);
+			this.$.groupButtonVideoInfo.infoSelected();
+			// this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
 			// this.$.videoDetailGroup.show();
 			this.videoDetailGroupReset(false);
 		}
@@ -606,7 +652,7 @@ enyo.kind({
 		// console.log(video);
 		// this.$.videoInfo.setVideoDescription(video[0].descriptionHtml);
 
-		this.$.panel.next();
+		// this.$.panel.next();
 		this.$.player.setVideoId(video);
 		// this.$.panel.setIndex(1);
 
@@ -619,7 +665,7 @@ enyo.kind({
 
 
 		/*actualizamos el video que se esta reproduciendo en la lista*/
-		console.log(this.videos);
+		// console.log(this.videos);
 		var index = 0;
 		/*if(!!Object.assign){ // si el navegador soporta ES6
 			index = this.videos.findIndex(x => x.video_id === this._videoIdCurrent);
@@ -669,6 +715,7 @@ enyo.kind({
 	},
 
 	searchFromUrl: function(inSender, url){
+		console.log("llega url");
 		this.$.listPanels.setIndex(1);
     	this.startVideo(inSender, {video_id: url});
 		this.$.search.setSearching(false);
@@ -757,6 +804,10 @@ enyo.kind({
 		var dataChannel = inResponse.items[0].snippet;
 		this.$.menuPanel.setImageUser(dataChannel.thumbnails.default.url);
 		this.$.menuPanel.setStatus(dataChannel.title);
+		
+		/*metemos los datos de ususario para que pueda comentar*/
+		this.$.commentList.setImageUser(dataChannel.thumbnails.default.url);
+		this.$.commentList.setUserName(dataChannel.title);
 	},
 
 	getMyPlaylistResults: function(inRequest, inResponse){
@@ -829,6 +880,29 @@ enyo.kind({
 		return true;
 	},
 
+	/*
+	cargamos los comentarios cuando el panel es mostrado
+	Es necesario comprobar que los comentarios no a sido cargados aún, caso contrario no se hace nada
+	*/
+	loadComments: function(){
+		
+		var oldComments = this.$.commentList.getComments();
+
+		if(oldComments.length > 0){
+
+			if(oldComments[0].snippet){
+
+				if(oldComments[0].snippet.videoId !== this._videoIdCurrent){
+
+					this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
+
+				}
+			}
+		}else{
+			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
+		}
+	},
+
 	radioGroupTap: function(inSender, inEvent){
 		if(inSender.active){
 			if(inSender.active.index){
@@ -838,6 +912,7 @@ enyo.kind({
 	},
 
 	videoFinished: function(inSender, inEvent){
+		console.log("Views -> videoFinished: reproduce el sieguinet video ");
 		var nextId = null;
 		for (var i = 0; i < this.videos.length; i++) {
 			if(this.videos[i].video_id === this._videoIdCurrent){
@@ -850,9 +925,8 @@ enyo.kind({
 		// console.log(nextId);
 		if(nextId){
 			this.startVideo(inSender, nextId);
-		}else{
-			return true;
 		}
+		return true;
 	},
 
 	videoDetailGroupReset: function(option){
@@ -861,21 +935,41 @@ enyo.kind({
 		this.$.commentButton.setDisabled(option);
 	},
 
-	panelChanged: function(){
-		console.log("Cambia el panel");
-		if(this.$.panel.getIndex()>0){
-			// webos.setFullScreen(true);
-			this.$.pullout.hide();
-			// enyo.webos.keyboard.forceHide();
-			if(enyo.platform.webos < 4){
-				PalmSystem.keyboardHide();
-			}
-		}else{
-			// webos.setFullScreen(false);
-			if(this._android_is_ready){
-				screen.unlockOrientation();
-			}
-			this.$.pullout.show();
+	panelChanged: function(inSender, inEvent){		
+		/*console.log("Cambia el panel");
+		console.log(inEvent.originator.name);*/
+		switch(inEvent.originator.name) {
+		    case "panel":
+
+		        if(this.$.panel.getIndex()>0){
+					// webos.setFullScreen(true);
+					this.$.pullout.hide();
+					// enyo.webos.keyboard.forceHide();
+					if(enyo.platform.webos < 4){
+						PalmSystem.keyboardHide();
+					}
+				}else{
+					// webos.setFullScreen(false);
+					/*if(this._android_is_ready){
+						screen.unlockOrientation();
+					}*/
+					this.$.pullout.show();
+				}
+
+		        break;
+
+		    case "listPanels":
+		    this.$.videoDetailGroup.setActive(this.$.videoDetailGroup.children[this.$.listPanels.getIndex()]);
+		    case "infoCommentPanel":
+		        // console.log("llama a comments");
+		    	if(this.$.listPanels.getIndex() === 2 && this.$.infoCommentPanel.getIndex() === 0){
+		    		
+		    		this.loadComments();
+		    	}
+
+		        break;
+		    default:
+		        
 		}
 	},
 
@@ -1067,7 +1161,7 @@ enyo.kind({
     },
 
     onOffline: function(inSender, inEvent){
-    	console.log("Views -> onOffilen : on esta conectado a internet");
+    	console.log("Views -> onOffilen : NO esta conectado a internet");
     	this._isInternetConnectionAvailable = false;
     	this.notifyInternetsrtatus();
     	return true;
@@ -1114,6 +1208,13 @@ enyo.kind({
     */
 
     cordovaReady: function(inSender, inEvent){
+
+    	// Android events
+    	console.log("cordova es Ready");
+		/*enyo.dispatcher.listen(window, 'orientationchange', this.bindSafely(this.orientationChange));
+		enyo.dispatcher.listen(window, 'offline', this.bindSafely(this.onOffline));
+		enyo.dispatcher.listen(window, 'online', this.bindSafely(this.onOnline));*/
+		// this.internetGetStatus();
     	
     	// enyo.dispatcher.listen(window, 'offline', onOffline);
 		// enyo.dispatcher.listen(window, 'online', onOnline);
@@ -1173,8 +1274,13 @@ enyo.kind({
 
     },
 
+
+    /*audio con
+	https://github.com/manusimpson/Phonegap-Android-VolumeControl
+    */
     volumeUpButton: function(inSender, inEvent){
 		// console.log("llega el evento de volumeUpButton");
+		var sound = enyo.$.app.$.player.$.player.getSources()[0];
 		if(this._volume !== null){
 
     		this._volume.getVolume(
@@ -1417,8 +1523,8 @@ enyo.kind({
 
 	//se informa de una nueva versión
 	thereIsNewVersion: function(inEvent, inSender){
-		console.log("popup : mostrar nueva version");
-		console.log(inSender);
+		// console.log("popup : mostrar nueva version");
+		// console.log(inSender);
 
     	this.createComponent({
 					kind: "infoVersion",
@@ -1430,9 +1536,9 @@ enyo.kind({
 	},
 
 	checkupdates: function(){
-		console.log("Prepara para mandar a chequear actualización");
+		// console.log("Prepara para mandar a chequear actualización");
 		if(this._isInternetConnectionAvailable){
-			this.log("SE manda a chequear la version");
+			// this.log("SE manda a chequear la version");
 			this.$.watchVersion.getNewVersion();
 		}
 	},
@@ -1451,18 +1557,25 @@ enyo.kind({
 	},
 
 	internetGetStatus : function(inSender, inResponse){
+
 		if (window.PalmSystem){
+
 			console.log("Views : internetGetStatus -> Solicita status de internet");
 			this.$.internetStatus.send({ "subscribe": true });
+
 		}else{
-			if(!enyo.platform.android && !enyo.platform.webos){
+			// if(!enyo.platform.android && !enyo.platform.webos){
 
 				this._isInternetConnectionAvailable = navigator.onLine;
 				
 				if(!navigator.onLine){ //desktop version
 					this.$.videoList.setMessage('No network connection');
 				}
-			}
+
+				// comprobamos que no se ejecuta en android con cordova para usarlo en el escritorio
+				if(!window.cordova)
+					this.notifyInternetsrtatus();
+			// }
 		}
 		return true;
 	},
@@ -1489,11 +1602,15 @@ enyo.kind({
 			this.$.videoList.setMessage("");
 
 			if(this.$.player.getVideoStatus()){
-				this.queryChanged();
+				// if(this.videos.length < 1){
+				// }
 				this.$.player.internetConnectionHandler(this._isInternetConnectionAvailable);
-			}else{
-				this.loginAndLoadData();
 			}
+				// this.queryChanged();
+				// this.videos = [];
+				// this.$.youtube.setNextPage("");
+				this.loginAndLoadData();
+			
 		}
 	}
 	/*windowRotated: function(inSender, inEvent){

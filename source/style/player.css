@@ -46,13 +46,7 @@ img#app_player_image.enyo-image{
 	border-top-right-radius: 15px;
 	border-bottom-right-radius: 15px;
 }
-.spinner-webos{
-	position: relative;
-	top: 50%;
-	left: 45%;
-	background-color: #000;
-	border-radius: 999px;
-}
+
 
 .small-icon-tap-area{
 	font-size: 70px !important;
@@ -93,6 +87,11 @@ img#app_player_image.enyo-image{
 	background-color:rgba(211,211,211,0.5);
 	border-color: #cf0652 !important;
 	color:#fff;
+}
+.quality-item{
+	padding: 5px;
+	text-align: center;
+	border-bottom: 1px solid #000;
 }
 
 
@@ -142,6 +141,12 @@ img#app_player_image.enyo-image{
 	/*width: 33px;*/
 	padding: 0;
 	margin: 0;
+	width: 22px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -11px;
+	margin-left: -11px;
 }
 
 /*Eventos con los controles*/
@@ -250,4 +255,15 @@ img#app_player_image.enyo-image{
 .lunetube-spinner{
 	background-color: rgba(0, 0, 0, 0.60);
 	border: 3px solid #333;
+	margin-top: -39.5px;
+	margin-left: -39.5px;
+}
+.spinner-webos{
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-top: -30px;
+	margin-left: -30px;
+	background-color: rgba(0, 0, 0, 0.60);
+	border-radius: 999px;
 }

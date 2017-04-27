@@ -76,3 +76,9 @@
 .panels-sample-flickr-image.tall {
 	height: 100%;
 }
+
+/*Lunetube globals classes*/
+.lunetube-center-vertical{
+	position: absolute;
+	top: 50%;
+}

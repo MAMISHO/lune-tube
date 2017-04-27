@@ -10,6 +10,7 @@
 	* @public
 	*/
 
+
 	/**
 	* Fires when [playbackRate]{@link enyo.Video#playbackRate} is changed to a value between `0` and `1`.
 	*
