@@ -41,73 +41,66 @@ enyo.kind({
 	},
 	components:[
 		{fit:true, classes:"enyo-fit", components:[
-		{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu enyo-fit', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", index:1,  components: [
-			// {kind:"LuneTube.Menu", name:"menuPanel"},
-			{content:""},//old menu
-			{fit:true, classes:"enyo-fit", components:[
+			{kind: 'Panels',name:"mainPanel", fit: true, classes: 'panels-sliding-menu enyo-fit', arrangerKind: 'CollapsingArranger', wrap: false,realtimeFit:true, draggable:true, onTransitionFinish:"draggableMenu", index:1,  components: [
+				// {kind:"LuneTube.Menu", name:"menuPanel"},
+				{content:""},//old menu
+				{fit:true, classes:"enyo-fit", components:[
 
-				{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false, realtimeFit:true, onTransitionFinish: "panelChanged", components: [
+					{kind: 'Panels',name:"panel", fit: true, style:"height:100%", classes: 'panels-sample-sliding-panels', arrangerKind: 'CollapsingArranger', wrap: false, realtimeFit:true, onTransitionFinish: "panelChanged", components: [
 
-					{layoutKind: "FittableRowsLayout", components: [
+						{layoutKind: "FittableRowsLayout", components: [
 
-						{kind: "LuneTube.Search", name:"search"},
-						{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
-							// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
-								// {kind:"VideoList", name:"videoList"},
-							{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
-								// {kind:"VideoGridList", name:"videoList"},
-								{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist", onCreatePlaylist:"createPlaylist"},
-								{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist", onCreatePlaylist:"createPlaylist"},
-								// {tag:"div", components:[
-								{layoutKind: "FittableRowsLayout", components: [
+							{kind: "LuneTube.Search", name:"search"},
+							{name: 'content_list',fit: true, layoutKind: "FittableRowsLayout", components: [
+								// {kind: 'Scroller', horizontal:"hidden", classes: 'enyo-fit', touch: true, components: [
+									// {kind:"VideoList", name:"videoList"},
+								{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
+									// {kind:"VideoGridList", name:"videoList"},
+									{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist", onCreatePlaylist:"createPlaylist"},
+									{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist", onCreatePlaylist:"createPlaylist"},
+									// {tag:"div", components:[
+									{layoutKind: "FittableRowsLayout", components: [
 
-									{kind:"mochi.GroupButton", onActiveTab:"groupControlTap", name: "groupButtonVideoInfo"},
-									{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
+										{kind:"mochi.GroupButton", onActiveTab:"groupControlTap", name: "groupButtonVideoInfo"},
+										{kind: "Panels", name:"infoCommentPanel", fit:true, draggable: false, style:"height: 100%;", components:[
 
-										{kind:"CommentList", name:"commentList"},
-										{kind: "videoInfo", name: "videoInfo"}
+											{kind:"CommentList", name:"commentList"},
+											{kind: "videoInfo", name: "videoInfo"}
 
+										]}
 									]}
+								]}	
+								// ]}
+							]},
+							{kind: "onyx.Toolbar", classes:"menu", components:[
+							// {kind: "onyx.Toolbar", classes:"", components:[
+								{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"margin: 0"},
+								{name:"videoDetailGroup", kind: "Group", tag: null, onActivate:"tabActivated__", ontap:"radioGroupTap", defaultKind: "onyx.IconButton", components: [
+									// {src: "assets/icon_results.png", ontap:"deactivate"},
+									// {src: "assets/icon_related.png", ontap:"activate"},
+									{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1, style:"margin: 0 12% 0 0"},
+									{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2, style:"margin: 0 12%"},
+									{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3, style:"margin: 0 12%"},
 								]}
-							]}	
-							// ]}
-						]},
-						{kind: "onyx.Toolbar", classes:"menu", components:[
-						// {kind: "onyx.Toolbar", classes:"", components:[
-							{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"margin: 0"},
-							{name:"videoDetailGroup", kind: "Group", tag: null, onActivate:"tabActivated__", ontap:"radioGroupTap", defaultKind: "onyx.IconButton", components: [
-								// {src: "assets/icon_results.png", ontap:"deactivate"},
-								// {src: "assets/icon_related.png", ontap:"activate"},
-								{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1, style:"margin: 0 12% 0 0"},
-								{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2, style:"margin: 0 12%"},
-								{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3, style:"margin: 0 12%"},
-							]}
-						]},
+							]},
 
-					]},
-					{name: 'content_player',fit: true, doubleTapEnabled: true, ondoubletap: "doubleTap", components: [
-							{kind: "Player", name:"player"}
-					]},
+						]},
+						{name: 'content_player',fit: true, doubleTapEnabled: true, ondoubletap: "doubleTap", components: [
+								{kind: "Player", name:"player"}
+						]},
+					]}
 				]}
+			]},
+			/*{kind:"Pullout", name:"Pullout", classes:"pullout", components:[
+				{kind:"LuneTube.Menu", name:"menuPanel"},
+			]},*/
+			{kind: "Pullout",
+			 fit:true,
+			 classes: "pullout enyo-fit", onDropPin: "dropPin", onShowTraffic: "showTraffic", onMapTypeSelect: "mapTypeSelect", onBookmarkSelect: "bookmarkSelect", components: [
+				{kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
 			]}
 		]},
-		/*{kind:"Pullout", name:"Pullout", classes:"pullout", components:[
-			{kind:"LuneTube.Menu", name:"menuPanel"},
-		]},*/
-		{kind: "Pullout",
-		 fit:true,
-		 classes: "pullout enyo-fit", onDropPin: "dropPin", onShowTraffic: "showTraffic", onMapTypeSelect: "mapTypeSelect", onBookmarkSelect: "bookmarkSelect", components: [
-			/*{classes: "pullout-menu", defaultKind: "onyx.IconButton", components: [
-				// {src: "images/menu-icon-info.png", panel: "info", ontap: "togglePullout"},
-				// {src: "images/menu-icon-bookmark.png", panel: "bookmark", ontap: "togglePullout"},
-				// {src: "images/menu-icon-mylocation.png", ontap: "findCurrentLocation"}
-				{content: "1"},
-				{content: "2"},
-				{content: "3"},
-			]}*/
-			{kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
-		]},
-		]},
+		
 		{name: "messagePopup", classes: "onyx-sample-popup info-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
 			{name:"boxNotification", content:"", allowHtml:true, classes:"info-version"}
 		]},

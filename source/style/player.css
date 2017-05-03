@@ -60,6 +60,17 @@ img#app_player_image.enyo-image{
 /*.moon-icon-button:active{
 	background-color: #000 !important;
 }*/
+/*poster*/
+.poster-container{
+	height: 100%;
+	width: 100%;
+}
+.poster{
+	height: 100%;
+	width: 100%;
+}
+
+/*quality*/
 
 .quality-option{
 	width: 100%;
@@ -92,6 +103,16 @@ img#app_player_image.enyo-image{
 	padding: 5px;
 	text-align: center;
 	border-bottom: 1px solid #000;
+}
+
+.quality-resolutions{
+	background-color: #333;
+	color: #fff;
+	border-radius: 99px;
+	text-align: center;
+	font-size: 22px;
+	margin-top: 5px;
+	width: 48px;
 }
 
 
@@ -232,16 +253,17 @@ img#app_player_image.enyo-image{
 	border: 2px solid red;
 	padding: 7px 10px !important;
 }
-.onyx-picker{
+/*.onyx-picker{
 	background-color: rgba(247, 247, 247, 0.53) !important;
 	text-align: center;
 	font-weight: bolder;
 	font-size: 1.2em;
 }
-.onyx-picker .onyx-menu-item.selected, .onyx-picker .onyx-menu-item.active, .onyx-picker .onyx-menu-item:active:hover{
+*/
+/*.onyx-picker .onyx-menu-item.selected, .onyx-picker .onyx-menu-item.active, .onyx-picker .onyx-menu-item:active:hover{
 	background-color: transparent;	
 	padding-bottom: 20px;
-}
+}*/
 .onyx-menu-item.selected{
 	background-color: rgba(51, 51, 51, 0.56);
 	

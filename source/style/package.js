@@ -8,5 +8,6 @@ enyo.depends(
 	"video_list.css",
 	"player.css",
 	"video_info.css",
-	"mochi_group_button.css"
+	"mochi_group_button.css",
+	"player_config.css"
 );

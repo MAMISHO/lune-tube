@@ -1,6 +1,7 @@
 enyo.kind({
 	name: "Pullout",
 	kind: "enyo.Slideable",
+	overMoving: false,
 	events: {
 		// onDropPin: "",
 		// onShowTraffic: "",

@@ -8,6 +8,7 @@ enyo.kind({
     	onPlay:"statusPlay",
     	onPause: "pauseVideo",
     	onVideoFinished: "videoFinished",
+    	onHideControlsComplete: "HideInfoControls"
     	// onloadedmetadata:"loadedMetaData",
     	// onloadeddata: "loadedData"
 	},
@@ -22,7 +23,7 @@ enyo.kind({
 	components: [
 		{
 			name: "player",
-			kind: "moon.VideoPlayer",
+			kind: "LuneTubePlayer",
 			preload: "auto",
 			fitToWindow:true,
 			autoCloseTimeout: 5000,
@@ -74,8 +75,28 @@ enyo.kind({
 				]}*/
 			]
 		},
+
 		{kind:"moon.Dialog", name:"tapDialog", title:"The controls were tapped.", message:"Press OK to dismiss", components: [
 			{kind:"moon.Button", content:"OK", ontap:"dismissTapDialog"}
+		]},
+
+		{kind: "PlayerPanel", name: "panel", classes:"player-panel-config",
+		onAnimateFinish:"menuDraggin",
+		ondrag: "menuDrag",
+		components:[
+
+			{kind: "FittableRows",
+			style: "background-color: rgba(0, 0, 0, 0.5);height: 100%",
+			components:[
+				{kind: "Control", content:"Options", classes: "player-panel-title"},
+				{kind: "PlayerConfig", name: "configControl",
+					onSpeedChange: "speedChange", 
+					onLoopChanged: "loopChanged",
+					onSleepApp:    "sleepApp" 
+				},
+			]},
+
+			// {kind: "Control", classes: "player-background-layer"},
 		]}
 	],
 	bindings: [
@@ -84,10 +105,70 @@ enyo.kind({
 	],
 	status:false, //false when is paused | true when is playing
 	_isFullScreen : false,
+	_isLoop: false,
 	controlsTapped: function() {
 		// this.$.tapDialog.show();
 	},
-	dismissTapDialog: function() {
+
+	HideInfoControls: function(inSender, inEvent){
+		console.log("Se ocultan los controles");
+		this.$.panel.hide();
+		return true;
+	},
+
+
+	menuDraggin: function(inSender, inEvent){
+		/*console.log(inSender);
+		console.log(inEvent);*/
+		console.log("Animate finish");
+		// inEvent.preventDefault();
+		return true;
+	},
+
+	menuDrag: function(inSender, inEvent){
+		// console.log(inSender);
+		// console.log(inEvent);
+		console.log("drag");
+		inEvent.preventDefault();
+		return true;
+	},
+
+	speedChange: function(inSender, inEvent){
+		console.log("llega slider a player");
+		
+		switch(inEvent.originator.currentPosition){
+			case 2:
+				// if(this.$.player._isPlaying){
+					this.$.player.play();
+				// }
+			break;
+			default:
+				// if(this.$.player._isPlaying){
+					this.$.player.speedChange(inEvent.originator.currentPosition);
+				// }
+			break;
+
+		}
+		
+		// speedChange
+		return true;
+	},
+
+	loopChanged: function(inSender, inEvent){
+		this._isLoop = inSender.loop;
+		this.$.player.setLoop(this._isLoop);
+		return true;
+	},
+
+	sleepApp: function(inSender, inEvent){
+		console.log("APP dormida");
+		this.$.player.pause();
+		return true;
+	},
+
+
+	dismissTapDialog: function(inSender, inEvent) {
+
 		this.$.tapDialog.hide();
 	},
 	unload: function() {
@@ -201,6 +282,10 @@ enyo.kind({
 		// }else{
 			// this.$.player.setSources(this.sources[0]);
 		}
+
+		this.$.player.getVideo().setCurrentTime(0);
+		// this.$.player.getAudio().setCurrentTime(0);
+
 		this.$.player.$.slider.setQuality(this.getQuality());
 		this.$.player.setSources(this.sources[this.getQuality()]);
 		// this.$.player.setVideoSource(this.sources[this.getQuality()]);
@@ -217,6 +302,7 @@ enyo.kind({
 			}
 		}
 		this.$.player.showFSControls();
+		this.$.panel.show();
 	},
 
 	// loadHD: function(inSender, inEvent){
@@ -264,15 +350,27 @@ enyo.kind({
 		// console.log("Player -> changeResolution: cambia resolución");
 
 		// console.log(inEvent.quality);
-
-		if (enyo.platform.webos < 4) {
-			this.$.player.setPoster("");
+		
+		if(inEvent.quality === "video"){
+			if (enyo.platform.webos < 4) {
+				this.$.player.setPoster("");
+			}
 		}
 
+		/*if(this.getQuality() != 'Audi'){
+
+			this.currentTime = this.$.player.getVideo().getCurrentTime();
+		}else{
+
+			this.currentTime = this.$.player.getAudio().getCurrentTime();
+		}*/
 		this.currentTime = this.$.player.getVideo().getCurrentTime();
+
+		
 		// this.sources = [];
 		// this.sources.push(this.sd);
 		// this.quality = "SD-MP4";
+
 		
 		this.setQuality(inEvent.quality);
 
@@ -285,7 +383,7 @@ enyo.kind({
 			Cuando es seleccionado el source del video es solo de audio se activa el reproductor
 			de audio para reproducir el recurso
 		*/
-		if(this.quality === 'Audi'){
+		/*if(this.quality === 'Audi'){
 			this.$.player.pause();
 			// this.$.player.unload();
 			this.$.player.setVideoSource(this.sources[this.quality]);
@@ -294,10 +392,9 @@ enyo.kind({
 			this.$.player.$.audio.pause();
 			// this.$.player.setSources(this.sources[this.quality]);
 			this.$.player.play();
-		}
+		}*/
 		
-		// this.$.player.setSources(this.sources[this.quality]);	
-
+		this.$.player.setSources(this.sources[this.quality]);	
 		return true;
 	},
 
@@ -321,8 +418,15 @@ enyo.kind({
 	},
 
 	videoFinished: function(inSender, inEvent){
-		console.log("Player -> videoFinished : cambia estado del status" + this.status);
 		this.currentTime = 0;
+
+		if(this._isLoop){
+			this.$.player.setCurrentTime(this.currentTime);
+			this.$.player.play();
+			this.$.player.$.video.play();
+			return true;	
+		} 
+		console.log("Player -> videoFinished : cambia estado del status" + this.status);
 		this.status = false;
 		console.log(" a "+  this.status);
 	},

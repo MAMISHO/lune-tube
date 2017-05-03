@@ -16,5 +16,8 @@ enyo.depends(
 	"comment_item_reply.js",
 	"MochiGroupButton.js",
 	"webos_spinner.js",
-	"custom_video.js"
+	"custom_video.js",
+	"poster.js",
+	"lunetube-player.js",
+	"player_config.js"
 );
