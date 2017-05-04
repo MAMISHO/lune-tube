@@ -533,6 +533,7 @@
 
 			videoSource: null,
 			loop: false,
+			videoDuration: 0,
 		},
 		
 		/**
@@ -747,6 +748,10 @@
 			this.$.video.setLoop(this.loop);
 		},
 
+		videoDurationChanged: function(){
+
+		},
+
 		sourcesChanged: function(){
 
 			if(!this.getSources()) return;
@@ -772,7 +777,7 @@
 					name: 'video',
 					kind: 'Audio',
 					attributes:{"x-palm-media-audio-class": "media"},
-					preload:"auto",
+					preload: "metadata",
 					ontimeupdate: 'timeUpdate',
 					onloadedmetadata: 'metadataLoaded',
 					durationchange: 'durationUpdate',
@@ -2072,16 +2077,15 @@
 				return;
 			}
 
+			this.duration = e.duration;	
+			this._currentTime = e.currentTime;
+
 			if(this._sourceType === "audio"){
-				this.duration = e.duration / 2;	
-				if(e.currentTime > this.duration){
+				this.duration = this.getVideoDuration();	
+				if(this._currentTime > this.getVideoDuration()){
 					this._stop();
 				}
-			}else{
-				this.duration = e.duration;	
 			}
-			
-			this._currentTime = e.currentTime;
 
 			this.updatePosition();
 
@@ -2112,12 +2116,13 @@
 			this.duration = this.$.video.getDuration();
 			this._currentTime = this.$.video.getCurrentTime();
 
-			if(this._sourceType === "audio"){
-				this.duration = this.duration / 2;
-			}
+			/*if(this._sourceType === "audio"){
+				this.duration = this.duration;
+			}*/
 
 			this.$.slider.setMin(0);
-			this.$.slider.setMax(this.duration);
+			this.$.slider.setMax(this.getVideoDuration());
+			// this.$.slider.setMax(this.duration);
 
 			this.updatePosition();
 
@@ -2222,8 +2227,13 @@
 				this.updateSpinner();
 				return;
 			}
+
+
 			if (e.srcElement.currentTime === 0) {
 				this.sendFeedback('Stop', {}, true);
+				if(this.getLoop()){
+					this.play();
+				}
 				return;
 			}
 			this.sendFeedback('Pause', {}, true);

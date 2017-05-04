@@ -62,7 +62,7 @@ enyo.kind({
 		if(this.sleep){
 			var time = 0;
 			time = this.$.timeSleep1.getContent();
-			this.startJob("sleepApp", enyo.bind(this, "sendToSleep") , (time * 1000), 1);
+			this.startJob("sleepApp", enyo.bind(this, "sendToSleep") , (time * 1000 * 60), 1);
 			return true;
 		}
 	},

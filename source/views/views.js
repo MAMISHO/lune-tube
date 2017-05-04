@@ -1178,6 +1178,10 @@ enyo.kind({
         console.log(inEvent);*/
         console.log(enyo.json.stringify(enyo.platform));
         console.log(this.$.panel.getIndex());
+        if(this.$.player.$.panel.isAtMin()){ //si esta el panel de configuración del video se oculta
+        	this.$.player.$.panel.toggle();
+        	return true;
+        }
         if(this.$.mainPanel.getIndex() === 0){
         	this.$.mainPanel.setIndex(1);
         }else{

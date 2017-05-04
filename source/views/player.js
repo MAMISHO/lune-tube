@@ -112,7 +112,10 @@ enyo.kind({
 
 	HideInfoControls: function(inSender, inEvent){
 		console.log("Se ocultan los controles");
-		this.$.panel.hide();
+		if(!this.$.panel.isAtMin()){
+			this.$.panel.hide();	
+		}
+		
 		return true;
 	},
 
@@ -285,7 +288,7 @@ enyo.kind({
 
 		this.$.player.getVideo().setCurrentTime(0);
 		// this.$.player.getAudio().setCurrentTime(0);
-
+		this.$.player.setVideoDuration(this.videoId[0].duration);
 		this.$.player.$.slider.setQuality(this.getQuality());
 		this.$.player.setSources(this.sources[this.getQuality()]);
 		// this.$.player.setVideoSource(this.sources[this.getQuality()]);
