@@ -18,12 +18,12 @@ enyo.kind({
 	            ]}*/
 	            {kind:"onyx.Button",name:"more", content:"more"}
 			], bindings: [
-				{from: ".model.video_id", to: ".$.videoItem.videoId"},
+				{from: ".model.video_id", 	to: ".$.videoItem.videoId"},
 				{from: ".model.channel_id", to: ".$.videoItem.channelId"},
-				{from: ".model.image", to: ".$.videoItem.image"},
-				{from: ".model.title", to: ".$.videoItem.title"},
-				{from: ".model.views", to: ".$.videoItem.views"},
-				{from: ".model.time", to: ".$.videoItem.time"},
+				{from: ".model.image", 		to: ".$.videoItem.image"},
+				{from: ".model.title", 		to: ".$.videoItem.title"},
+				{from: ".model.views", 		to: ".$.videoItem.views"},
+				{from: ".model.time", 		to: ".$.videoItem.time"},
 				
 				{from: ".model.video_id", to: ".$.more.canGenerate", transform: function(euid, refferer, binding) {
                     var collection = this.container.collection;

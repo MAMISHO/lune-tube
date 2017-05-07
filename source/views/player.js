@@ -8,13 +8,15 @@ enyo.kind({
     	onPlay:"statusPlay",
     	onPause: "pauseVideo",
     	onVideoFinished: "videoFinished",
+    	onended: "videoFinish",
     	onHideControlsComplete: "HideInfoControls"
     	// onloadedmetadata:"loadedMetaData",
     	// onloadeddata: "loadedData"
 	},
 	published: {
         videoId: "",
-        quality: "360p", //calidad por defecto. Se modificará cuando se añada la posibilidad de guardar configuraciones
+        // quality: "360p", //calidad por defecto. Se modificará cuando se añada la posibilidad de guardar configuraciones
+        quality: "Audi",
         hd: null,
         sd: null,
         currentTime:0,
@@ -26,7 +28,7 @@ enyo.kind({
 			kind: "LuneTubePlayer",
 			preload: "auto",
 			fitToWindow:true,
-			autoCloseTimeout: 5000,
+			autoCloseTimeout: 5000000,
 			ontap:"showControlsPlayer",
 			showPlaybackControls:false, //si este es true los demás show deberían ser true
 			showPlayPauseControl: false,
@@ -81,7 +83,7 @@ enyo.kind({
 		]},
 
 		{kind: "PlayerPanel", name: "panel", classes:"player-panel-config",
-		onAnimateFinish:"menuDraggin",
+		ondragfinish: "menuDragFinish",
 		ondrag: "menuDrag",
 		components:[
 
@@ -111,7 +113,7 @@ enyo.kind({
 	},
 
 	HideInfoControls: function(inSender, inEvent){
-		console.log("Se ocultan los controles");
+
 		if(!this.$.panel.isAtMin()){
 			this.$.panel.hide();	
 		}
@@ -119,41 +121,28 @@ enyo.kind({
 		return true;
 	},
 
-
-	menuDraggin: function(inSender, inEvent){
-		/*console.log(inSender);
-		console.log(inEvent);*/
-		console.log("Animate finish");
-		// inEvent.preventDefault();
+	//se previene que el evento sea enviado al panel de reproducción del video
+	menuDragFinish: function(inSender, inEvent){
+		inEvent.preventDefault();
 		return true;
 	},
 
+	//previene que el evento se envíe al panel del vídeo
 	menuDrag: function(inSender, inEvent){
-		// console.log(inSender);
-		// console.log(inEvent);
-		console.log("drag");
 		inEvent.preventDefault();
 		return true;
 	},
 
 	speedChange: function(inSender, inEvent){
-		console.log("llega slider a player");
 		
 		switch(inEvent.originator.currentPosition){
 			case 2:
-				// if(this.$.player._isPlaying){
 					this.$.player.play();
-				// }
 			break;
 			default:
-				// if(this.$.player._isPlaying){
 					this.$.player.speedChange(inEvent.originator.currentPosition);
-				// }
 			break;
-
 		}
-		
-		// speedChange
 		return true;
 	},
 
@@ -164,8 +153,12 @@ enyo.kind({
 	},
 
 	sleepApp: function(inSender, inEvent){
-		console.log("APP dormida");
 		this.$.player.pause();
+		return true;
+	},
+
+	videoFinish: function(inSender, inEvent){
+		console.log("fin video");
 		return true;
 	},
 
@@ -288,7 +281,8 @@ enyo.kind({
 
 		this.$.player.getVideo().setCurrentTime(0);
 		// this.$.player.getAudio().setCurrentTime(0);
-		this.$.player.setVideoDuration(this.videoId[0].duration);
+
+		this.$.player.setVideoDuration(Number(this.videoId[0].duration));
 		this.$.player.$.slider.setQuality(this.getQuality());
 		this.$.player.setSources(this.sources[this.getQuality()]);
 		// this.$.player.setVideoSource(this.sources[this.getQuality()]);
@@ -421,6 +415,7 @@ enyo.kind({
 	},
 
 	videoFinished: function(inSender, inEvent){
+		console.log(inEvent);
 		this.currentTime = 0;
 
 		if(this._isLoop){
@@ -431,7 +426,6 @@ enyo.kind({
 		} 
 		console.log("Player -> videoFinished : cambia estado del status" + this.status);
 		this.status = false;
-		console.log(" a "+  this.status);
 	},
 
 

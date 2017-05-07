@@ -9020,6 +9020,17 @@ img#app_player_image.enyo-image{
 /*.moon-icon-button:active{
 	background-color: #000 !important;
 }*/
+/*poster*/
+.poster-container{
+	height: 100%;
+	width: 100%;
+}
+.poster{
+	height: 100%;
+	width: 100%;
+}
+
+/*quality*/
 
 .quality-option{
 	width: 100%;
@@ -9052,6 +9063,16 @@ img#app_player_image.enyo-image{
 	padding: 5px;
 	text-align: center;
 	border-bottom: 1px solid #000;
+}
+
+.quality-resolutions{
+	background-color: #333;
+	color: #fff;
+	border-radius: 99px;
+	text-align: center;
+	font-size: 22px;
+	margin-top: 5px;
+	width: 48px;
 }
 
 
@@ -9192,16 +9213,17 @@ img#app_player_image.enyo-image{
 	border: 2px solid red;
 	padding: 7px 10px !important;
 }
-.onyx-picker{
+/*.onyx-picker{
 	background-color: rgba(247, 247, 247, 0.53) !important;
 	text-align: center;
 	font-weight: bolder;
 	font-size: 1.2em;
 }
-.onyx-picker .onyx-menu-item.selected, .onyx-picker .onyx-menu-item.active, .onyx-picker .onyx-menu-item:active:hover{
+*/
+/*.onyx-picker .onyx-menu-item.selected, .onyx-picker .onyx-menu-item.active, .onyx-picker .onyx-menu-item:active:hover{
 	background-color: transparent;	
 	padding-bottom: 20px;
-}
+}*/
 .onyx-menu-item.selected{
 	background-color: rgba(51, 51, 51, 0.56);
 	
@@ -9363,4 +9385,56 @@ img#app_player_image.enyo-image{
 	border-bottom-left-radius: 25px;
 	box-shadow: 1px 1px 0 #939393;
 	-webkit-box-shadow: 1px 1px 0 #939393;
+}
+
+/* source/style/player_config.css */
+
+.player-panel-config{
+	position: absolute;
+	top: 57px;
+	right: 0;
+	bottom: 0;
+	width: 320px;
+	background: transparent;
+}
+
+.player-panel-shadow{
+	position: absolute;
+	height: 100%;
+	width: 20px;
+	left: -20px;
+	/*background: url('../assets/sliding-shadow-reverse.png') repeat-y;*/
+	/*background: url('../source/images/sliding-shadow.png') repeat-y;*/
+	background-size: 20px 2px;
+}
+
+.player-panel-grabbutton{
+	position: absolute;
+	height: 54px;
+	width: 50px;
+	bottom: 50%;
+	left: -46px;
+	border-radius: 10px 0 0 10px;
+	background-color: #D8D8D8;
+	box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.3);
+}
+.player-background-layer{
+	height: 100%;
+	width: 100%;
+	background-color: #000000;
+	opacity: 0.4;
+	z-index: 10;
+}
+
+.player-panel-title{
+	background-color:  #cf0652;
+	color: #fff;
+	font-family: "Mochi Bold Oblique";
+	text-align: center;
+	font-size: 1.3em;
+}
+
+.config-item{
+	color: #fff;
+	background-color: rgba(0, 0, 0, 0.5);
 }

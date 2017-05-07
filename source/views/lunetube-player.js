@@ -2083,7 +2083,26 @@
 			if(this._sourceType === "audio"){
 				this.duration = this.getVideoDuration();	
 				if(this._currentTime > this.getVideoDuration()){
-					this._stop();
+					
+					if(!this._isPlaying) return true;
+
+					
+					if(!this.loop){
+
+						this.$.video.jumpToEnd();
+						this.$.video.pause();
+						e.srcElement.currentTime = 0;
+						this.currentTime = 0;
+						this._currentTime = 0;
+						this._stop();
+					}else{
+
+						this.$.video.setCurrentTime(0.0000001);
+						
+					}
+					
+					// this._stop();
+					// return true;
 				}
 			}
 
@@ -2231,9 +2250,9 @@
 
 			if (e.srcElement.currentTime === 0) {
 				this.sendFeedback('Stop', {}, true);
-				if(this.getLoop()){
+				/*if(this.getLoop()){
 					this.play();
-				}
+				}*/
 				return;
 			}
 			this.sendFeedback('Pause', {}, true);

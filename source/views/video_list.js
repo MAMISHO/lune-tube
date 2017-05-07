@@ -28,7 +28,8 @@ enyo.kind({
             ]},
             
         ]},
-        {kind: "List", name:"list",
+        {kind: "List",
+        name:"list",
         // touch: true,
         onSetupItem: "setupItem", classes:"enyo-fit",
         // enableSwipe: true,
