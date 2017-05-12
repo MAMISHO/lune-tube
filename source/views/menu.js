@@ -211,16 +211,49 @@ enyo.kind({
 	/*Login functions*/
 	youtubeLogin: function(inSender, inEvent){
 		console.log("Menu -> youtubeLogin : Vemos las versiones de login");
+
 		if(!myApiKey.login){
 			var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
 			
 			if(enyo.platform.webos >= 4){ //LuneOS
+
 				this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
 			}else if(enyo.platform.webos < 4){ //webOS
+
 				console.log("Se envia webos");
 				this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
+
 			}else{
+
+				if(window.cordova){ //android
+					console.log("Se abro con android");
+					/*se usa el siguiente plugin*/
+					/* 
+					Plugin
+					cordova plugin add cordova-plugin-googleplus
+					Info
+					https://github.com/EddyVerbruggen/cordova-plugin-googleplus
+					*/
+					window.plugins.googleplus.login(
+					    {
+					      'scopes': myApiKey.scope,
+					      'webClientId': myApiKey.client_id,
+					      'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
+					    },
+					    function (obj) {
+					    	console.log("recibe token");
+					    	console.log(obj);
+					      alert(JSON.stringify(obj)); // do something useful instead of alerting
+					    },
+					    function (msg) {
+					    	console.log("Error");
+					      	alert('error: ' + msg);
+					    }
+					);
+				}else{ //desktop
+					console.log("Se abre con android");
 				window.open(url, '_blank');
+				}
 			}
 
 		    this.$.loginGroup.show();
