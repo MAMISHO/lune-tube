@@ -15,8 +15,8 @@ enyo.kind({
 	},
 	published: {
         videoId: "",
-        // quality: "360p", //calidad por defecto. Se modificará cuando se añada la posibilidad de guardar configuraciones
-        quality: "Audi",
+        quality: "360p", //calidad por defecto. Se modificará cuando se añada la posibilidad de guardar configuraciones
+        // quality: "Audi",
         hd: null,
         sd: null,
         currentTime:0,
@@ -28,7 +28,7 @@ enyo.kind({
 			kind: "LuneTubePlayer",
 			preload: "auto",
 			fitToWindow:true,
-			autoCloseTimeout: 5000000,
+			autoCloseTimeout: 5000,
 			ontap:"showControlsPlayer",
 			showPlaybackControls:false, //si este es true los demás show deberían ser true
 			showPlayPauseControl: false,

@@ -24,6 +24,7 @@ enyo.kind({
 		 // touch: true,
 		 touchOverscroll:false,
 		 components: [
+		 	
 			{name:"loginGroup", kind: "onyx.Groupbox", style:"margin: 10px 5px", components: [
 				{kind: "onyx.GroupboxHeader", classes:"lunetube-groupbox-header", content:"paste the token", name:"token_message"},
 				{classes:"menu-login-group", components:[
@@ -82,6 +83,11 @@ enyo.kind({
 	                {name:"loginIcon",kind:"Image", src:"assets/login-icon.png"},
 	                {name:"loginButton", content: "Login", style:"display: inline-block"}
 	            ]},
+
+	            //webos browser
+	            {kind: "mochi.Button", name: "cancelButton", content: "Cancel", ontap:"cancelLogin"},
+	            {kind: "Control", name: "webViewContent", fit: true},
+
 	            {classes: "onyx-menu-divider"},
 	            {ontap:"aboutTap", classes:"menu-option-item", style:"text-align: center", components:[
 	              	// {kind:"Image", src:"assets/home-icon.png"},
@@ -104,6 +110,7 @@ enyo.kind({
 		     subscribe: true
 		}
     ],
+    gotToken: false,
     create:function() {
         this.inherited(arguments);
         this.statusChanged();
@@ -112,6 +119,22 @@ enyo.kind({
         this.$.info.hide();
         this.$.listChannel.hide();
         this.$.loginGroup.hide();
+        this.$.cancelButton.hide();
+
+        if(enyo.platform.webos < 4){
+
+        	this.$.webViewContent.destroyClientControls();
+        	this.createComponent({
+        		container: this.$.webViewContent,
+        		kind: "WebView",
+        		url: "",
+		style: "height: 300px",
+		onPageTitleChanged: "pageTitleChanged"
+        	});
+        	this.$.webViewContent.setStyle("height", "100%");
+        	this.$.webViewContent.hide();
+        	this.$.webViewContent.render();
+        }
     },
 
     statusChanged: function(){
@@ -199,20 +222,50 @@ enyo.kind({
 
 	loginChanged: function(){
 		if(this.login){
+
 			this.$.listChannel.show();
 			this.$.loginGroup.hide();
 			this.$.loginButton.setContent("Logout");
 		}else{
+
 			this.$.listChannel.hide();
 			this.$.loginButton.setContent("Login");
 		}
 	},
 
+	pageTitleChanged: function(sender, title, url) {
+		/*console.log(" Sender Keys ");
+	        console.log(Object.keys(sender));
+	        console.log(" Title Keys ");
+	        console.log(Object.keys(title));
+	        console.log(title.inTitle);*/
+
+
+	         // var str = CircularJSON.stringify(obj);
+	         // console.log(str);
+	        var ind = title.inTitle.indexOf("code=");
+
+	        if (ind != -1) {
+
+	            var code = title.inTitle.substr(ind + 5);
+	            this.log("**************** code: " + code);
+	            if ( !this.gotToken){
+	            	this.$.token.setValue(code);
+	            	this.gotToken = true;
+	            	this.authorizationToken();
+	            }
+	            return true;
+	            // this.doGotAuthCode(code);
+	        }
+	    },
+
+
 	/*Login functions*/
 	youtubeLogin: function(inSender, inEvent){
 		console.log("Menu -> youtubeLogin : Vemos las versiones de login");
 
-		if(!myApiKey.login){
+		if( !myApiKey.login ){
+
 			var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
 			
 			if(enyo.platform.webos >= 4){ //LuneOS
@@ -221,43 +274,59 @@ enyo.kind({
 			}else if(enyo.platform.webos < 4){ //webOS
 
 				console.log("Se envia webos");
-				this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
+				this.$.webView.setUrl(url);
+				// this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
 
 			}else{
 
-				if(window.cordova){ //android
-					console.log("Se abro con android");
-					/*se usa el siguiente plugin*/
-					/* 
-					Plugin
-					cordova plugin add cordova-plugin-googleplus
-					Info
-					https://github.com/EddyVerbruggen/cordova-plugin-googleplus
-					*/
-					window.plugins.googleplus.login(
-					    {
-					      'scopes': myApiKey.scope,
-					      'webClientId': myApiKey.client_id,
-					      'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
-					    },
-					    function (obj) {
-					    	console.log("recibe token");
-					    	console.log(obj);
-					      alert(JSON.stringify(obj)); // do something useful instead of alerting
-					    },
-					    function (msg) {
-					    	console.log("Error");
-					      	alert('error: ' + msg);
-					    }
-					);
-				}else{ //desktop
+				// if(window.cordova){ //android
+
+				// 	console.log("Se abre con android");
+				// 	/*se usa el siguiente plugin*/
+				// 	/* 
+				// 	Plugin
+				// 	cordova plugin add cordova-plugin-googleplus
+				// 	Info
+				// 	https://github.com/EddyVerbruggen/cordova-plugin-googleplus
+				// 	*/
+				// 	window.plugins.googleplus.login(
+				// 	    {
+				// 	      'scopes': myApiKey.scope,
+				// 	      'webClientId': myApiKey.client_id,
+				// 	      'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
+				// 	    },
+
+				// 	    function (obj) {
+				// 	    	console.log("recibe token");
+				// 	    	console.log(obj);
+				// 	      	alert(JSON.stringify(obj)); // do something useful instead of alerting
+				// 	    },
+
+				// 	    function (msg) {
+
+				// 	    	console.log("Error");
+				// 	      	alert('error: ' + msg);
+				// 	    }
+				// 	);
+				// }else{ //desktop
+
 					console.log("Se abre con android");
-				window.open(url, '_blank');
-				}
+					window.open(url, '_blank');
+				// }
 			}
 
-		    this.$.loginGroup.show();
-		    this.$.token.focus();
+		    
+		    if(enyo.platform.webos < 4){
+
+		    	this.$.loginGroup.hide();
+		    	this.$.webViewContent.show();
+		    	this.$.cancelButton.show();
+		    }else{
+
+		    	this.$.loginGroup.show();
+		    	this.$.token.focus();
+		    }
+		    
 
 		}else{
 			this.logout();
@@ -265,10 +334,13 @@ enyo.kind({
 	},
 
 	confirmLogin: function(inSender, inEvent){
+
 		if(this.$.token.getValue() !== ""){
+
 			this.$.token_message.setContent("Login...");
 			this.authorizationToken();
 		}else{
+
 			this.$.token_message.setContent("Please, put a valid token");
 		}
 	},
@@ -336,6 +408,9 @@ enyo.kind({
 			this.setLogin(myApiKey.login);
 			this.$.loginButton.setContent("Logout");
 		}
+
+		this.$.webViewContent.hide();
+		this.$.cancelButton.hide();
 	},
 
 	authorizationTokenError: function(inRequest, inResponse){
@@ -362,8 +437,10 @@ enyo.kind({
 
 	cancelLogin: function(inSender, inEvent){
 		this.$.info.hide();
-        this.$.listChannel.hide();
-        this.$.loginGroup.hide();
+        		this.$.listChannel.hide();
+        		this.$.loginGroup.hide();
+        		this.$.webViewContent.hide();
+        		this.$.cancelButton.hide();
 	},
 
 	openVideoDemo: function(inSender, inEvent){

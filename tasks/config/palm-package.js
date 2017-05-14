@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         luneos: {
             command: [
                 'palm-package deploy',
-                'scp -P 5522 com.emsoft.lunetube_0.4.1_all.ipk root@localhost:/media/internal/downloads',
+                'scp -P 5522 com.emsoft.lunetube_0.5.0_all.ipk root@localhost:/media/internal/downloads',
             ].join('&&')
         },
         webos: {
@@ -17,18 +17,22 @@ module.exports = function(grunt) {
             //     }
             // ].join('&&')
             command: [
+                
                 'palm-package deploy',
-                'palm-install com.emsoft.lunetube_0.4.1_all.ipk',
+                'palm-install com.emsoft.lunetube_0.5.0_all.ipk',
                 'palm-launch com.emsoft.lunetube',
                 'palm-log -f com.emsoft.lunetube'
+
             ].join('&&')
         },
         android: {
             command: [
-                'rm -r /Users/developer/Desarrollo/movil/lune-tube/www/*',
-                'cp -r ./deploy/* /Users/developer/Desarrollo/movil/lune-tube/www/',
-                '(cd /Users/developer/Desarrollo/movil/lune-tube; cordova build android)',
-                '(cd /Users/developer/Desarrollo/movil/lune-tube; cordova run android)'
+
+                'rm -r /Users/Developer/Desarrollo/movil/lune-tube/www/*',
+                'cp -r ./deploy/* /Users/Developer/Desarrollo/movil/lune-tube/www/'
+                // '(cd /Users/Developer/Desarrollo/movil/lune-tube; cordova build android)',
+                // '(cd /Users/Developer/Desarrollo/movil/lune-tube; cordova run android)'
+
             ].join('&&')
         },
         default:{
