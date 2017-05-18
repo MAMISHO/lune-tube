@@ -108,6 +108,10 @@ enyo.kind({
 	status:false, //false when is paused | true when is playing
 	_isFullScreen : false,
 	_isLoop: false,
+	create:function() {
+	    this.inherited(arguments);
+	    this.$.player.$.slider.setQuality(this.getQuality());
+	},
 	controlsTapped: function() {
 		// this.$.tapDialog.show();
 	},

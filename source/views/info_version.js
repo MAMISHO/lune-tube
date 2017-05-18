@@ -23,8 +23,8 @@ enyo.kind({
         this.infoChanged();
     },
 
-    infoChanged: function(){
-    	if(!this.info.version) return true;
+    infoChanged: function () {
+    	if (!this.info.version) return true;
 
     	var version = this.info.version;
 		var new_version = this.info.versions[version];
