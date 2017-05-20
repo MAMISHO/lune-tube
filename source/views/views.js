@@ -534,11 +534,17 @@ enyo.kind({
 
 	loadMore: function(inSender, inEvent){
 		if(this.getQueryType() === "playlist"){
+
 			this.$.youtube.getPlaylistFromIdNextPage().response(this, "receiveResults");
+
 		}else if(this.getQueryType() === "home"){
+
 			this.$.youtube.getActivities().response(this, "receiveResults");
+
 		}else{
+
 			this.$.youtube.searchNext(this.query).response(this, "receiveResults");
+
 		}
 		return true;
 	},
@@ -629,8 +635,11 @@ enyo.kind({
 		this.numberOfTries = 0;
 
 		if(!video[0].restricted){
+
 			if(video[0].descriptionHtml){
+
 				this.$.videoInfo.setVideoDescription(video[0].descriptionHtml);
+				
 			}
 			this.$.youtube.search("", this._videoIdCurrent).response(this, "receiveResultsRelated");
 			this.$.commentList.setComments([]);

@@ -62,7 +62,8 @@ img#app_player_image.enyo-image{
 }*/
 /*poster*/
 .poster-container{
-	height: 100%;
+	/*height: 100%;*/
+	margin-top: 50%;
 	width: 100%;
 }
 .poster{
