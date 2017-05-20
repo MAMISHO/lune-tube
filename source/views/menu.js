@@ -92,7 +92,7 @@ enyo.kind({
 	            {ontap:"aboutTap", classes:"menu-option-item", style:"text-align: center", components:[
 	              	// {kind:"Image", src:"assets/home-icon.png"},
 	               	{name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
-						{allowHtml:true, content:"<b>LuneTube v0.4.1<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
+						{allowHtml:true, content:"<b>LuneTube v0.5.0<br/>This is a Beta version.</b><br/><hr> Your feedback is very important!, please comment and  <a href='http://forums.webosnation.com/luneos/330640-lunetube-luneos-youtube-client-app.html' target='_blank'>more info here.</a><br/>All versions <a href='https://app.box.com/lunetube-latest' target='_blank'>LuneTube for LuneOS and webOS</a><br/><br/> @Mamisho1 On twitter"}
 			    	]},
 	            	{content: "( About APP )", style:"display: inline-block"},
 	            	{content: "( DEMO )", ontap: "openVideoDemo"}
