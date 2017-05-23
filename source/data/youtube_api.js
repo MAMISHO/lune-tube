@@ -13,6 +13,7 @@ enyo.kind({
 	_tryLogincound:0,
 	_nextPageComments:"",
 	myPlaylist:[],
+	deferred : undefined, //use for implement promises
 	create:function() {
 		this.inherited(arguments);
 	},
@@ -36,7 +37,7 @@ enyo.kind({
 				}
 			}
 
-			var url_base = "https://content.googleapis.com/youtube/v3/";
+			var url_base = youtube_api_url;
 			var method = "search";
 
 			return new enyo.JsonpRequest({
@@ -91,7 +92,7 @@ enyo.kind({
 			key: "AIzaSyCKQFgdGripe3wQYC31aipO9_sXw_dMhEE"
 		};
 
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "videos";
 
 			return new enyo.JsonpRequest({
@@ -118,7 +119,7 @@ enyo.kind({
 	},
 
 	searchNext: function(inSearchText){
-			var url_base = "https://content.googleapis.com/youtube/v3/";
+			var url_base = youtube_api_url;
 			var method = "search";
 			var params={
 				maxResults: 15,
@@ -136,7 +137,7 @@ enyo.kind({
 
 	searchAuth: function(inSearchText, inRelated){
 		// console.log("Solicitud enviada con oAuth");
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "search";
 		var params={
 			maxResults: 15,
@@ -147,18 +148,15 @@ enyo.kind({
 			regionCode: regionCode
 		};
 
-		// console.log(localeInfo);
-		if(!inRelated){		// sin videos relacionados				
+
+		if(!inRelated){			// Petición sin videos relacionados				
+
 				params.q = inSearchText;
-		}else{						//peticion de videos relacionados
+		}else{					// Petición con videos relacionados
+
 			params.relatedToVideoId = inSearchText;
 		}
 
-		/*return new enyo.JsonpRequest({
-				url: url_base + method,
-				method: "GET",
-            	headers:{"Authorization": "Bearer " + myApiKey.access_token}
-			}).go(params).response(this, "processResponse");*/
 		var request = new enyo.Ajax({
             url: url_base + method,
             method: "GET",
@@ -167,7 +165,8 @@ enyo.kind({
 
         request.response(enyo.bind(this, "processResponse"));
         request.error(enyo.bind(this, "processError"));
-        return request.go(params);
+		return request.go(params);
+        
 	},
 
 	getActivities: function(){
@@ -177,7 +176,7 @@ enyo.kind({
 			return {error:"login", message: myApiErrors.login};
 		}
 
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "activities";
 		var params={
 			maxResults: 15,
@@ -263,6 +262,29 @@ enyo.kind({
 
 
 	/*private*/
+		/*
+			Para mejorar la encapsulación de la aplicaición
+			se ha implementado el uso de promises. Para mantner
+			la conàtibilidad con veriosnes antiguas de webOS se 
+			usa promises mediante la libresía when.js Sepodría 
+			usar promises directamente con ES6 para las versiones
+			modernas, pero despues de pruebas de rendiemiento se
+			ha visto que no se perjudica en nada, es más se mejora
+			el rendimiento al actual, aunque esta un poco por
+			debajo de una implemntación nativa en ES6
+
+			objeto relacionado:
+								deferred
+			
+			Librería:
+					https://github.com/cujojs/when
+
+			Se ha hecho uso de browserify para llevar el paquete
+			al front-end
+
+			implementación con ENYO:
+					http://codebrocken.blogspot.com.es/2012/01/implementing-promises-with-enyo.html
+		*/
 	refreshToken: function(){
 		console.log("Se va a refrescar el token con:");
 		// console.log(myApiKey);
@@ -272,6 +294,9 @@ enyo.kind({
 		formData.append("client_secret", myApiKey.client_secret);
 		formData.append("refresh_token", myApiKey.refresh_token);
 		formData.append("grant_type", "refresh_token");*/
+
+
+		 this.deferred = when.defer();
 
 		var postBody = {
 					client_id: myApiKey.client_id,	
@@ -295,7 +320,10 @@ enyo.kind({
 		// console.log(request);
 		request.response(enyo.bind(this, "refreshTokenResponse"));
 		request.error(enyo.bind(this, "processErrorRefreshToken"));
-		return request.go();
+		//return request.go();
+		request.go();
+
+		return this.deferred.promise;
 	},
 
 	refreshTokenResponse: function(inRequest, inResponse){
@@ -328,9 +356,12 @@ enyo.kind({
 			myApiKey.login = true;
 			this._tryLogincound=0;
 			console.log("cookie refrescada");
-			return this.bubble("onRefreshTokenFinish",this);
+
+			// return this.bubble("onRefreshTokenFinish",this);
+			// return true;
 		}
-		return;
+		//return;
+		this.deferred.resolve(inResponse);
 	},
 
 	processErrorRefreshToken: function(inRequest, inResponse){
@@ -338,11 +369,13 @@ enyo.kind({
 		this._tryLogincound++;
 		console.log(inRequest.xhrResponse.body);
 		console.log("no se puede refrescar el token, es necesario logarse otra vez.");
-		return this.bubble("onRefreshTokenError",this);
+		//return this.bubble("onRefreshTokenError",this);
+
+		this.deferred.reject(inResponse);
 	},
 
 	getMyChannelInfo: function(){
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "channels";
 		var params={
 			part: "id, snippet, contentDetails",
@@ -372,7 +405,7 @@ enyo.kind({
 	},
 
 	getMyPlaylist: function(nextPage){
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "playlists";
 		var params={
 			part: "id,snippet,status",
@@ -386,8 +419,7 @@ enyo.kind({
 		}
 
 		var request = new enyo.Ajax({
-            // url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet&maxResults=50&mine=true",
-            url: "https://www.googleapis.com/youtube/v3/playlists",
+            url: url_base + method,
             method: "GET",
             headers:{"Authorization": "Bearer " + myApiKey.access_token},
             cacheBust: false,
@@ -444,7 +476,7 @@ enyo.kind({
 		/*this.totalResults = 0;
 		this.resultsItem = 0;*/
 		this.currentPlaylist = id;
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "playlistItems";
 		var params={
 			part: "id,snippet, status",
@@ -517,7 +549,7 @@ enyo.kind({
 
 	getPlaylistFromIdNextPage: function(){
 		if(typeof this.nextPage !== "undefined"){
-			var url_base = "https://www.googleapis.com/youtube/v3/";
+			var url_base = youtube_api_url;
 			var method = "playlistItems";
 			var params={
 				part: "id,snippet, status",
@@ -548,7 +580,7 @@ enyo.kind({
 	},
 
 	getComments: function(id){
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 			var method = "commentThreads";
 			var params={
 				part: "id, replies, snippet",
@@ -582,7 +614,7 @@ enyo.kind({
 
 	getNextComments: function(id){
 		if(typeof this._nextPageComments !== "undefined"){
-			var url_base = "https://www.googleapis.com/youtube/v3/";
+			var url_base = youtube_api_url;
 				var method = "commentThreads";
 				var params={
 					part: "id, replies, snippet",
@@ -633,7 +665,7 @@ enyo.kind({
 	},
 
 	setComment: function(resource){
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 			var method = "commentThreads";
 			var params={
 				part: "snippet",
@@ -659,7 +691,7 @@ enyo.kind({
 	setReplyComment: function(resource){
 		console.log("llega a la API");
 		console.log(resource);
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 			var method = "comments";
 			var params={
 				part: "snippet",
@@ -713,7 +745,7 @@ enyo.kind({
 		// console.log(videoIds);
 		// return videoIds.toString();
 		// console.log(v[0].video_id);
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 			var method = "videos";
 			var params={
 				// part: "id, replies, snippet",
@@ -767,7 +799,7 @@ enyo.kind({
 		// console.log(videoIds);
 		// return videoIds.toString();
 		// console.log(v[0].video_id);
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 			var method = "videos";
 			var params={
 				// part: "id, replies, snippet",
@@ -807,7 +839,7 @@ enyo.kind({
 
 	setVideoToPlaylist: function(resource){
 		// console.log("Se envia la peticion");
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "playlistItems";
 		var params={
 			part: "snippet",
@@ -843,7 +875,7 @@ enyo.kind({
 	},
 
 	deleteVideoFromPlaylist: function(videoId){
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "playlistItems";
 		var params={
 			// part: "snippet",
@@ -880,7 +912,7 @@ enyo.kind({
 	createPlaylist: function(newPlaylist){
 		this._videoToNewPlaylist = newPlaylist.video;
 		// console.log(newPlaylist);
-		var url_base = "https://www.googleapis.com/youtube/v3/";
+		var url_base = youtube_api_url;
 		var method = "playlists";
 		var params={
 			part: "snippet, status",

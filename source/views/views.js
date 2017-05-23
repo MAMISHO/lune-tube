@@ -174,6 +174,7 @@ enyo.kind({
 	_android_is_ready: false,
 	_isInternetConnectionAvailable: false,
 	_loadCompleted: false,
+	queueActions : {}, //Cola de acciones que estan por realizar
 	create:function() {
 		this.inherited(arguments);
 		/*if (enyo.platform.webos < 4){
@@ -244,6 +245,9 @@ enyo.kind({
 
     loginAndLoadData: function(){
 
+    	/*Cuando ya se han cargado los datos por primera vez,
+    	no se vuelven a cargar para no realizar llamadas duplicadas
+    	en el caso que se haya perdido la conexión de internet.*/
     	if(this._loadCompleted) return true;
 
     	var cookie = enyo.getCookie("session_youtube");
@@ -262,12 +266,20 @@ enyo.kind({
 
 		}else if(!youtube_token && youtube_refresh){
 			console.log("token expirado, se refresaca el token");
-			 token = JSON.parse(cookie);
-				myApiKey.access_token = token.access_token;
-				myApiKey.refresh_token = token.refresh_token;
-				myApiKey.login = false;
+			token = JSON.parse(cookie);
+			myApiKey.access_token = token.access_token;
+			myApiKey.refresh_token = token.refresh_token;
+			myApiKey.login = false;
 
-			this.$.youtube.refreshToken();
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+
+					this.refreshTokenFinish();
+				})
+			);
+
+			//this.$.youtube.refreshToken().;
+
 		}else{
 			console.log("no hay token, necesita iniciar sesion");
 			this.queryChanged();
@@ -366,10 +378,24 @@ enyo.kind({
     	myApiKey.login =  true;
     	this.query_history = "";
     	this.loadHomeFeeds();
-		this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
-		this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
-		this.$.menuPanel.setLogin(myApiKey.login);
-		return true;
+
+    	if(!enyo.getCookie("youtube_token") && myApiKey.login){ //Comprueba que el token es vigente
+
+    		this.$.youtube.refreshToken().then(
+    			enyo.bind(this, function(){
+    				this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
+    				this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+    			})
+    		); 
+
+    	}else{
+
+    		this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
+    		this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+    	}
+
+    	this.$.menuPanel.setLogin(myApiKey.login);
+    	return true;
     },
 
     refreshTokenError: function(inSender, inEvent){
@@ -383,27 +409,49 @@ enyo.kind({
     	this.$.listPanels.setIndex(0);
     	// this.queryType = "home";
     	this.setQueryType("home");
-    	this.$.youtube.getActivities().response(this, "receiveResults");
+
+    	if(!enyo.getCookie("youtube_token") && myApiKey.login){ //Comprueba que el token es vigente
+
+					this.$.youtube.refreshToken().then(
+				      enyo.bind(this, function(){this.$.youtube.getActivities().response(this, "receiveResults");})
+				    ); 
+
+				}else{
+
+					this.$.youtube.getActivities().response(this, "receiveResults");
+				}
+    	
     	this.videoDetailGroupReset(true);
     },
     /**
      * @q  {string} palabra de búsqueda
      * @return {[type]}
      */
-    search: function(q) {
-		// if (/\S/.test(this.query)) {
+     search: function(q) {
 
-			this.$.listPanels.setIndex(0);
-			// this.queryType = "keyword";
-			this.setQueryType("keyword");
-			if (myApiKey.login) {
-				this.$.youtube.searchAuth(q).response(this, "receiveResults");
-			} else {
-				this.$.youtube.search(q).response(this, "receiveResults");
-			}
-			this.videoDetailGroupReset(true);
-		// }
-	},
+     	this.$.listPanels.setIndex(0);
+     	this.setQueryType("keyword");
+
+     	if (myApiKey.login) {
+     		if(!enyo.getCookie("youtube_token")){
+
+     			this.$.youtube.refreshToken().then(
+     				enyo.bind(this, function(){this.$.youtube.searchAuth(q).response(this, "receiveResults");})
+     				); 
+
+     		}else{
+
+     			this.$.youtube.searchAuth(q).response(this, "receiveResults");
+     		}
+
+
+     	} else {
+     		this.$.youtube.search(q).response(this, "receiveResults");
+     	}
+     	this.videoDetailGroupReset(true);
+
+			//añadimos la acción a la cola
+		},
 
 	receiveResults: function(inRequest, inResponse){
 		if(!inResponse) return;
@@ -447,7 +495,8 @@ enyo.kind({
 		// console.log(inResponse);
 		this.$.videoListRelated.setShowMore(false);
 		this.$.videoListRelated.setVideoList(inResponse);
-		this.$.youtube.getStatisticsFromRelated(inResponse).response(this, "receiveStatisticsFromRelated");
+
+    	this.$.youtube.getStatisticsFromRelated(inResponse).response(this, "receiveStatisticsFromRelated");	
 	},
 
 	receiveComments: function(inRequest, inResponse){
@@ -533,19 +582,45 @@ enyo.kind({
 	},
 
 	loadMore: function(inSender, inEvent){
-		if(this.getQueryType() === "playlist"){
 
-			this.$.youtube.getPlaylistFromIdNextPage().response(this, "receiveResults");
+		if(!enyo.getCookie("youtube_token") && myApiKey.login){ //Comprueba que el token es vigente
 
-		}else if(this.getQueryType() === "home"){
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
 
-			this.$.youtube.getActivities().response(this, "receiveResults");
+					if(this.getQueryType() === "playlist"){
+
+						this.$.youtube.getPlaylistFromIdNextPage().response(this, "receiveResults");
+
+					}else if(this.getQueryType() === "home"){
+
+						this.$.youtube.getActivities().response(this, "receiveResults");
+
+					}else{
+
+						this.$.youtube.searchNext(this.query).response(this, "receiveResults");
+
+					}
+				})
+				); 
 
 		}else{
 
-			this.$.youtube.searchNext(this.query).response(this, "receiveResults");
+			if(this.getQueryType() === "playlist"){
 
+				this.$.youtube.getPlaylistFromIdNextPage().response(this, "receiveResults");
+
+			}else if(this.getQueryType() === "home"){
+
+				this.$.youtube.getActivities().response(this, "receiveResults");
+
+			}else{
+
+				this.$.youtube.searchNext(this.query).response(this, "receiveResults");
+
+			}
 		}
+
 		return true;
 	},
 
@@ -780,8 +855,20 @@ enyo.kind({
 	/*Youtube Login*/
 	loadMyChannel: function(){
 		this.query_history = "home";
-		this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
-		this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+		if(!enyo.getCookie("youtube_token") && myApiKey.login){ //Comprueba que el token es vigente
+
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+					this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
+					this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+				})
+			);
+
+		}else{
+
+			this.$.youtube.getMyChannelInfo().response(this, "getMychannelresults");
+			this.$.youtube.getMyPlaylist().response(this, "getMyPlaylistResults").error(this, "getMyPlaylistResults");
+		}
 		return true;
 	},
 
@@ -840,7 +927,21 @@ enyo.kind({
 		this.setQueryType("playlist");
 		this.$.search.setSearching(true);
 		this.query_history = playlistInfo.id;
-		this.$.youtube.getPlaylistFromId(playlistInfo.id).response(this, "receiveResults");
+
+		if(!enyo.getCookie("youtube_token") && myApiKey.login){ //Comprueba que el token es vigente
+
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+
+					this.$.youtube.getPlaylistFromId(playlistInfo.id).response(this, "receiveResults");
+
+				})
+			);
+
+		}else{
+
+			this.$.youtube.getPlaylistFromId(playlistInfo.id).response(this, "receiveResults");
+		}
 		this.showMenuOption();
 		this.videoDetailGroupReset(true);
 		return true;
@@ -852,16 +953,16 @@ enyo.kind({
 
 		switch(playlist){
 			case "history":
-				playlist_id = this._myChannel.relatedPlaylists.watchHistory;
+			playlist_id = this._myChannel.relatedPlaylists.watchHistory;
 			break;
 			case "favorites":
-				playlist_id = this._myChannel.relatedPlaylists.favorites;
+			playlist_id = this._myChannel.relatedPlaylists.favorites;
 			break;
 			case "likes":
-				playlist_id = this._myChannel.relatedPlaylists.likes;
+			playlist_id = this._myChannel.relatedPlaylists.likes;
 			break;
 			case "watchLater":
-				playlist_id = this._myChannel.relatedPlaylists.watchLater;
+			playlist_id = this._myChannel.relatedPlaylists.watchLater;
 			break;
 
 		}
@@ -875,7 +976,22 @@ enyo.kind({
 			if(myApiKey.login){
 				this.$.search.setSearching(true);
 				this.query_history = playlist_id;
-				this.$.youtube.getPlaylistFromId(playlist_id).response(this, "receiveResults").error(this, "receiveResults");
+
+				if(!enyo.getCookie("youtube_token")){ //Comprueba que el token es vigente
+
+					this.$.youtube.refreshToken().then(
+						enyo.bind(this, function(){
+
+							this.$.youtube.getPlaylistFromId(playlist_id).response(this, "receiveResults").error(this, "receiveResults");
+
+						})
+					);
+
+				}else{
+
+					this.$.youtube.getPlaylistFromId(playlist_id).response(this, "receiveResults").error(this, "receiveResults");
+				}
+
 				this.showMenuOption();
 			}
 		}
@@ -897,11 +1013,12 @@ enyo.kind({
 				if(oldComments[0].snippet.videoId !== this._videoIdCurrent){
 
 					this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
-
 				}
 			}
 		}else{
+
 			this.$.youtube.getComments(this._videoIdCurrent).response(this, "receiveComments");
+
 		}
 	},
 
@@ -1007,18 +1124,53 @@ enyo.kind({
 	},
 
 	addVideoToPlaylist: function(inSender, resource){
-		this.$.youtube.setVideoToPlaylist(resource.snippet);
+		if(!enyo.getCookie("youtube_token")){ //Comprueba que el token es vigente
+
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+					this.$.youtube.setVideoToPlaylist(resource.snippet);
+
+				})
+			);
+
+		}else{
+
+			this.$.youtube.setVideoToPlaylist(resource.snippet);
+		}
 		return true;
 	},
 
 	removeFromPlaylist: function(inSender, resource){
-		this.$.youtube.deleteVideoFromPlaylist(resource.videoId);
+		if(!enyo.getCookie("youtube_token")){ //Comprueba que el token es vigente
+
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+					this.$.youtube.deleteVideoFromPlaylist(resource.videoId);
+
+				})
+			);
+		}else{
+			this.$.youtube.deleteVideoFromPlaylist(resource.videoId);
+		}
 		return true;
 	},
 
 	createPlaylist: function(inSender, newPlaylist){
 		// console.log(newPlaylist);
-		this.$.youtube.createPlaylist(newPlaylist).response(this, "createPlaylistResult");
+		if(!enyo.getCookie("youtube_token")){ //Comprueba que el token es vigente
+
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+					this.$.youtube.createPlaylist(newPlaylist).response(this, "createPlaylistResult");
+
+				})
+			);
+
+		}else{
+
+			this.$.youtube.createPlaylist(newPlaylist).response(this, "createPlaylistResult");
+		}
+
 		return true;
 	},
 
@@ -1046,19 +1198,46 @@ enyo.kind({
 				videoId : this._videoIdCurrent,
 				topLevelComment:{
 					snippet:{
-                        textOriginal: inEvent.comment.snippet.topLevelComment.snippet.textDisplay,
-                    }
+						textOriginal: inEvent.comment.snippet.topLevelComment.snippet.textDisplay,
+					}
 				}
 			}
 		};
-		this.$.youtube.setComment(snippet);
+
+		if(!enyo.getCookie("youtube_token")){ //Comprueba que el token es vigente
+
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+					this.$.youtube.setComment(snippet);
+
+				})
+			);
+
+		}else{
+
+			this.$.youtube.setComment(snippet);
+		}
+
 		return true;
 	},
 
 	setReply: function(inSender, inEvent){
 		// console.log("Llega al controller");
 		// console.log(inEvent);
-		this.$.youtube.setReplyComment(inEvent.snippet);
+		if(!enyo.getCookie("youtube_token")){ //Comprueba que el token es vigente
+
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){
+					this.$.youtube.setReplyComment(inEvent.snippet);
+
+				})
+			);
+
+		}else{
+
+			this.$.youtube.setReplyComment(inEvent.snippet);
+		}
+
 		return true;
 	},
 
@@ -1187,17 +1366,25 @@ enyo.kind({
         console.log(inEvent);*/
         console.log(enyo.json.stringify(enyo.platform));
         console.log(this.$.panel.getIndex());
+
         if(this.$.player.$.panel.isAtMin()){ //si esta el panel de configuración del video se oculta
+        	
         	this.$.player.$.panel.toggle();
         	return true;
         }
+
         if(this.$.mainPanel.getIndex() === 0){
+
         	this.$.mainPanel.setIndex(1);
         }else{
+
         	if(!enyo.platform.webos && this.$.panel.getIndex() === 0){
+
         		console.log("Es android y se manda a minimizar");
         		window.plugins.appMinimize.minimize();
+
         	}else{
+
         		this.$.panel.setIndex(0);
         	}
         }
@@ -1265,11 +1452,14 @@ enyo.kind({
     onPause: function(inSender, inEvent){
 
    			if(this.$.player.getVideoStatus()){
+
    				cordova.plugins.backgroundMode.enable();
 		        cordova.plugins.backgroundMode.on('activate', function() {
 		   			cordova.plugins.backgroundMode.disableWebViewOptimizations();
 				});
+
    			}else{
+
    				cordova.plugins.backgroundMode.disable();
    			}
 		

@@ -12,7 +12,7 @@ enyo.kind({
 		return new enyo.Ajax({
 				url: this._repository,
 				method: "GET",
-	            contentType: 'json',
+	            contentType: 'application/json',
 	            cacheBust: true,
 	            callbackName: null,
 	            overrideCallback: null
@@ -40,7 +40,7 @@ enyo.kind({
 	getCurrentVersion: function(){
 		var request = new enyo.Ajax({
 			url: "appinfo.json",
-			 contentType: 'json'
+			contentType: "application/json"
 		});
 		request.response(this, "getCurrentVersionResponse");
 		request.go();
