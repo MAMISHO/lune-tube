@@ -5,5 +5,6 @@ enyo.depends(
 	"util.js",
 	"youtube_api.js",
 	"youtube_video.js",
-	"watch_version.js"
+	"watch_version.js",
+	"data_preferences.js"
 );

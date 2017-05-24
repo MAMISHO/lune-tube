@@ -43,7 +43,8 @@ enyo.kind({
 
 	loopChanged: function(inSender, inEvent){
 			this.loop = inSender.getValue();
-			this.bubble("onLoopChanged", this);	
+			this.bubble("onLoopChanged", this);
+			return true;
 	},
 
 	speedChange: function(inSender, inEvent){
@@ -71,6 +72,7 @@ enyo.kind({
 		console.log("Se envia a dormir");
 		this.$.sleepToggle.setValue(false);
 		this.bubble("onSleepApp", this);
+		return true;
 	}
 });
 

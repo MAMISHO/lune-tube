@@ -29,8 +29,8 @@ var myApiErrors={
 
 /*Instrucciones para obtener la localización del dispositivo*/
 
-//var defaultRegionCode = getLocation();
-var defaultRegionCode = null;
+var defaultRegionCode = getLocation();
+//var defaultRegionCode = null;
 var loc = ilib.getLocale(); //other locations
 var localeInfo = new ilib.LocaleInfo(loc);
 var regionCode = defaultRegionCode.region;

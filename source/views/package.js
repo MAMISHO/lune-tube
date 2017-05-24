@@ -19,5 +19,6 @@ enyo.depends(
 	"custom_video.js",
 	"poster.js",
 	"lunetube-player.js",
-	"player_config.js"
+	"player_config.js",
+	"preferences.js"
 );

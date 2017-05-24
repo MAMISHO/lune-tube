@@ -40,10 +40,16 @@ enyo.kind({
 	getCurrentVersion: function(){
 		var request = new enyo.Ajax({
 			url: "appinfo.json",
-			contentType: "application/json"
+			contentType: "application/json",
+			dataType: "json",
+			cacheBust: true,
+			callbackName: null,
+			overrideCallback: null,
+			handleAs: "json"
 		});
 		request.response(this, "getCurrentVersionResponse");
 		request.go();
+
 	},
 
 	getCurrentVersionResponse: function (inRequest, inResponse) {

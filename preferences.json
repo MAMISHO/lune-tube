@@ -1,0 +1,17 @@
+{
+	"_comment" : "this documment represent the luneTube preferences",
+	"preferences" : [
+		{"key": "autoPlay", "type": "toggle", "label": "Auto Play"},
+		{"key": "autoPlayFrom", "type": "select", "label": "Auto Play", "items":[
+			{"label": "Result  videos", "value": "resultQuery"},
+			{"label": "Related videos", "value": "resultRetalted"}
+		]},
+		{"key": "playAudioByDefault", "type": "toggle", "label": "Play Audio Source by default"}
+
+	],
+	"default": [
+		{"autoPlay": true},
+		{"autoPlayFrom" : "resultRetalted"},
+		{"playAudioByDefault": false}
+	]
+}

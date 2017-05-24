@@ -84,6 +84,7 @@ enyo.kind({
                 //webos browser
                 {kind: "mochi.Button", name: "cancelButton", content: "Cancel", ontap:"cancelLogin"},
                 {kind: "Control", name: "webViewContent", fit: true},
+                {kind: "LunetubePreferences", name: "preferences"},
 
                 {classes: "onyx-menu-divider"},
                 {ontap:"aboutTap", classes:"menu-option-item", style:"text-align: center", components:[
