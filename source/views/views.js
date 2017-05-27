@@ -114,7 +114,7 @@ enyo.kind({
 		// My api de youtube
 		{kind: "YoutubeApi", name: "youtube"},
 		{kind: "YoutubeVideo", name: "yt"},
-		{kind: "WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion"},
+		{kind: "WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion", onCurrentVersion: "currentVersion"},
 
 		/*Aplication events*/
 		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
@@ -188,6 +188,12 @@ enyo.kind({
 			enyo.dispatcher.listen(window, 'offline', this.bindSafely(this.onOffline));
 			enyo.dispatcher.listen(window, 'online', this.bindSafely(this.onOnline));
 		}
+
+
+		console.log("*********************************");
+		console.log(modjewel);
+		console.log(modjewel.VERSION);
+		console.log("*********************************");
 	},
 
 	rendered:function() {
@@ -1718,21 +1724,30 @@ enyo.kind({
 	},
 
 	//se informa de una nueva versión
-	thereIsNewVersion: function(inEvent, inSender){
+	thereIsNewVersion: function(inSender, inEvent){
 		// console.log("popup : mostrar nueva version");
 		// console.log(inSender);
 
     	this.createComponent({
 					kind: "infoVersion",
 					container: this.$.boxNotification,
-					info: inSender
+					info: inEvent
 		});
     	this.$.messagePopup.show();
     	return true;
 	},
 
+	/*inyectamos la version que nos llega de watchversion al menu de información*/
+	currentVersion: function(inSender, inEvent){
+		console.log("Currently");
+		
+		this.$.menuPanel.setVersion(inEvent.version);
+		return true;
+	},
+
 	checkupdates: function(){
 		// console.log("Prepara para mandar a chequear actualización");
+
 		if(this._isInternetConnectionAvailable){
 			// this.log("SE manda a chequear la version");
 			this.$.watchVersion.getNewVersion();

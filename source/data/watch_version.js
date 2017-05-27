@@ -55,6 +55,8 @@ enyo.kind({
 	getCurrentVersionResponse: function (inRequest, inResponse) {
 		if(!inResponse) return true;
 		this._currentVersion = inResponse.version;
+		console.log("current version");
+		this.bubble("onCurrentVersion",  inResponse );	
 	},
 
 	versionCompare: function(v1, v2, options) {
