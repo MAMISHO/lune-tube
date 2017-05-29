@@ -75,6 +75,11 @@ enyo.kind({
                 ]},
 
             ]},
+
+            
+            {kind: "LunetubePreferences", name: "preferences"},
+            {classes: "onyx-menu-divider"},
+            
             {name: "menuOption",classes: "menu-option-default", components: [
                 // {name:"status", content: "", classes:"menu-option-item"},
                 {kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},        
@@ -86,7 +91,6 @@ enyo.kind({
                 //webos browser
                 {kind: "mochi.Button", name: "cancelButton", content: "Cancel", ontap:"cancelLogin"},
                 {kind: "Control", name: "webViewContent", fit: true},
-                {kind: "LunetubePreferences", name: "preferences"},
 
                 {classes: "onyx-menu-divider"},
                 {ontap:"aboutTap", classes:"menu-option-item", style:"text-align: center", components:[
