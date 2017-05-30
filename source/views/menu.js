@@ -75,6 +75,11 @@ enyo.kind({
                 ]},
 
             ]},
+
+            
+            //{kind: "LunetubePreferences", name: "preferences"},
+            //{classes: "onyx-menu-divider"},
+            
             {name: "menuOption",classes: "menu-option-default", components: [
                 // {name:"status", content: "", classes:"menu-option-item"},
                 {kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},        

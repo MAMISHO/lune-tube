@@ -25,9 +25,11 @@ enyo.kind({
     	if(pref){
 
     		this.setPreferences(pref);
+    		console.log("Ya existen las preferencias");
     	}else{
 
     		this.loadDefaultPreferences();
+    		console.log("Se cargan las preferencias por defecto");
     	}
     },
 
@@ -59,6 +61,7 @@ enyo.kind({
 	    if(pref){
 
 	    	storage.set(this.storageName, pref);
+	    	this.bubble("onPreferencesUpdate", pref);
 	    }else{
 	    	console.log("No se han creado las preferencias");
 	    	console.log(pref);
