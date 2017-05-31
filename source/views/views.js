@@ -190,10 +190,12 @@ enyo.kind({
 		}
 
 
+
 		/*console.log("*********************************");
 		console.log(modjewel);
 		console.log(modjewel.VERSION);
 		console.log("*********************************");*/
+
 	},
 
 	rendered:function() {

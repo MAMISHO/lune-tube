@@ -283,13 +283,14 @@ enyo.kind({
 			// this.$.player.setSources(this.sources[0]);
 		}
 
-		this.$.player.getVideo().setCurrentTime(0);
+		//this.$.player.getVideo().setCurrentTime(0);
 		// this.$.player.getAudio().setCurrentTime(0);
 
 		this.$.player.setVideoDuration(Number(this.videoId[0].duration));
 		this.$.player.$.slider.setQuality(this.getQuality());
 		this.$.player.setSources(this.sources[this.getQuality()]);
 		// this.$.player.setVideoSource(this.sources[this.getQuality()]);
+		// this.$.player.getVideo().setCurrentTime(0);
 	},
 	
 	showControlsPlayer: function(inSender, inEvent){
@@ -351,6 +352,10 @@ enyo.kind({
 		// console.log("Player -> changeResolution: cambia resolución");
 
 		// console.log(inEvent.quality);
+		if(!this.sources){
+			this.setQuality(inEvent.quality);
+			return true;
+		} 
 		
 		if(inEvent.quality === "video"){
 			if (enyo.platform.webos < 4) {
