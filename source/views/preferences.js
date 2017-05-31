@@ -16,6 +16,7 @@ enyo.kind({
 		]},
 		{name: "drawer", kind: onyx.Drawer, open: false, components: [
 			 {content: "Item", classes:"playlist-item", ontap: "tapItemPlaylist"},
+			 {kind: "Preference.Toggle"}
 		]},
 
         //Hidden Components
@@ -37,16 +38,17 @@ enyo.kind({
     	console.log("Preferences -> preferencesUpdated : ");
     	console.log(inSender);
     	console.log(inEvent);
-    	var storage = new enyo.LocalStorageSource();
-    	var pref = storage.get(inEvent.originator.storageName);
+    	//var storage = new enyo.LocalStorageSource();
+    	var pref = localStorage.getItem(inEvent.originator.storageName);
+    	var preferences = JSON.parse(pref)
 
-    	var preferences = pref.preferences;
-    	if(preferences.length > 0){
+    	//var preferences = pref;
+  //   	if(preferences.length > 0){
 
-			this.$.drawer.destroyClientControls();
-    		enyo.forEach(preferences, this.createPreferences, this);
-    		this.$.drawer.render();
-		}
+		// 	this.$.drawer.destroyClientControls();
+  //   		enyo.forEach(preferences, this.createPreferences, this);
+  //   		this.$.drawer.render();
+		// }
     	return true;
     },
     
@@ -73,7 +75,7 @@ enyo.kind({
 				kind: kindControl,
 				name: kindName,
 				container: this.$.drawer,
-				classes: "playlist-item"
+				//classes: "playlist-item"
 				//published:{playlistInfo:item},
 				//ontap: "tapItemPlaylist",
             });
@@ -92,12 +94,11 @@ enyo.kind({
     },
     components: [
         {kind: "FittableColumns", classes: "config-item", components:[
-			{kind: "Control", content: "label", fit: true},
-			{kind: "mochi.ToggleButton", onChange: "valueChange", colorActive: "#69cdff", colorInactive: "#ff4a4a", style: "width: 80px"},
+			{kind: "Control", content: "label"},
+			{kind: "mochi.ToggleButton", onChange: "valueChange", colorActive: "#69cdff", colorInactive: "#ff4a4a"},
 		]},
     ],
     create:function() {
         this.inherited(arguments);
-        
     }
 });

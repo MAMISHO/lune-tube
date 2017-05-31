@@ -1,7 +1,7 @@
 enyo.kind({
     name: "DataPreference",
     kind: "Component",
-    source: "localstorage",
+    //source: "localstorage",
     published: {
         preferences:{}
     },
@@ -19,13 +19,12 @@ enyo.kind({
     },
 
     loadPreferences: function(){
-    	var storage = new enyo.LocalStorageSource();
-    	var pref = storage.get(this.storageName);
+    	//var storage = new enyo.LocalStorageSource();
+    	var pref = localStorage.getItem(this.storageName);
     	
     	if(pref){
-
-    		this.setPreferences(pref);
     		console.log("Ya existen las preferencias");
+    		this.bubble("onPreferencesUpdate", JSON.parse(pref));
     	}else{
 
     		this.loadDefaultPreferences();
@@ -57,10 +56,10 @@ enyo.kind({
 
 	createPreferences: function(pref) {
 	    //if(pref && pref typeof Object){
-	    var storage = new enyo.LocalStorageSource();
+	    //var storage = new enyo.LocalStorageSource();
 	    if(pref){
 
-	    	storage.set(this.storageName, pref);
+	    	localStorage.setItem(this.storageName, JSON.stringify(pref));
 	    	this.bubble("onPreferencesUpdate", pref);
 	    }else{
 	    	console.log("No se han creado las preferencias");
