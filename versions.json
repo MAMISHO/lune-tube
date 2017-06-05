@@ -1,8 +1,18 @@
 {
 	"id":		"com.emsoft.lunetube",
-	"version":      	"0.5.0",
+	"version":      	"0.5.1",
 	"title":		"LuneTube",
 	"versions": {
+		"0.5.1" : {
+			"url" : {
+				"ipk" : "https://app.box.com/shared/static/og2nogtueoc6ty9wu2axvbbc1rcmv5au.ipk",
+				"apk" : "https://app.box.com/shared/static/aklv3kzq1temc427l5nu8r4cb6aztvr6.apk"
+			},
+			"changelog": [
+				"Fixed bug that causes the player does not start the video.",
+				"Improve Login",
+			]
+		},
 		"0.5.0" : {
 			"url" : {
 				"ipk" : "https://app.box.com/shared/static/qmie7y6118m4vox0f7mw2shrx00k78kw.ipk",

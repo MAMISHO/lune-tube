@@ -93,14 +93,16 @@ enyo.kind({
                 {kind: "Control", name: "webViewContent", fit: true},
                 // {kind: "LunetubePreferences", name: "preferences"},
 
-                {classes: "onyx-menu-divider"},
-                {ontap:"aboutTap", classes:"menu-option-item", style:"text-align: center", components:[
-                    // {kind:"Image", src:"assets/home-icon.png"},
-                    {name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
-                        {kind: "Control", name: "textInfo", allowHtml:true, content:""}
-                    ]},
-                    {content: "( About APP )", style:"display: inline-block"},
-                    {content: "( DEMO )", ontap: "openVideoDemo"}
+                {kind: "Control", name: "aboutContainer", components:[
+                    {classes: "onyx-menu-divider"},
+                    {ontap:"aboutTap", classes:"menu-option-item", style:"text-align: center", components:[
+                        // {kind:"Image", src:"assets/home-icon.png"},
+                        {name:"info", kind: "onyx.Groupbox", style:"margin: 0 5px", showing:false, components: [
+                            {kind: "Control", name: "textInfo", allowHtml:true, content:""}
+                        ]},
+                        {content: "( About APP )", style:"display: inline-block"},
+                        {content: "( DEMO )", ontap: "openVideoDemo"}
+                    ]}, 
                 ]},
             ]},
         ]},
@@ -125,20 +127,29 @@ enyo.kind({
         this.$.listChannel.hide();
         this.$.loginGroup.hide();
         this.$.cancelButton.hide();
+    },
 
+    createWebView: function(url){
         if (enyo.platform.webos < 4){
 
-            this.$.webViewContent.destroyClientControls();
-            this.createComponent({
-                container: this.$.webViewContent,
-                kind: "WebView",
-                url: "",
-        style: "height: 300px",
-        onPageTitleChanged: "pageTitleChanged"
-            });
-            this.$.webViewContent.setStyle("height", "100%");
-            this.$.webViewContent.hide();
-            this.$.webViewContent.render();
+            if(!this.$.webView){
+
+                this.$.webViewContent.destroyClientControls();
+                this.createComponent({
+                    container: this.$.webViewContent,
+                    kind: "WebView",
+                    url: "",
+                    style: "height: 300px",
+                    onPageTitleChanged: "pageTitleChanged"
+                });
+                this.$.webViewContent.setStyle("height", "100%");
+                this.$.webViewContent.show();
+                this.$.webViewContent.render();
+                this.$.webView.setUrl(url);
+            }else{
+                this.$.webViewContent.show();
+                this.$.webView.setUrl(url);
+            }
         }
     },
 
@@ -283,7 +294,8 @@ enyo.kind({
             }else if(enyo.platform.webos < 4){ //webOS
 
                 console.log("Se envia webos");
-                this.$.webView.setUrl(url);
+                this.createWebView(url);
+                this.$.aboutContainer.hide();
                 // this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
 
             }else{
@@ -420,6 +432,7 @@ enyo.kind({
 
         this.$.webViewContent.hide();
         this.$.cancelButton.hide();
+        this.$.aboutContainer.show();
     },
 
     authorizationTokenError: function(inRequest, inResponse){
@@ -440,6 +453,8 @@ enyo.kind({
             this.setStatus("No User");
             this.bubble("onSearchEvent", "");
             this.setLogin(myApiKey.login);
+            this.$.webView.setUrl(url);
+            this.cancelLogin();
             this.bubble("onShowMenuOption", this);
         }
     },
@@ -450,6 +465,7 @@ enyo.kind({
                 this.$.loginGroup.hide();
                 this.$.webViewContent.hide();
                 this.$.cancelButton.hide();
+                this.$.aboutContainer.show();
     },
 
     openVideoDemo: function(inSender, inEvent){

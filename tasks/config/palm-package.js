@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         luneos: {
             command: [
                 'palm-package deploy',
-                'scp -P 5522 com.emsoft.lunetube_0.5.0_all.ipk root@localhost:/media/internal/downloads',
+                'scp -P 5522 com.emsoft.lunetube_0.5.1_all.ipk root@localhost:/media/internal/downloads',
             ].join('&&')
         },
         webos: {
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
             command: [
                 
                 'palm-package deploy',
-                'palm-install com.emsoft.lunetube_0.5.0_all.ipk',
+                'palm-install com.emsoft.lunetube_0.5.1_all.ipk',
                 'palm-launch com.emsoft.lunetube',
                 'palm-log -f com.emsoft.lunetube'
 
