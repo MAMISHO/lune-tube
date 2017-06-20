@@ -232,6 +232,8 @@ enyo.kind({
             // console.log(item);
             if(this.selected){
                 this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));   
+            }else{
+                this.$.item.removeClass("item-selected");
             }
             // this.$.item.addRemoveClass("item-selected", inSender.isSelected(inEvent.index));
             this.$.videoItem.addClass(this.platformStyle);
