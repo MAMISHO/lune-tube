@@ -10,7 +10,7 @@
 			},
 			"changelog": [
 				"Fixed bug that causes the player does not start the video.",
-				"Improve Login",
+				"Improve Login"
 			]
 		},
 		"0.5.0" : {
