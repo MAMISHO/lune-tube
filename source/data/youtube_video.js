@@ -583,7 +583,8 @@ enyo.kind({
     getTokens: function(html5playerfile, debug, callback) {
       
       var key, cachedTokens;
-      var rs = /(?:html5)?player-([a-zA-Z0-9\-_]+)(?:\.js|\/)/
+      // var rs = /(?:html5)?player-([a-zA-Z0-9\-_]+)(?:\.js|\/)/
+      var rs = /(?:html5)?player[-_]([a-zA-Z0-9\-_]+)(?:\.js|\/)/
         .exec(html5playerfile);
       if (rs) {
        

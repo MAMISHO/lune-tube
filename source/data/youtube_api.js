@@ -59,7 +59,7 @@ enyo.kind({
 				v.video_id = data[i].id.videoId;
 				v.channel_id = data[i].snippet.channelId;
 				v.image = data[i].snippet.thumbnails.medium.url;
-				v.image_high = data[i].snippet.thumbnails.high.url;
+				// v.image_high = data[i].snippet.thumbnails.high.url;
 				v.title = data[i].snippet.title;
 				v.chanel = data[i].snippet.channelTitle;
 				v.views = "",
@@ -70,6 +70,20 @@ enyo.kind({
 					v.nextPage = inResponse.nextPageToken;	
 				}
 				
+				// mapeamos la imgs
+				var images = new Array();
+					var t = data[i].snippet.thumbnails;
+
+					for (var image in t ) {
+					    images.push([image, t[image]]);
+					}
+
+					images.sort( function sortable(img1, img2){
+						return img1[1].width - img2[1].width;
+					});
+					
+					v.image_high = images.pop()[1].url;
+
 				/*var vevo = v.chanel.search("VEVO");
 				if(vevo === -1){
 					videos.push(v);
@@ -234,10 +248,25 @@ enyo.kind({
 				v.channel_id = data[i].snippet.channelId;
 				v.title = data[i].snippet.title;
 				v.chanel = data[i].snippet.channelTitle;
-				v.image_high = data[i].snippet.thumbnails.high.url;
+				// v.image_high = data[i].snippet.thumbnails.high.url;
 				v.views = "";
 				v.time = data[i].snippet.publishedAt.split("T")[0];
 				v.description = data[i].snippet.description;
+
+				// mapeamos la imgs
+				var images = new Array();
+					var t = data[i].snippet.thumbnails;
+
+					for (var image in t ) {
+					    images.push([image, t[image]]);
+					}
+
+					images.sort( function sortable(img1, img2){
+						return img1[1].width - img2[1].width;
+					});
+					
+					v.image_high = images.pop()[1].url;
+
 				
 				if(data[i].snippet.thumbnails){
 					v.image = data[i].snippet.thumbnails.medium.url;
@@ -517,7 +546,7 @@ enyo.kind({
 					v.video_id = data[i].snippet.resourceId.videoId;
 					v.channel_id = data[i].snippet.channelId;
 					v.image = data[i].snippet.thumbnails.medium.url;
-					v.image_high = data[i].snippet.thumbnails.high.url;
+					// v.image_high = data[i].snippet.thumbnails.high.url;
 					v.title = data[i].snippet.title;
 					v.chanel = data[i].snippet.channelTitle;
 					v.views = "",
@@ -528,6 +557,21 @@ enyo.kind({
 					if(inResponse.nextPageToken){
 						v.nextPage = inResponse.nextPageToken;	
 					}
+
+					// mapeamos la imgs
+				var images = new Array();
+					var t = data[i].snippet.thumbnails;
+
+					for (var image in t ) {
+					    images.push([image, t[image]]);
+					}
+
+					images.sort( function sortable(img1, img2){
+						return img1[1].width - img2[1].width;
+					});
+					
+					v.image_high = images.pop()[1].url;
+
 					/*var vevo = v.chanel.search("VEVO");
 					if(vevo === -1){
 						videos.push(v);
