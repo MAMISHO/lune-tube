@@ -1,0 +1,378 @@
+.topbar{
+	background-color: #cf0652;
+	border: none;
+	padding: 4px 2px;
+}
+.topbar > img{
+	margin: 0;
+	padding: 0;
+}
+
+.menu{
+	/*padding: 2px 1px 2px 1px;*/
+	/*padding: 0 1px 0 0;*/
+	padding: 4px 0 4px 0;
+	margin: 0;
+	background-color: #cf0652;
+	display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-wrap: nowrap;
+	-ms-flex-wrap: nowrap;
+	flex-wrap: nowrap;
+	border: none;
+	max-height: 40px;
+	position: relative;
+	bottom: 0px;
+}
+.menu div{
+	-webkit-flex-grow: 1;
+	-ms-flex-positive: 1;
+	flex-grow: 1;
+	-ms-flex-negative: 0;
+	-webkit-flex-shrink: 0;
+	flex-shrink: 0;
+	-ms-flex-preferred-size: auto;
+	-webkit-flex-basis: auto;
+	flex-basis: auto;
+	text-align: center;
+	/*shorthand*/
+	/*flex: 0 0 auto; */
+}
+
+.menu-option{
+	background-color: #fff;
+	color:#333;
+	font-weight: bolder;
+	/*padding: 0 0 0 5px;*/
+}
+
+.menu-option-default{
+	display: inline-block;
+	width: 100%;
+	height: 100%;
+	text-align: center;
+	font-size: 20px;
+	padding: 10px 0px;
+	font-weight: bolder;
+	color:#333;
+}
+.menu-option-item{
+	font-size: 20px;
+	/*padding: 10px 0;*/
+	padding: 10px 5px;
+	margin: 0;
+	/*width: 100%;*/
+	border-color: rgb(124, 124, 124);
+	border-bottom-color: rgb(211,211,211);
+	text-align: left;
+}
+.menu-option-item img{
+	width: 23px;
+	display: inline-block;
+	padding-right: 3px;
+}
+.menu-login-group{
+	text-align:center;
+	padding-bottom: 5px;
+	border-bottom-left-radius: 15px !important;
+	border-bottom-right-radius: 15px !important;
+}
+
+.menu-login{
+	width: 100%;
+	text-align: center;
+}
+.menu-login-img{
+	height: 100%;
+	min-height: 90px;
+	/*background-image: url();*/
+	width: 100% !important;
+	max-width: 90px;
+	background-position: center;
+	border-radius: 66px;
+}
+
+.onyx-menu-item:hover{
+	background-color: #333;
+	color: #fff;
+}
+
+.header {
+	width: 100%;
+	/*padding: 2px 4px;*/
+	margin: 0;
+	background-color: #cf0652;
+	/*display: -webkit-flex;
+	display: -ms-flexbox;
+	display: flex;
+	-webkit-flex-wrap: nowrap;
+	    -ms-flex-wrap: nowrap;
+	    flex-wrap: nowrap;*/
+	    border: none;
+	    border-bottom: 8px solid #cf0652;
+	}
+
+	.header > div{
+		padding: 0 5px;
+		text-align: center;
+	/*-webkit-flex: 0 0 auto;
+	    -ms-flex: 0 0 auto;
+	    flex: 0 0 auto; */
+	    display: inline-block;
+	    width: auto;
+	}
+	.header-loc{
+		text-align: left !important;
+		width: 100%;
+		/*color: #fff;*/
+		font-size: 28px;
+		font-weight: bolder;
+		background-color: white;
+		color: #cf0652;
+		text-decoration: underline;
+		border-right: 7px solid #cf0652;
+	}
+	.menu > label{
+	}
+	label > input{
+		font-size: 16px !important;
+		font-weight: bold;
+	}
+	label{
+	}
+	.search-input{
+		margin: 0;
+		background-color: #b4b4b4;
+		border: 0;
+		border-radius: 0;
+		outline: none;
+		font-size: 13px;
+		color: #1a1a1a;
+		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+	}
+
+	.search-input-decorator{
+		border-radius: 20px;
+	}
+
+	.search-spinner {
+		position: absolute;
+		top: 4px;
+		right: 4px;
+	}
+
+	.search-button {
+		cursor: pointer;
+	}
+
+	.search-autocomplete{
+		background-color: rgba(211, 211, 211, 0.94);
+		color: #333;
+		font-weight: bolder;
+		font-family: "Mochi Bold Oblique";
+		font-size: 1.2em;
+	}
+
+	@media screen and (min-width: 800px) {
+		input{
+			width: 96%;
+		}
+		label{
+			width: 88%;
+		}
+
+	}
+	@media screen and (min-width: 1024px) {
+		label{
+			width: 228px;
+		}
+		input{
+			width: 93%;
+		}
+	}
+	@media screen and (width: 768px) {
+		label{
+			width: 88%;
+		}
+		input{
+			width: 97%;
+		}
+	}
+	@media screen and (width: 480px) {
+		label{
+			width: 82%;
+		}
+		input{
+			width: 93%;
+		}
+	}
+	@media screen and (width: 320px) {
+		input{
+			width: 94%;
+		}
+		label{
+			width: 75%;
+		}
+	}
+	/*Tab buttons*/
+	.onyx-radiobutton{
+		width: 33.33%;
+		border-radius: 0px !important;
+		padding-left: 0 !important;
+		padding-right: 0 !important;
+		background-color: #cf0652;
+		color: #fff;
+		padding-top: 3px !important;
+		padding-bottom: 3px !important;
+	}
+	.onyx-radiobutton.active{
+		background-color: transparent;
+		color: #000;
+		border-bottom: none;
+	}
+
+
+	/*Menu option user*/
+	.lunetube-groupbox-header{
+		background-image: none; 
+		background-color: rgb(246, 246, 246);
+		color: #333;
+		text-align: center;
+		border: 2px solid rgb(124, 124, 124);
+		border-top-right-radius: 20px !important;
+		border-top-left-radius: 20px !important;
+		border-bottom-color: transparent;
+	}
+	.lunetube-option-item-bottom{
+		padding: 0;
+		margin: 0;
+		text-align: center;
+		border: none;
+	}
+	.lunetube-option-item-down{
+		width: 72px !important;
+		margin-top: -1px;
+	}
+	.lunetube-option-item-after-bottom{
+		border-bottom: 2px solid rgb(124, 124, 124);
+		border-bottom-left-radius: 20px !important;
+		border-bottom-right-radius: 20px !important;
+		margin-bottom: -1px;
+	}
+	.lunetube-option-item{
+		border-color: rgb(211, 211, 211);
+		/* border-bottom-color: transparent; */
+	}
+
+
+	/*Pullout*/
+/*.pullout {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	width: 320px;
+	background-color: #fff;
+}
+
+.pullout-shadow {
+	position: absolute;
+	height: 100%;
+	width: 20px;
+	right: -20px;
+	background: url(../../assets/sliding-shadow.png) repeat-y;
+	background-size: 20px 2px;
+}
+
+.pullout-grabbutton {
+	position: absolute;
+	height: 30px;
+	width: 30px;
+	bottom: 5px;
+	right: -30px;
+	background-color: red;
+	box-shadow: 4px 4px 4px rgba(0,0,0,0.3);
+	border-radius: 50px;
+}
+.pullout-toolbar {
+	padding-top: 4px;
+	text-align: center;
+}
+.settings {
+	padding: 10px;
+}
+.settings > * {
+	padding: 10px;
+	min-height: 30px;
+	line-height: 30px;
+}
+
+.settings > * > * {
+	display: inline-block;
+}
+.bookmark-header {
+	text-align: center;
+	padding: 10px 0;
+}
+.bookmark-scroller {
+	background-color: #fff;
+}
+.pullout-menu {
+	display: none;
+	}*/
+
+	.pullout-shadow{
+		position: absolute;
+		height: 100%;
+		width: 20px;
+		right: -20px;
+		/*background: url(http://enyojs.com/samples/maps/images/sliding-shadow.png) repeat-y;*/
+		background: url(../../assets/sliding-shadow.png) repeat-y;
+		background-size: 20px 2px;
+		/*-moz-transform: scaleX(-1);
+		-o-transform: scaleX(-1);
+		-webkit-transform: scaleX(-1);
+		transform: scaleX(-1);
+		filter: FlipH;
+		-ms-filter: "FlipH";*/
+	}
+	.pullout-grabbutton{
+		/*position: absolute;
+		height: 54px;
+		width: 50px;
+		bottom: 20px;
+		right: -46px;
+		border-radius: 0 10px 10px 0;
+		background-color: #D8D8D8;
+		box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);*/
+		position: absolute;
+		height: 40px;
+		width: 30px;
+		bottom: 1px;
+		right: -26px;
+		border-radius: 0 10px 10px 0;
+		/*background-color: #D8D8D8;*/
+		background-color: white;
+		box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
+	}
+
+	.pullout{
+		position: absolute;
+		/*top: 57px;*/
+		top: 0;
+		/*right: 0;*/
+		left:0;
+		bottom: 0;
+		width: 280px;
+		max-width: 280px;
+		/*background: #D8D8D8;*/
+		background-color: white;
+	}
+	.pullout-menu{
+		display: none;
+	}
+	.pullout-toolbar{
+		/*padding-top: 4px;*/
+		/*text-align: center;*/
+	}

@@ -1,0 +1,23 @@
+enyo.depends(
+    "LoadiLibResources.js",
+    "sample.css",
+    "ChooseLocale.js",
+    "ChooseTimeZone.js",
+    "ChooseCurrency.js",
+    "LocaleInfo.css",
+    "LocaleInfo.js",
+    "DateFormatting.css",
+    "DateFormatting.js",
+    "AdvDateFormatting.css",
+    "AdvDateFormatting.js",
+    "NumberFormatting.css",
+    "NumberFormatting.js",
+    "NameParsing.css",
+    "NameParsing.js",
+    "NameFormatting.css",
+    "NameFormatting.js",
+    "AddressParsing.css",
+    "AddressParsing.js",
+    "AddressFormatting.css",
+    "AddressFormatting.js"
+);

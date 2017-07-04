@@ -1,0 +1,114 @@
+.comment{
+	padding: 4px 4px 4px 4px;
+	/*margin: 15px 0;*/
+}
+.comment-text > img{
+	/*width: 20%;*/
+	max-height: 50px;
+	height: 50px !important;
+	max-width: 50px;
+	width: 50px !important;
+	border-radius: 66px;
+	-webkit-border-radius: 66px;
+	user-drag: none; 
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+	vertical-align: middle;
+}
+.comment-user{
+	/*font-size: 20px;*/
+	font-size: 16px;
+	font-weight: bolder;
+	color: rgb(93, 93, 93);
+	text-shadow: 1px 1px 1px #333;
+	padding: 0;
+	margin: 0 0 0 3px;
+	vertical-align: middle;
+}
+.comment-text{
+	width: 100%;
+	/*margin-left: 5%;*/
+	font-size: 13px;
+	padding: 0;
+	margin-top: 0;
+	margin-bottom: 0;
+}
+.send-comment-button{
+	height: 24px; width:24px; vertical-align: bottom; position: absolute;right: 3px;bottom: 3px;
+}
+.comments-action-buttons{
+	/*text-align: right;padding-right: 15px; height: 24px;*/
+	width: 100%;
+	text-align: right;
+}
+.mochi-button-base{
+	margin: 0;
+	font-size: 13px !important;
+}
+.mochi-button-decorator-left{
+	padding: 0;
+}
+.mochi-button-decorator-right{
+	padding: 0;	
+}
+
+#app_commentList_myComment{
+	/*enyo-tool-decorator mochi-input-decorator mochi-input-animate mochi-focused*/
+	 -webkit-transform:translateZ(0) ;
+	         transform:translateZ(0) ;
+}
+.my-comment-box{
+	/*margin: 4px;*/
+	border-bottom: 1px solid rgb(211, 211, 211);
+	/*padding-top: 4px;*/
+	padding-bottom: 6px;
+	font-size: 16px;
+}
+.comment-reply{
+	background-color: rgba(162, 162, 162, 0.53);
+	width: 95%;
+	margin-left: 5%;
+	padding-top: 10px;
+	/*-webkit-box-shadow: inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);
+	-moz-box-shadow:    inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);
+	box-shadow:         inset 0px 4px 9px 0px rgba(50, 50, 50, 0.73);*/
+}
+
+.moon-item{
+	font-size: 16px;
+}
+.moon-expandable-picker-header::after{
+	font-size: 36px;
+	line-height: 20px;	
+}
+.moon-accordion{
+	padding-right: 30px;
+}
+.moon-expandable-list-item, .moon-accordion, .open{
+	width: 98%;
+	padding: 1%;
+}
+.like-comment{
+	width: 24px;
+	max-width: 24px;
+	height: 24px !important;
+	max-height: 24px;
+	margin: 0 10px 0 10px;
+}
+.mochi-input-decorator{
+	padding: 1px 1px 5px 8px;
+}
+.moon-expandable-picker-header{
+	background-image: url(../../lib/moonstone/images/caret-black-small-down-icon.png);
+	background-repeat: no-repeat;
+	background-position-x: 62px;
+	background-position-y: -2.5px;
+	content: "" !important;
+}
+.moon-expandable-list-item.open .moon-expandable-picker-header{
+	background-image: url(../../lib/moonstone/images/caret-black-small-up-icon.png);
+	background-repeat: no-repeat;
+	background-position-x: 62px;
+	background-position-y: -2.5px;
+	content: "" !important;
+}

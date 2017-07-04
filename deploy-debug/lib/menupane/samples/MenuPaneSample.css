@@ -1,0 +1,43 @@
+/* MenuPaneSample.css */
+
+.menu-header,
+.menu-item {
+  height: 40px;
+  width: 284px;
+  /* width: 100%; */
+  color: white;
+  padding: 16px 0 0 16px;
+}
+
+.menu-header > *,
+.menu-item > * {
+  display: inline-block;
+}
+
+.menupane-menu .menu-header,
+.menupane-menu .menu-item {
+  padding-right: 60px;
+}
+
+.menupane-menu-secondary .menu-header,
+.menupane-menu-secondary .menu-item {
+  padding-left: 76px;
+}
+
+.menu-header {
+  background-color: rgb( 64, 64, 64);
+}
+
+.menu-item {
+  background-color: rgb(128,128,128);
+}
+
+.menupane-pane {
+  background-color: rgb(192, 192, 192);
+  box-shadow: 0px 0px 5px 6px rgba( 32, 32, 32, 0.5);
+}
+
+.content {
+  padding: 32px;
+  min-height: 480px;
+}

@@ -5,7 +5,7 @@ module.exports = function(grunt) {
         luneos: {
             command: [
                 'palm-package deploy',
-                'scp -P 5522 com.emsoft.lunetube_0.5.1_all.ipk root@localhost:/media/internal/downloads',
+                'scp -P 5522 com.emsoft.lunetube_0.5.2_all.ipk root@localhost:/media/internal/downloads',
             ].join('&&')
         },
         webos: {
@@ -19,10 +19,31 @@ module.exports = function(grunt) {
             command: [
                 
                 'palm-package deploy',
-                'palm-install com.emsoft.lunetube_0.5.1_all.ipk',
+                'palm-install com.emsoft.lunetube_0.5.2_all.ipk',
                 'palm-launch com.emsoft.lunetube',
                 'palm-log -f com.emsoft.lunetube'
 
+            ].join('&&')
+        },
+        webosdebug: {
+            command: [
+                'rm -rf ./deploy-debug',
+                'mkdir ./deploy-debug',
+                'cp -r ./appinfo.json ./deploy-debug',
+                'cp -r ./framework_config.json ./deploy-debug',
+                'cp -r ./icon.png ./deploy-debug',
+                'cp -r ./debug.html ./deploy-debug',
+                'mv ./deploy-debug/debug.html ./deploy-debug/index.html',
+                'cp -r ./preferences.json ./deploy-debug',
+                'cp -r ./package.js ./deploy-debug',
+                'cp -r ./enyo ./deploy-debug',
+                'cp -r ./assets ./deploy-debug',
+                'cp -r ./lib ./deploy-debug',
+                'cp -r ./source ./deploy-debug',
+                'palm-package deploy-debug',
+                'palm-install com.emsoft.lunetube_0.5.2_all.ipk',
+                'palm-launch com.emsoft.lunetube',
+                'palm-log -f com.emsoft.lunetube'
             ].join('&&')
         },
         android: {

@@ -1,0 +1,49 @@
+.player-panel-config{
+	position: absolute;
+	top: 57px;
+	right: 0;
+	bottom: 0;
+	width: 320px;
+	background: transparent;
+}
+
+.player-panel-shadow{
+	position: absolute;
+	height: 100%;
+	width: 20px;
+	left: -20px;
+	/*background: url(../../assets/sliding-shadow-reverse.png) repeat-y;*/
+	/*background: url(../images/sliding-shadow.png) repeat-y;*/
+	background-size: 20px 2px;
+}
+
+.player-panel-grabbutton{
+	position: absolute;
+	height: 54px;
+	width: 50px;
+	bottom: 50%;
+	left: -46px;
+	border-radius: 10px 0 0 10px;
+	background-color: #D8D8D8;
+	box-shadow: -4px 4px 4px rgba(0, 0, 0, 0.3);
+}
+.player-background-layer{
+	height: 100%;
+	width: 100%;
+	background-color: #000000;
+	opacity: 0.4;
+	z-index: 10;
+}
+
+.player-panel-title{
+	background-color:  #cf0652;
+	color: #fff;
+	font-family: "Mochi Bold Oblique";
+	text-align: center;
+	font-size: 1.3em;
+}
+
+.config-item{
+	color: #fff;
+	background-color: rgba(0, 0, 0, 0.5);
+}

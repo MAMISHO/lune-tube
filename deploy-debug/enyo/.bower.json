@@ -1,0 +1,14 @@
+{
+  "name": "enyo",
+  "homepage": "https://github.com/enyojs/enyo",
+  "_release": "2.5.1.1",
+  "_resolution": {
+    "type": "tag",
+    "tag": "2.5.1.1",
+    "commit": "8286c09137187434ec918157fdd189ac7de5292a"
+  },
+  "_source": "git://github.com/enyojs/enyo.git",
+  "_target": "2.5.1.1",
+  "_originalSource": "enyojs/enyo",
+  "_direct": true
+}
