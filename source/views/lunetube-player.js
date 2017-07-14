@@ -616,7 +616,7 @@
 		/**
 		* @private
 		*/
-		_sourceType: "video",
+		_sourceType: "video", //[ video | audio]
 		
 		/**
 		* @private

@@ -4,7 +4,7 @@
 	"vendor":		"mamisho",
 	"type":			"web",
 	"main":			"index.html",
-	"title":			"LuneTube",
+	"title":		"LuneTube",
 	"icon":			"icon.png",
 	"uiRevision":	2,
 	"noWindow":		false,
@@ -13,7 +13,7 @@
 	"splashBackground": "assets/splashBackground.png", 
 	"mimeTypes": [
 
-		],
+	],
 	"universalSearch":{
 		"action":{ 
 			"displayName": "Search video",
