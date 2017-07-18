@@ -1120,7 +1120,7 @@ enyo.kind({
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){
-			this.$.player.playVideo();
+			//this.$.player.playVideo();
 		}
 		return true;
 	},
@@ -1132,7 +1132,7 @@ enyo.kind({
 		if(this._platform === "webOS"){
 			console.log("prueba video no se pausa");
 			// this.$.player.pauseVideo(); //force background plaing
-			this.$.player.playVideo();
+			//this.$.player.playVideo();
 		}
 		return true;
 	},
