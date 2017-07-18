@@ -304,9 +304,11 @@ enyo.kind({
       request.error(enyo.bind(this, "youtubeGetBodyError"));
 
       if(video_id){
-        return request.go({v:video_id});
+        // return request.go({v:video_id});
+        return request.go({v:video_id, app: "desktop", persist_app:1, client:"mv-google"});
       }else{
-        return request.go({v:this.video_id_try});
+        // return request.go({v:this.video_id_try});
+        return request.go({v:this.video_id_try, app: "desktop", persist_app:1, client:"mv-google"});
       }
     },
 

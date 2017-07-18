@@ -8,8 +8,9 @@
 	"icon":			"icon.png",
 	"uiRevision":	2,
 	"noWindow":		false,
+	"tapToShareSupported": true,
 	"keywords": ["Videos", "Movies", "Youtube"],
-	"splashicon": "assets/icon_splash.png",
+	"splashicon": "icon.png",
 	"splashBackground": "assets/splashBackground.png", 
 	"mimeTypes": [
 

@@ -19,6 +19,7 @@ enyo.kind({
 	},
 	search: function(inSearchText, inRelated) {
 		// console.log(regionCode);
+		console.log("Llega a api search");
 		var params={
 			maxResults: 15,
 			order: "relevance",
@@ -47,6 +48,7 @@ enyo.kind({
 
 	processResponse: function(inRequest, inResponse) {
 		// console.log(inRequest);
+		console.log("Llega a processResponse");
 			if(!inResponse) return [];
 			// return inResponse;
 			// console.log(inResponse);
@@ -97,6 +99,7 @@ enyo.kind({
 	},
 
 	searchVideosList: function(query){
+		console.log("Llega a searchVideosList api");
 		var params={
 			maxResults: 15,
 			chart: "mostPopular",
@@ -150,6 +153,7 @@ enyo.kind({
 	},
 
 	searchAuth: function(inSearchText, inRelated){
+		console.log("Llega a searchAuth API");
 		// console.log("Solicitud enviada con oAuth");
 		var url_base = youtube_api_url;
 		var method = "search";

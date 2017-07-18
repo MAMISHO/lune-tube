@@ -20,5 +20,6 @@ enyo.depends(
 	"poster.js",
 	"lunetube-player.js",
 	"player_config.js",
-	"preferences.js"
+	"preferences.js",
+	"audiomanager.js"
 );

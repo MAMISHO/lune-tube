@@ -144,6 +144,79 @@
 .list-button-more > div{
 	color: #fff;
 }
+
+/*webos 3.5 compatibility*/
+.list-item-webos{
+	position: relative;
+	width: 50%;
+	display: inline-block;
+	user-drag: none; 
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+}
+.list-item-webos > img{
+	width: 120px;
+	display: inline-block;
+	padding: 5px;
+	user-drag: none; 
+	-moz-user-select: none;
+	-webkit-user-drag: none;
+}
+.list-item-webos > span{
+	width: 100%;
+	display: inline-block;
+	height: 100%;
+}
+.list-item-webos > span > h3{
+	/*position: absolute;*/
+	top: 5px;
+	/*height: 100%;*/
+}
+
+/*Menu option item*/
+.mochi-badge-inner{
+	background-color: rgba(105, 205, 255, 0.8);
+	color: rgb(255, 255, 255);
+	padding-left: 0 !important;
+	padding-right: 0 !important;
+	border-top-left-radius: 12px;
+	border-bottom-left-radius: 12px;
+	border-top-right-radius: 12px;
+	border-bottom-right-radius:0;
+}
+.video-menu-button{
+	position: absolute;bottom: 3px;left: 98px;
+}
+.mochi-contextual-popup-scroller{
+	padding: 5px;
+}
+
+#app_videoList_menu_client_strategy_client, #app_videoListRelated_menu_client_strategy_client{
+	max-height: 200px !important;
+	height: 200px !important;
+}
+.mochi-togle-buttom-custom{
+	border-radius: 24px;
+	background-color: #69cdff;
+}
+div[class="onyx-toggle-button-knob"]{
+	border-radius: 24px;
+}
+div[class="onyx-toggle-content on"]{
+	background-color: #69cdff;
+	border-radius: 24px;
+}
+div[class="onyx-toggle-content off"]{
+	background-color: #ff4a4a;
+	border-radius: 24px;
+}
+/*div[class="onyx-toggle-button mochi-togle-buttom-custom off"]{*/
+.onyx-toggle-button.off{
+	background-color: #ff4a4a !important;
+}
+
+
+
 /*mobile*/
 @media screen and (min-width: 480px) {
     .list-item {
@@ -250,73 +323,12 @@
 		width: 170px !important;
 	}
 }
-
-/*webos 3.5 compatibility*/
-.list-item-webos{
-	position: relative;
-	width: 50%;
-	display: inline-block;
-	user-drag: none; 
-	-moz-user-select: none;
-	-webkit-user-drag: none;
-}
-.list-item-webos > img{
-	width: 120px;
-	display: inline-block;
-	padding: 5px;
-	user-drag: none; 
-	-moz-user-select: none;
-	-webkit-user-drag: none;
-}
-.list-item-webos > span{
-	width: 100%;
-	display: inline-block;
-	height: 100%;
-}
-.list-item-webos > span > h3{
-	/*position: absolute;*/
-	top: 5px;
-	/*height: 100%;*/
-}
-
-/*Menu option item*/
-.mochi-badge-inner{
-	background-color: rgba(105, 205, 255, 0.8);
-	color: rgb(255, 255, 255);
-	padding-left: 0 !important;
-	padding-right: 0 !important;
-	border-top-left-radius: 12px;
-	border-bottom-left-radius: 12px;
-	border-top-right-radius: 12px;
-	border-bottom-right-radius:0;
-}
-.video-menu-button{
-	position: absolute;bottom: 3px;left: 98px;
-}
-.mochi-contextual-popup-scroller{
-	padding: 5px;
-}
-
-#app_videoList_menu_client_strategy_client, #app_videoListRelated_menu_client_strategy_client{
-	max-height: 200px !important;
-	height: 200px !important;
-}
-.mochi-togle-buttom-custom{
-	border-radius: 24px;
-	background-color: #69cdff;
-}
-div[class="onyx-toggle-button-knob"]{
-	border-radius: 24px;
-}
-div[class="onyx-toggle-content on"]{
-	background-color: #69cdff;
-	border-radius: 24px;
-}
-div[class="onyx-toggle-content off"]{
-	background-color: #ff4a4a;
-	border-radius: 24px;
-}
-/*div[class="onyx-toggle-button mochi-togle-buttom-custom off"]{*/
-.onyx-toggle-button.off{
-	background-color: #ff4a4a !important;
+@media screen and (width: 480px) {
+	.list-item-webos{
+		zoom: 1.4;
+	}
+	.list-item-webos{
+		position: relative !important;
+		width: 90% !important;
+	}
 }

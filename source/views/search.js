@@ -10,10 +10,10 @@ enyo.kind({
     },
     components: [
         {kind: "onyx.Toolbar", classes:"topbar",  components:[
-                {kind: "Image", src: "assets/yt_icon_1.png", ontap:"showMenu", style:"padding: 0 16px 0 16px"},
+                {kind: "Image", src: "assets/yt_icon_1.png", ontap:"showMenu"},
                 {name:"acid", kind:"AutoCompleteInputDecorator", onInputChanged:"inputChanged", onValueSelected: "searchAction", components:[
                     {kind: "onyx.Input",fit:true, name:"searchQuery", placeholder: "Just Type...", onchange: "inputChanged", selectOnFocus:true, defaultFocus:false, onkeypress: "inputKeypress"},
-                    {name:"searchButton",kind: "Image", src: "assets/search-input-search.png", ontap:"searchAction", showing: true, style:"width:20px"},
+                    {name:"searchButton",kind: "Image", src: "assets/search-input-search.png", ontap:"searchAction", showing: true, classes: "search-input-image"},
                     {name: "searchSpinner", kind: "Image", src: "assets/spinner.gif", showing: false, style:"width:20px"}
                 ]}
         ]},

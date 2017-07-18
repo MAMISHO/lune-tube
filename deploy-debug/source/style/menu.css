@@ -5,7 +5,8 @@
 }
 .topbar > img{
 	margin: 0;
-	padding: 0;
+	/*padding: 0;*/
+	padding: 0 16px 0 16px;
 }
 
 .menu{
@@ -14,18 +15,19 @@
 	padding: 4px 0 4px 0;
 	margin: 0;
 	background-color: #cf0652;
-	display: -webkit-flex;
+	/*display: -webkit-flex;
 	display: -ms-flexbox;
 	display: flex;
 	-webkit-flex-wrap: nowrap;
 	-ms-flex-wrap: nowrap;
-	flex-wrap: nowrap;
+	flex-wrap: nowrap;*/
 	border: none;
 	max-height: 40px;
 	position: relative;
 	bottom: 0px;
+	text-align: right ;
 }
-.menu div{
+/*.menu div{
 	-webkit-flex-grow: 1;
 	-ms-flex-positive: 1;
 	flex-grow: 1;
@@ -36,9 +38,7 @@
 	-webkit-flex-basis: auto;
 	flex-basis: auto;
 	text-align: center;
-	/*shorthand*/
-	/*flex: 0 0 auto; */
-}
+}*/
 
 .menu-option{
 	background-color: #fff;
@@ -155,6 +155,9 @@
 	.search-input-decorator{
 		border-radius: 20px;
 	}
+	.search-input-image{
+		width: 20px;
+	}
 
 	.search-spinner {
 		position: absolute;
@@ -174,48 +177,7 @@
 		font-size: 1.2em;
 	}
 
-	@media screen and (min-width: 800px) {
-		input{
-			width: 96%;
-		}
-		label{
-			width: 88%;
-		}
-
-	}
-	@media screen and (min-width: 1024px) {
-		label{
-			width: 228px;
-		}
-		input{
-			width: 93%;
-		}
-	}
-	@media screen and (width: 768px) {
-		label{
-			width: 88%;
-		}
-		input{
-			width: 97%;
-		}
-	}
-	@media screen and (width: 480px) {
-		label{
-			width: 82%;
-		}
-		input{
-			width: 93%;
-		}
-	}
-	@media screen and (width: 320px) {
-		input{
-			width: 94%;
-		}
-		label{
-			width: 75%;
-		}
-	}
-	/*Tab buttons*/
+/*Tab buttons*/
 	.onyx-radiobutton{
 		width: 33.33%;
 		border-radius: 0px !important;
@@ -234,6 +196,9 @@
 
 
 	/*Menu option user*/
+	.menu-groupbox-container{
+		margin: 10px 5px;
+	}
 	.lunetube-groupbox-header{
 		background-image: none; 
 		background-color: rgb(246, 246, 246);
@@ -264,6 +229,155 @@
 		border-color: rgb(211, 211, 211);
 		/* border-bottom-color: transparent; */
 	}
+
+.pullout-shadow{
+		position: absolute;
+		height: 100%;
+		width: 20px;
+		right: -20px;
+		/*background: url(http://enyojs.com/samples/maps/images/sliding-shadow.png) repeat-y;*/
+		background: url(../../assets/sliding-shadow.png) repeat-y;
+		background-size: 20px 2px;
+		/*-moz-transform: scaleX(-1);
+		-o-transform: scaleX(-1);
+		-webkit-transform: scaleX(-1);
+		transform: scaleX(-1);
+		filter: FlipH;
+		-ms-filter: "FlipH";*/
+	}
+	.pullout-grabbutton{
+		/*position: absolute;
+		height: 54px;
+		width: 50px;
+		bottom: 20px;
+		right: -46px;
+		border-radius: 0 10px 10px 0;
+		background-color: #D8D8D8;
+		box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);*/
+		position: absolute;
+		height: 40px;
+		width: 30px;
+		bottom: 1px;
+		right: -26px;
+		border-radius: 0 10px 10px 0;
+		/*background-color: #D8D8D8;*/
+		background-color: white;
+		box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
+	}
+
+	.pullout{
+		position: absolute;
+		/*top: 57px;*/
+		top: 0;
+		/*right: 0;*/
+		left:0;
+		bottom: 0;
+		width: 280px;
+		max-width: 280px;
+		/*background: #D8D8D8;*/
+		background-color: white;
+	}
+	.pullout-menu{
+		display: none;
+	}
+	.pullout-toolbar{
+		/*padding-top: 4px;*/
+		/*text-align: center;*/
+	}
+
+	@media screen and (min-width: 800px) {
+		input{
+			width: 96%;
+		}
+		label{
+			width: 88%;
+		}
+
+	}
+	@media screen and (min-width: 1024px) {
+		label{
+			width: 228px;
+		}
+		input{
+			width: 93%;
+		}
+	}
+	@media screen and (width: 768px) {
+		label{
+			width: 88%;
+		}
+		input{
+			width: 97%;
+		}
+	}
+	@media screen and (width: 480px) {
+		label{
+			width: 80%;
+		}
+		input{
+			width: 93%;
+		}
+		label > input{
+			font-size: 30px !important;
+			font-weight: bold;
+			margin-top: 16px !important;
+		}
+		.topbar-search{
+			height: 80px;
+		}
+		.topbar{
+			background-color: #CF0652;
+			border: none;
+			height: 61px;
+			padding: 9px;
+		}
+		.topbar > img{
+			margin: 0;
+			padding: 0 16px 0 16px;
+			height: 37px;
+		}
+		.pullout{
+			width: 420px;
+			max-width: 420px;
+		}
+		.header{
+			border-bottom: 20px solid #cf0652;
+			padding-top: 10px;
+		}
+		.header-loc{
+			font-size: 38px;
+			margin-right: 7px;
+		}
+		.menu-groupbox-container{
+			margin: 10px 8px;
+		}
+		.search-input-image{
+			width: 32px;
+		}
+		.menu{
+			max-height: 80px;
+			height: 80px;
+		}
+		.menu > div{
+			zoom: 1.4;
+			margin-top: 11px !important;
+		}
+		.pullout-grabbutton{
+			height: 80px;
+			width: 40px;
+			right: -36px;
+		}
+
+	}
+	@media screen and (width: 320px) {
+		input{
+			width: 94%;
+		}
+		label{
+			width: 75%;
+		}
+	}
+	
 
 
 	/*Pullout*/
@@ -321,58 +435,3 @@
 .pullout-menu {
 	display: none;
 	}*/
-
-	.pullout-shadow{
-		position: absolute;
-		height: 100%;
-		width: 20px;
-		right: -20px;
-		/*background: url(http://enyojs.com/samples/maps/images/sliding-shadow.png) repeat-y;*/
-		background: url(../../assets/sliding-shadow.png) repeat-y;
-		background-size: 20px 2px;
-		/*-moz-transform: scaleX(-1);
-		-o-transform: scaleX(-1);
-		-webkit-transform: scaleX(-1);
-		transform: scaleX(-1);
-		filter: FlipH;
-		-ms-filter: "FlipH";*/
-	}
-	.pullout-grabbutton{
-		/*position: absolute;
-		height: 54px;
-		width: 50px;
-		bottom: 20px;
-		right: -46px;
-		border-radius: 0 10px 10px 0;
-		background-color: #D8D8D8;
-		box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);*/
-		position: absolute;
-		height: 40px;
-		width: 30px;
-		bottom: 1px;
-		right: -26px;
-		border-radius: 0 10px 10px 0;
-		/*background-color: #D8D8D8;*/
-		background-color: white;
-		box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.3);
-	}
-
-	.pullout{
-		position: absolute;
-		/*top: 57px;*/
-		top: 0;
-		/*right: 0;*/
-		left:0;
-		bottom: 0;
-		width: 280px;
-		max-width: 280px;
-		/*background: #D8D8D8;*/
-		background-color: white;
-	}
-	.pullout-menu{
-		display: none;
-	}
-	.pullout-toolbar{
-		/*padding-top: 4px;*/
-		/*text-align: center;*/
-	}

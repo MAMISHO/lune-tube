@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<!-- <script src="http://192.168.1.35:8080/target/target-script-min.js"></script> -->
-		<script src="http://localhost:8080/target/target-script-min.js#webos"></script>
+		<!-- <script src="http://localhost:8080/target/target-script-min.js#webos"></script> -->
 		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 		<title>LuneTube</title>
 		<link rel="shortcut icon" href="assets/favicon.ico"/>
@@ -31,9 +31,17 @@
 				location = 'debug.html';
 			}
 			if (window.PalmSystem){
-            window.PalmSystem.stageReady();
+            	window.PalmSystem.stageReady();
     		}
+    		(function() {
+			    window.devicePixelRatio = 1.5; // FORCE for Pre3/Windsor
+			    if (window.devicePixelRatio == 1.5) {
+			      document.querySelector('html').setAttribute('class', 'pixel-ratio-15');
+			    }
+			  })();
+
 			new App().renderInto(document.body);
+			
 		</script>
 	</body>
 </html>

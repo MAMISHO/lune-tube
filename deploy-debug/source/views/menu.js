@@ -24,7 +24,10 @@ enyo.kind({
          // horizontal:"hidden",
          // touch: true,
             touchOverscroll: false, components: [
-            {name: "loginGroup", kind: "onyx.Groupbox", style: "margin: 10px 5px", components: [
+            {name: "loginGroup", kind: "onyx.Groupbox",
+            // style: "margin: 10px 5px",
+            classes: "menu-groupbox-container",
+            components: [
                 {kind: "onyx.GroupboxHeader", classes: "lunetube-groupbox-header", content: "paste the token", name: "token_message"},
                 {classes: "menu-login-group", components: [
                     {kind: "onyx.InputDecorator", components: [
@@ -44,7 +47,10 @@ enyo.kind({
                             // {kind: "onyx.Button", content: "Confirm", ontap: "confirmLogin"}
                 ]}
             ]},
-            {name: "listChannel", kind: "onyx.Groupbox", style: "margin: 10px 5px", components: [
+            {name: "listChannel", kind: "onyx.Groupbox",
+            // style: "margin: 10px 5px", 
+            classes: "menu-groupbox-container",
+            components: [
                 {kind: "onyx.GroupboxHeader", classes: "lunetube-groupbox-header", name: "status", content: "Channel"},
                 {ontap: "homeRequest", classes: "menu-option-item", components: [
                     {kind: "Image", src: "assets/home-icon.png"},
@@ -139,10 +145,11 @@ enyo.kind({
                     container: this.$.webViewContent,
                     kind: "WebView",
                     url: "",
-                    style: "height: 300px",
+                    style: "height: 400px",
                     onPageTitleChanged: "pageTitleChanged"
                 });
                 this.$.webViewContent.setStyle("height", "100%");
+                this.$.webViewContent.setStyle("padding-bottom", "5%");
                 this.$.webViewContent.show();
                 this.$.webViewContent.render();
                 this.$.webView.setUrl(url);

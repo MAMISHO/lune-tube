@@ -26,10 +26,10 @@ var myApiErrors={
 	login:"Login required"
 };
 
-
+var regionCode = "US";
 /*Instrucciones para obtener la localización del dispositivo*/
 
-var defaultRegionCode = getLocation();
+/*var defaultRegionCode = getLocation();
 //var defaultRegionCode = null;
 var loc = ilib.getLocale(); //other locations
 var localeInfo = new ilib.LocaleInfo(loc);
@@ -52,4 +52,4 @@ function getLocation(){
     }else{
         return new ilib.Locale("en-US");
     }
-}
+}*/

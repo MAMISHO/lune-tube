@@ -74,11 +74,11 @@ enyo.kind({
 							]},
 							{kind: "onyx.Toolbar", classes:"menu", components:[
 							// {kind: "onyx.Toolbar", classes:"", components:[
-								{kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"margin: 0"},
+								// {kind: "Image", src: "assets/menu.png", ontap:"showMenuOption", style:"margin: 0"},
 								{name:"videoDetailGroup", kind: "Group", tag: null, onActivate:"tabActivated__", ontap:"radioGroupTap", defaultKind: "onyx.IconButton", components: [
 									// {src: "assets/icon_results.png", ontap:"deactivate"},
 									// {src: "assets/icon_related.png", ontap:"activate"},
-									{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1, style:"margin: 0 12% 0 0"},
+									{name:"resultsButton", src: "assets/icon_results.png", active: true,index:1, style:"margin: 0 12%"},
 									{name:"relatedButton",src: "assets/icon_related.png", disabled:true, index:2, style:"margin: 0 12%"},
 									{name:"commentButton", src: "assets/icon_comments.png", disabled: true, index:3, style:"margin: 0 12%"},
 								]}
