@@ -651,13 +651,13 @@ enyo.kind({
 
 		if(this._videoIdCurrent !== video_id){
 
-			this.$.player.unload();
+			//this.$.player.unload();
 			if(video.image_high){
 				this.$.player.setPosterTmp(video.image_high);
 			}
 			// this.$.panel.setIndex(1);
 			this.$.panel.next();
-			this.$.player.startVideoPlay();
+			//this.$.player.startVideoPlay();
 
 			/*	antes de realizar la peticion revisamos si ya tenemos los datos del
 				video en la cache

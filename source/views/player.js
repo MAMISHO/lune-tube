@@ -195,7 +195,8 @@ enyo.kind({
 		this.$.player.setSources(this.sources);
 	},
 */	videoIdChanged: function(inSender, inEvent) {
-	
+		console.log("Datos tratados");
+		console.log(this.videoId);
 		// this.$.player.unload();
 		if(enyo.platform.webos < 4){
 				this.$.player.unload();//comementar para dispositivos mas potentes	
@@ -246,6 +247,8 @@ enyo.kind({
 			}*/
 		}
 
+		console.log("formatos ordenados");
+		console.log(this.sources);
 		// console.log(this.videoId);
 		if(this.videoId[0].title != this.$.videoInfoHeader.getSubSubTitle()){
 			this.$.videoInfoHeader.setSubSubTitle(this.videoId[0].title);
