@@ -724,14 +724,14 @@ enyo.kind({
             q.resolution = item.resolution;
           }
           break;
-      
-      //case '139': // Audio
-      case '140': // Audio mp4 128 bit aac
-      case '141':
-      //case '171': // Audio webM 128 bit vorbis
-      //case '249': // Audio webM 50 bit opus
-      //case '250': // Audio webM 70 bit opus
-      //case '251': // Audio webM 160 bit opus 
+      case '139': //Dash MP4 Audio
+      case '140': //Dash MP4 Audio 128 bits aac
+      case '141': //Dash MP4 Audio
+      case '171': //Dash WEBM Audio 128 audiobitrate vorbis
+      case '172': //Dash WEBM Audio
+      case '249': // Audio webM 50 bit opus
+      case '250': // Audio webM 70 bit opus
+      case '251': // Audio webM 160 bit opus 
           // if(item.quality){
             q.resolution = 'Audi';
           // }

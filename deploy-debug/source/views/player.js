@@ -108,9 +108,11 @@ enyo.kind({
 	status:false, //false when is paused | true when is playing
 	_isFullScreen : false,
 	_isLoop: false,
+	_wasSleep: false,
 	create:function() {
 	    this.inherited(arguments);
 	    this.$.player.$.slider.setQuality(this.getQuality());
+	    
 	},
 	controlsTapped: function() {
 		// this.$.tapDialog.show();
@@ -158,6 +160,7 @@ enyo.kind({
 
 	sleepApp: function(inSender, inEvent){
 		this.$.player.pause();
+		this._wasSleep = true;
 		return true;
 	},
 
@@ -444,6 +447,14 @@ enyo.kind({
 	playVideo: function(inSender, inEvent){
 		// console.log("playVideo : " + this.status);
 		
+		/*Cuando se ha mandado a dormir y al desactivarse se pone play
+			por el backgrund evitamos que se inicie nuevamente por una vez
+			Luego al siguiente intento si se permite porque habrá cambiado el sleep
+		*/
+		if(this._wasSleep){
+			this._wasSleep = false;
+			return true;
+		}
 
 		if(this.status){
 			// console.log("dentro del status");

@@ -117,7 +117,7 @@ enyo.kind({
 		{kind: "WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion", onCurrentVersion: "currentVersion"},
 
 		/*Aplication events*/
-		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange"},
+		{kind: "enyo.ApplicationEvents", onWindowRotated: "windowRotated", onactivate:"activate", ondeactivate:"deactivate", onWindowParamsChange: "windowParamsChange", onrelaunch: "windowParamsChange", onwebOSRelaunch: "windowParamsChange", onApplicationRelaunch: "applicationRelaunchHandler",},
 		{kind: "enyo.Signals",
 			onactivate: "handleActivate",
 			ondeactivate: "handleDeactivate",
@@ -145,6 +145,16 @@ enyo.kind({
 		     onResponse: "gotResponse",
 		     subscribe: true
 		},
+
+		{kind: "LunaService",
+             name: "sendData",
+             service: "palm://com.palm.stservice",
+             method: "shareData",
+             onSuccess : "sendDataSuccess",
+             onFailure : "sendDataFailure",
+             onResponse: "sendDataGotResponse",
+             subscribe: true
+        },
 
 		/*Audio Service*/
 		{name: "psMediaStatus", kind: "LunaService", service: "palm://com.palm.audio/", method: "media/status", onSuccess: "onSuccess_RequestMediaStatus", onFailure: "onFailure_RequestMediaStatus", subscribe: true},
@@ -1110,7 +1120,7 @@ enyo.kind({
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){
-			this.$.player.playVideo();
+			//this.$.player.playVideo();
 		}
 		return true;
 	},
@@ -1122,7 +1132,7 @@ enyo.kind({
 		if(this._platform === "webOS"){
 			console.log("prueba video no se pausa");
 			// this.$.player.pauseVideo(); //force background plaing
-			this.$.player.playVideo();
+			//this.$.player.playVideo();
 		}
 		return true;
 	},
@@ -1825,7 +1835,33 @@ enyo.kind({
 				this.loginAndLoadData();
 			
 		}
-	}
+	},
+
+	// test touch to share
+	applicationRelaunchHandler: function(inSender) {
+
+        //
+        // When the devices tap, this function is called.
+        // It calls the ST service to send the URL over Bluetooth.
+        //                                                                          
+        var params = enyo.windowParams;
+        if (params.sendDataToShare !== undefined) {
+            dataToSend = { "target": "https://www.youtube.com/watch?v=nvEahdVBFVg" + this._videoIdCurrent, "type": "video", "mimetype": "text/html"};
+            this.$.sendData.send({"data": dataToSend});
+            return true;
+         }                                                          
+    }, 
+    sendDataSuccess: function(inSender, inResponse) {
+        this.log("Send data, results=" + enyo.json.stringify(inResponse));
+    },          
+    // Log errors to the console for debugging
+    sendDataFailure: function(inSender, inError, inRequest) {
+        this.log(enyo.json.stringify(inError));
+    },
+
+    sendDataGotResponse: function(inSender, inEvent){
+    	this.log("Send data, results=" + enyo.json.stringify(inResponse));
+    },
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");
 		return true;
