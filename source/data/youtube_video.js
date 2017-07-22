@@ -716,9 +716,11 @@ enyo.kind({
             q.resolution = item.resolution;
           }
           break;
-      case '139':
-      case '140':
-      case '141':
+      case '139': //Dash MP4 Audio
+      case '140': //Dash MP4 Audio
+      case '141': //Dash MP4 Audio
+      case '171': //Dash WEBM Audio
+      case '172': //Dash WEBM Audio
           // if(item.quality){
             q.resolution = 'Audi';
           // }

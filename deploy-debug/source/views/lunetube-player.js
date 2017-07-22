@@ -616,7 +616,8 @@
 		/**
 		* @private
 		*/
-		_sourceType: "video",
+		_sourceType: "video", //[ video | audio]
+		_webosPhone: false,
 		
 		/**
 		* @private
@@ -685,7 +686,20 @@
 				]},
 				{name: 'ilPlayPause', kind: 'moon.IconButton', ontap: 'playPause'},
 				{name: 'ilFullscreen', kind: 'moon.VideoFullscreenToggleButton'}
-			]}
+			]},
+			
+
+
+			// Componentes que no se ven
+	        {kind: "LunaService",
+	             name: "playAudio",
+	             service: "palm://com.palm.applicationManager/",
+	             method: "launch",
+	             onSuccess: "launchFinished",
+	             onFailure: "launchFail",
+	             onResponse: "gotResponse",
+	             subscribe: true
+	        }
 		],
 
 		/**
@@ -734,6 +748,7 @@
 			if (window.ilib) {
 				this.durfmt = new ilib.DurFmt({length: 'medium', style: 'clock', useNative: false});
 			}
+			this._webosPhone = (webos.deviceInfo().platformVersion === "2.2.4");
 
 		},
 
@@ -763,7 +778,15 @@
 
 				console.log("es audio");
 				this._sourceType = "audio";
+
+
+				/*webos 2.2.4 problema al crear kind Audio*/
+				if (this._webosPhone) {
+					this.$.playAudio.send({"id": "com.palm.app.streamingmusicplayer", "params":{"target": source.src}});
+					return true;
+				}
 				
+				/*Para los demás dispositivos*/
 				if(this.getVideo().kind === "Audio"){
 
 					this.$.video.setSrc(source.src);

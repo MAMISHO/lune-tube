@@ -35,7 +35,7 @@ module.exports = function(grunt) {
                 'cp -r ./lib ./deploy-debug',
                 'cp -r ./source ./deploy-debug',
                 'palm-package deploy-debug',
-                'palm-install com.emsoft.lunetube_0.5.2_all.ipk',
+                'palm-install com.emsoft.lunetube_' + appinfo.version + '_all.ipk',
                 'palm-launch com.emsoft.lunetube',
                 'palm-log -f com.emsoft.lunetube'
             ].join('&&')

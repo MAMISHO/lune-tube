@@ -35,7 +35,6 @@ enyo.kind({
         // enableSwipe: true,
         // onSetupSwipeItem: "setupSwipeItem",
         touchOverscroll: false,
-        strategyKind:"TranslateScrollStrategy",
          components: [
             {name: "item", ontap: "selectedVideo", components: [
                 {kind:"VideoListItem", name:"videoItem"}    

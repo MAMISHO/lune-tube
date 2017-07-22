@@ -290,7 +290,6 @@ enyo.kind({
       // console.log("Se envia akax 3");
       var url = "https://www.youtube.com/watch";
       var request = new enyo.Ajax({
-        // url: "https://www.youtube.com/watch?v=h--P8HzYZ74&amp;app=desktop&amp;persist_app=1&amp;client=mv-google&amp;hl=en&amp;gl=ES",
           url: url,
           method: "GET",
           conntentype: "text/plain",
@@ -306,9 +305,9 @@ enyo.kind({
 
       if(video_id){
         // return request.go({v:video_id});
-        // return request.go();
         return request.go({v:video_id, app: "desktop", persist_app:1, client:"mv-google"});
       }else{
+        // return request.go({v:this.video_id_try});
         return request.go({v:this.video_id_try, app: "desktop", persist_app:1, client:"mv-google"});
       }
     },
