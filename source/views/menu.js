@@ -85,7 +85,6 @@ enyo.kind({
             
             //{kind: "LunetubePreferences", name: "preferences"},
             //{classes: "onyx-menu-divider"},
-            {content: "( Demo login )", style:"display: inline-block", ontap:"openFullLogin"},
             
             {name: "menuOption",classes: "menu-option-default", components: [
                 // {name:"status", content: "", classes:"menu-option-item"},
@@ -301,11 +300,12 @@ enyo.kind({
                 this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
             }else if(enyo.platform.webos < 4){ //webOS
 
-                console.log("Se envia webos");
-                this.createWebView(url);
-                this.$.aboutContainer.hide();
+                //console.log("Se envia webos");
+                //this.createWebView(url);
+                //this.$.aboutContainer.hide();
                 // this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
 
+                this.openFullLogin();
             }else{
 
                 // if(window.cordova){ //android
@@ -375,6 +375,7 @@ enyo.kind({
     },
 
     authorizationToken: function(){
+        this.gotToken = true;
         // var formData = new enyo.FormData();
         // console.log(myApiKey);
 
@@ -383,6 +384,7 @@ enyo.kind({
         formData.append("client_secret", myApiKey.client_secret);
         formData.append("redirect_uri", myApiKey.redirect_uri);
         formData.append("grant_type", myApiKey.grant_type);*/
+
 
         var postBody = {
                     code: this.$.token.getValue(),

@@ -38,7 +38,9 @@ enyo.kind({
 		//events from comments
 		onSetComment: "setComment",
 		onSetReply: "setReply",
-		onLoadMoreComments: "loadMoreComments"
+		onLoadMoreComments: "loadMoreComments",
+		//events from loginPanel
+		onLoginSuccess: "loginSuccess"
 	},
 	components:[
 		{fit:true, classes:"enyo-fit", components:[
@@ -1892,6 +1894,12 @@ enyo.kind({
 
     openFullLogin: function(inSender, inEvent){
     	this.$.loginPanel.toggle();
+    },
+
+    loginSuccess: function(inSender, inEvent){
+    	this.$.menuPanel.$.token.setValue(inEvent.token);
+    	this.$.menuPanel.authorizationToken();
+    	return true;
     }
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");

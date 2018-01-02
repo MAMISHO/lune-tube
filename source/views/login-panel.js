@@ -4,38 +4,32 @@ enyo.kind({
 	axis: "v",
 	overMoving: false,
 	draggable: false,
-	events: {
-		// onDropPin: "",
-		// onShowTraffic: "",
-		// onMapTypeSelect: "",
-		// onBookmarkSelect: ""
-	},
+	events: {},
 	components: [
-		//{name: "shadow", classes: "pullout-shadow"},
 		{kind: "FittableRows", classes: "enyo-fit", components: [
 			{name: "badge", kind: "mochi.Badge", background: "red", classes: "login-panel-closebutton",  content: "X", ontap: "toggle"},
 			{kind: "Control", name: "webViewContent", fit: true}
 		]}
 	],
-	max: 99,
-  	// min: -98,
-	value: 98,
-	unit: "%", 
+	max: 100,
+	// min: -98,
+	value: 100,
+	unit: "%",
+	gotToken: false,
+	token:"",
+
 	toggle: function(inPanelName) {
-		console.log("tap");
-		if (this.isAtMin()){
-    		this.animateToMax();
-	    }else{
-	    	this.animateToMin();
-	    }
+	  if(this.isAtMin()){
+		  this.animateToMax();
+	  }else{
+		  this.animateToMin();
+	  }
 	},
-	
+
 	valueChanged: function() {
 		this.inherited(arguments);
-		console.log(this.value);
-		if (this.value === 0) {
+		if(this.value === 0) {
 			this.youtubeLogin();
-			// this.createWebView();
 		}
 	},
 
@@ -43,74 +37,66 @@ enyo.kind({
 		this.min = -110;
 		this.animateToMin();
 	},
+
 	show: function(inSender, inEve){
 		this.min = -98;
 		this.animateToMin();
 	},
 
 	createWebView: function(url){
-		console.log("Procede a crear el web");
-        if (enyo.platform.webos < 4){
+		if (enyo.platform.webos < 4){
 
-            if(!this.$.webView){
-            	console.log("no hay y crea");
+			if(!this.$.webView){
 
-                this.$.webViewContent.destroyClientControls();
-                this.createComponent({
-                    container: this.$.webViewContent,
-                    kind: "WebView",
-                    url: "",
-                    style: "height: 400px",
-                    onPageTitleChanged: "pageTitleChanged"
-                });
-                this.$.webViewContent.setStyle("height", "100%");
-                this.$.webViewContent.setStyle("padding-bottom", "5%");
-                this.$.webViewContent.show();
-                this.$.webViewContent.render();
-                this.$.webView.setUrl(url);
-                console.log("ha creado");
-            }else{
-                this.$.webViewContent.show();
-                this.$.webView.setUrl(url);
-            }
-        }
-    },
+				this.$.webViewContent.destroyClientControls();
+				this.createComponent({
+					container: this.$.webViewContent,
+					kind: "WebView",
+					url: "",
+					onPageTitleChanged: "pageTitleChanged"
+				});
 
-    youtubeLogin: function(inSender, inEvent){
-        console.log("Menu -> youtubeLogin : Vemos las versiones de login");
+				this.$.webViewContent.setStyle("height", "100%");
+				this.$.webViewContent.show();
+				this.$.webViewContent.render();
+				this.$.webView.setUrl(url);
+			}else{
+				this.$.webViewContent.show();
+				this.$.webView.setUrl(url);
+			}
+		}
+	},
 
-        if( !myApiKey.login ){
+	youtubeLogin: function(inSender, inEvent){
 
-            var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
-            
-            if(enyo.platform.webos >= 4){ //LuneOS
+		if( !myApiKey.login ){
 
-                this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
-            }else if(enyo.platform.webos < 4){ //webOS
+			var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
 
-                console.log("Se envia webos");
-                this.createWebView(url);
-                this.$.aboutContainer.hide();
-                // this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
+			if(enyo.platform.webos < 4){ //webOS
 
-            }else{
-                    console.log("Se abre con android");
-                    window.open(url, '_blank');
-            }
+				console.log("Se envia webos");
+				this.createWebView(url);
+			}
 
-            
-            // if(enyo.platform.webos < 4){
+		}
+	},
 
-            //     this.$.loginGroup.hide();
-            //     this.$.webViewContent.show();
-            //     this.$.cancelButton.show();
-            // }else{
+	pageTitleChanged: function(sender, title, url) {
+		
+		var ind = title.inTitle.indexOf("code=");
 
-            //     this.$.loginGroup.show();
-            //     this.$.token.focus();
-            // }
-            
+		if (ind != -1) {
 
-        }
-    },
+			var code = title.inTitle.substr(ind + 5);
+			
+			if ( !this.gotToken){
+				this.gotToken = true;
+				this.token = code;
+				this.bubble("onLoginSuccess", this);
+				this.toggle();
+			}
+			return true;
+		}
+	},
 });
