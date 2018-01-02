@@ -1,0 +1,14 @@
+.login-panel-closebutton{
+	position: absolute;
+	top: 1px;
+	right: 6px;
+}
+.login-panel{
+	position: absolute;
+	top: 0;
+	left:0;
+	bottom: 0;
+	width: 100%;
+	background: #D8D8D8;
+	/*background-color: white;*/
+}

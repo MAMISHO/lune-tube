@@ -46,6 +46,7 @@ enyo.kind({
 			// autoplay:true,
 			onPlaybackControlsTapped: "controlsTapped",
 			onFullScreen:"fullScreen",
+			onBlockscreen: "blockScreen",
 			onLoadHD: 'loadHD',
 			onLoadSD: 'loadSD',
 			onChangeResolution: 'changeResolution',
@@ -99,7 +100,11 @@ enyo.kind({
 			]},
 
 			// {kind: "Control", classes: "player-background-layer"},
-		]}
+		]},
+
+		{name: "messagePopup", classes: "onyx-sample-popup info-popup", kind: "onyx.Popup", autoDismiss:true, centered: true, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
+			{name:"boxNotification", content:"", allowHtml:true, classes:"block-screen"}
+		]},
 	],
 	bindings: [
 		{from:".$.player.disablePlaybackControls", to:".$.controlsToggleButton.value", oneWay:false},
@@ -107,6 +112,7 @@ enyo.kind({
 	],
 	status:false, //false when is paused | true when is playing
 	_isFullScreen : false,
+	_isblocked: false,
 	_isLoop: false,
 	_wasSleep: false,
 	create:function() {
@@ -528,6 +534,40 @@ enyo.kind({
             }
         }
 		return true;
+	},
+
+	blockScreen: function(inSender, inEvent){
+		console.log("Llega el blocScreen");
+
+		var image = "";
+		if (this._isblocked) { //desbloqueamos
+
+			this._isblocked = false;
+			image = "assets/unbloq.png";
+
+		}else{ // bloqueamos
+
+			this._isblocked = true;
+			image = "assets/bloq.png";
+		}
+		this.$.boxNotification.destroyClientControls();
+		this.createComponent({
+					kind: "Image",
+					src: image,
+					container: this.$.boxNotification,
+		});
+		this.$.boxNotification.render();
+    	this.$.messagePopup.show();
+
+    	webos.setWindowOrientation("free");
+    	enyo.job("showPopup", enyo.bind(this, "hidePopup"), 1000, "high");		
+    	
+		return true
+
+	},
+
+	hidePopup: function(inSender, inEvent){
+		this.$.messagePopup.hide();
 	},
 
 	showVideoInfo: function(inSender, inEvent){

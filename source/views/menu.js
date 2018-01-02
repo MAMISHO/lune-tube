@@ -85,6 +85,7 @@ enyo.kind({
             
             //{kind: "LunetubePreferences", name: "preferences"},
             //{classes: "onyx-menu-divider"},
+            {content: "( Demo login )", style:"display: inline-block", ontap:"openFullLogin"},
             
             {name: "menuOption",classes: "menu-option-default", components: [
                 // {name:"status", content: "", classes:"menu-option-item"},
@@ -503,5 +504,11 @@ enyo.kind({
         this.bubble("onStartVideo",video);
         this.bubble("onShowMenuOption", this);
         return;
-    }
+    },
+
+    openFullLogin: function(inSender, inEvent){
+        console.log("openFullLogin");
+        this.bubble("onOpenFullLogin", this);
+        return;
+    },
 });

@@ -352,11 +352,17 @@ enyo.kind({
         return {error:true, message:"No se ha encontrado videos"};
       }
       // console.log(info.description);
+      console.log("datos crudos");
+      console.log(info);
 
       var formats_compatibles = [
-      '139',  //audio
-      '140',
-      '141',  
+      '139', // Audio
+      '140', // Audio mp4 128 bit aac
+      '141',
+      '171', // Audio webM 128 bit vorbis
+      '249', // Audio webM 50 bit opus
+      '250', // Audio webM 70 bit opus
+      '251', // Audio webM 160 bit opus 
       // '17',   // 144p 3GP
       '160',  // 144p MP4
       '264',  // 144p DASH-MP4
@@ -387,6 +393,8 @@ enyo.kind({
                     });
 
       // ordenamos los formatos para el player
+      console.log("Solo formatos permitidos");
+      console.log(formats);
       formats.sort(function(a, b) {
         var x = a.itag ? formats.indexOf(a.itag) : -1;
         var y = b.itag ? formats.indexOf(b.itag) : -1;
@@ -716,15 +724,20 @@ enyo.kind({
             q.resolution = item.resolution;
           }
           break;
-      case '139':
-      case '140':
-      case '141':
+      case '139': //Dash MP4 Audio
+      case '140': //Dash MP4 Audio 128 bits aac
+      case '141': //Dash MP4 Audio
+      case '171': //Dash WEBM Audio 128 audiobitrate vorbis
+      case '172': //Dash WEBM Audio
+      case '249': // Audio webM 50 bit opus
+      case '250': // Audio webM 70 bit opus
+      case '251': // Audio webM 160 bit opus 
           // if(item.quality){
             q.resolution = 'Audi';
           // }
 
           if(!item.quality_label){
-            q.quality_label = '100p';
+            q.quality_label = item.audioBitrate;
           }
 
           /*if(item.resolution){

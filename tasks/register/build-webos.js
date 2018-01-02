@@ -1,6 +1,6 @@
 module.exports = function (grunt) {
 	grunt.registerTask('build-webos', [
-		//'deploy',
+		'deploy',
 		'clean:build',
 		'copy:build',
 		'shell:webos'

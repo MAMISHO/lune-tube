@@ -32,6 +32,7 @@ enyo.kind({
 		onLoadLikes: "loadPlaylistById",
 		onLoadWatchLater: "loadPlaylistById",
 		onLoadMyChannel: "loadMyChannel",
+		onOpenFullLogin: "openFullLogin",
 		//events from list
 		onUpdateTime: "updateTime",
 		//events from comments
@@ -98,7 +99,16 @@ enyo.kind({
 			 fit:true,
 			 classes: "pullout enyo-fit", onDropPin: "dropPin", onShowTraffic: "showTraffic", onMapTypeSelect: "mapTypeSelect", onBookmarkSelect: "bookmarkSelect", components: [
 				{kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
-			]}
+			]},
+
+			{kind: "LoginPanel", name: "loginPanel",
+			 // fit:true,
+			 classes: "login-panel enyo-fit"
+			 //  onDropPin: "dropPin", onShowTraffic: "showTraffic", onMapTypeSelect: "mapTypeSelect", onBookmarkSelect: "bookmarkSelect",
+			  // components: [
+				// {kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
+				// {kind: "Control", name: "test"},
+			}
 		]},
 		
 		{name: "messagePopup", classes: "onyx-sample-popup info-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
@@ -110,8 +120,8 @@ enyo.kind({
 			{content:"Lock screen", ontap:"doLockScreen"}
 		]},
 
-		// Hiden domponents
-		// My api de youtube
+		// Hidden domponents
+		// My youtube API
 		{kind: "YoutubeApi", name: "youtube"},
 		{kind: "YoutubeVideo", name: "yt"},
 		{kind: "WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion", onCurrentVersion: "currentVersion"},
@@ -191,6 +201,7 @@ enyo.kind({
 			this.$.panel.realtimeFit = false;
 		}*/
 		this.internetGetStatus();
+		console.log("Es telefono?: " + webos.isPhone());
 		if(enyo.platform.safari){
 			console.log("Es safari");
 			// this.internetGetStatus();
@@ -220,6 +231,7 @@ enyo.kind({
 		currentOsPlatform = this.getCurrentOsPlatform();
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		// webos.setWindowOrientation("free");
+		console.log(webos.deviceInfo.platformVersion);
 
 		if(currentOsPlatform){ //is is webos or luneos platform
 
@@ -229,8 +241,14 @@ enyo.kind({
 			
 			if(window.PalmSystem){
 				console.log("Entra a modo background");
-				PalmSystem.keepAlive(true);
-				enyo.webos.keyboard.setResizesWindow(false);
+
+				if(webos.deviceInfo.platformVersion !== "2.2.4"){ // only  tablet
+
+					PalmSystem.keepAlive(true);
+					enyo.webos.keyboard.setResizesWindow(false);	
+
+				}
+				
 
 				this.RequestHeadsetStatus();
 				this.RequestAVRCPStatus();
@@ -238,7 +256,7 @@ enyo.kind({
 				
 				this.$.psBroadcaster.send();
 				this.$.psMediaStatus.send({});
-				this.internetGetStatus();
+				// this.internetGetStatus();
 
 			}
 
@@ -1116,25 +1134,34 @@ enyo.kind({
 	},
 
 	activate: function(a, b){
-		console.log("\n***window Active***");
+		console.log("\n*** Window Active ***");
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){
-			//this.$.player.playVideo();
+			
 		}
 		return true;
 	},
 
 	deactivate: function(a, b){
-		console.log("\n***window Unactive***");
+		console.log("\n*** Window Unactive ***");
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){
-			console.log("prueba video no se pausa");
-			// this.$.player.pauseVideo(); //force background plaing
-			//this.$.player.playVideo();
+
+			if (!this.$.player.$.player.getVideo().isPaused()) {
+
+				enyo.job("playInBackground", enyo.bind(this, "playVideoBackgrund"), 100, "high");
+				
+			}
 		}
 		return true;
+	},
+
+	playVideoBackgrund: function(){
+
+		this.$.player.playVideo();
+
 	},
 
 	groupControlTap: function(inSender, inEvent){
@@ -1862,6 +1889,10 @@ enyo.kind({
     sendDataGotResponse: function(inSender, inEvent){
     	this.log("Send data, results=" + enyo.json.stringify(inResponse));
     },
+
+    openFullLogin: function(inSender, inEvent){
+    	this.$.loginPanel.toggle();
+    }
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");
 		return true;

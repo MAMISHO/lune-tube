@@ -110,8 +110,8 @@ enyo.kind({
 			{content:"Lock screen", ontap:"doLockScreen"}
 		]},
 
-		// Hiden domponents
-		// My api de youtube
+		// Hidden domponents
+		// My youtube API
 		{kind: "YoutubeApi", name: "youtube"},
 		{kind: "YoutubeVideo", name: "yt"},
 		{kind: "WatchVersion", name: "watchVersion", onThereIsNewVersion: "thereIsNewVersion", onCurrentVersion: "currentVersion"},
@@ -220,6 +220,7 @@ enyo.kind({
 		currentOsPlatform = this.getCurrentOsPlatform();
 		console.log("Hi " + currentOsPlatform + " --> starting debug");
 		// webos.setWindowOrientation("free");
+		console.log(webos.deviceInfo.platformVersion);
 
 		if(currentOsPlatform){ //is is webos or luneos platform
 
@@ -229,8 +230,14 @@ enyo.kind({
 			
 			if(window.PalmSystem){
 				console.log("Entra a modo background");
-				PalmSystem.keepAlive(true);
-				enyo.webos.keyboard.setResizesWindow(false);
+
+				if(webos.deviceInfo.platformVersion !== "2.2.4"){ // only  tablet
+
+					PalmSystem.keepAlive(true);
+					enyo.webos.keyboard.setResizesWindow(false);	
+
+				}
+				
 
 				this.RequestHeadsetStatus();
 				this.RequestAVRCPStatus();
@@ -651,13 +658,13 @@ enyo.kind({
 
 		if(this._videoIdCurrent !== video_id){
 
-			this.$.player.unload();
+			//this.$.player.unload();
 			if(video.image_high){
 				this.$.player.setPosterTmp(video.image_high);
 			}
 			// this.$.panel.setIndex(1);
 			this.$.panel.next();
-			this.$.player.startVideoPlay();
+			//this.$.player.startVideoPlay();
 
 			/*	antes de realizar la peticion revisamos si ya tenemos los datos del
 				video en la cache
@@ -1116,25 +1123,34 @@ enyo.kind({
 	},
 
 	activate: function(a, b){
-		console.log("\n***window Active***");
+		console.log("\n*** Window Active ***");
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){
-			//this.$.player.playVideo();
+			
 		}
 		return true;
 	},
 
 	deactivate: function(a, b){
-		console.log("\n***window Unactive***");
+		console.log("\n*** Window Unactive ***");
 		// console.log(a);
 		// console.log(b);
 		if(this._platform === "webOS"){
-			console.log("prueba video no se pausa");
-			// this.$.player.pauseVideo(); //force background plaing
-			//this.$.player.playVideo();
+
+			if (!this.$.player.$.player.getVideo().isPaused()) {
+
+				enyo.job("playInBackground", enyo.bind(this, "playVideoBackgrund"), 100, "high");
+				
+			}
 		}
 		return true;
+	},
+
+	playVideoBackgrund: function(){
+
+		this.$.player.playVideo();
+
 	},
 
 	groupControlTap: function(inSender, inEvent){

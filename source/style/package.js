@@ -9,5 +9,6 @@ enyo.depends(
 	"player.css",
 	"video_info.css",
 	"mochi_group_button.css",
-	"player_config.css"
+	"player_config.css",
+	"login-panel.css"
 );

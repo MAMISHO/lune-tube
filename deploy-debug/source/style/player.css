@@ -295,3 +295,9 @@ img#app_player_image.enyo-image{
 	background-color: rgba(0, 0, 0, 0.60);
 	border-radius: 999px;
 }
+.block-screen{
+	background-color: #EAEAEA;
+	color: #333;
+	border-radius: 70%;
+	padding: 3px;
+}
