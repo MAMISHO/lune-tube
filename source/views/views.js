@@ -33,6 +33,7 @@ enyo.kind({
 		onLoadWatchLater: "loadPlaylistById",
 		onLoadMyChannel: "loadMyChannel",
 		onOpenFullLogin: "openFullLogin",
+		onGotAutorizationToken: "gotAutorizationToken",
 		//events from list
 		onUpdateTime: "updateTime",
 		//events from comments
@@ -101,14 +102,7 @@ enyo.kind({
 				{kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
 			]},
 
-			{kind: "LoginPanel", name: "loginPanel",
-			 // fit:true,
-			 classes: "login-panel enyo-fit"
-			 //  onDropPin: "dropPin", onShowTraffic: "showTraffic", onMapTypeSelect: "mapTypeSelect", onBookmarkSelect: "bookmarkSelect",
-			  // components: [
-				// {kind:"LuneTube.Menu", fit:true, name:"menuPanel", style:"height:100%"},
-				// {kind: "Control", name: "test"},
-			}
+			{kind: "LoginPanel", name: "loginPanel", classes: "login-panel enyo-fit"}
 		]},
 		
 		{name: "messagePopup", classes: "onyx-sample-popup info-popup", kind: "onyx.Popup", autoDismiss:true, centered: false, modal: true, floating: true, onShow: "popupShown", onHide: "popupHidden", components: [
@@ -448,46 +442,44 @@ enyo.kind({
 
     	if(!enyo.getCookie("youtube_token") && myApiKey.login){ //Comprueba que el token es vigente
 
-					this.$.youtube.refreshToken().then(
-				      enyo.bind(this, function(){this.$.youtube.getActivities().response(this, "receiveResults");})
-				    ); 
+			this.$.youtube.refreshToken().then(
+				enyo.bind(this, function(){this.$.youtube.getActivities().response(this, "receiveResults");})
+			); 
 
-				}else{
-
-					this.$.youtube.getActivities().response(this, "receiveResults");
-				}
+		}else{
+			this.$.youtube.getActivities().response(this, "receiveResults");
+		}
     	
     	this.videoDetailGroupReset(true);
     },
+    
     /**
      * @q  {string} palabra de búsqueda
      * @return {[type]}
      */
-     search: function(q) {
+	search: function(q) {
 
-     	this.$.listPanels.setIndex(0);
-     	this.setQueryType("keyword");
+		this.$.listPanels.setIndex(0);
+		this.setQueryType("keyword");
 
-     	if (myApiKey.login) {
+		if (myApiKey.login) {
      		if(!enyo.getCookie("youtube_token")){
 
      			this.$.youtube.refreshToken().then(
      				enyo.bind(this, function(){this.$.youtube.searchAuth(q).response(this, "receiveResults");})
-     				); 
+     			); 
 
      		}else{
 
      			this.$.youtube.searchAuth(q).response(this, "receiveResults");
      		}
 
-
      	} else {
      		this.$.youtube.search(q).response(this, "receiveResults");
      	}
      	this.videoDetailGroupReset(true);
 
-			//añadimos la acción a la cola
-		},
+	},
 
 	receiveResults: function(inRequest, inResponse){
 		if(!inResponse) return;
@@ -667,7 +659,9 @@ enyo.kind({
 		var video_id = video.video_id;
 		this.$.videoInfo.setVideoDetails(video);
 
-		if(this._videoIdCurrent !== video_id){
+		// if(this._videoIdCurrent !== video_id){
+		// if(this._videoIdCurrent !== video_id && !this.$.videoList.getIsPlaylist()){
+
 
 			//this.$.player.unload();
 			if(video.image_high){
@@ -694,7 +688,7 @@ enyo.kind({
 				this.$.yt.youtubeDecryptLocalService(video_id).response(this,"decipherVideo");
 			}
 
-		}
+		// }
 		return true;
 	},
 
@@ -791,6 +785,8 @@ enyo.kind({
 			}
 		}*/
 
+		// Cuando la lista se reproduce de forma automática debemos actualizar
+		// el elemento seleccionado en la lista.
 		for (var i = this.videos.length - 1; i >= 0; i--) {
 				if(this.videos[i].video_id === this._videoIdCurrent){
 					index = i;
@@ -1892,7 +1888,15 @@ enyo.kind({
 
     openFullLogin: function(inSender, inEvent){
     	this.$.loginPanel.toggle();
-    }
+    },
+
+    gotAutorizationToken: function(inSender, code){
+    	this.$.menuPanel.setToken(code);
+    	this.$.menuPanel.authorizationToken();
+    	this.$.loginPanel.toggle();
+    	return true;
+    },
+
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");
 		return true;

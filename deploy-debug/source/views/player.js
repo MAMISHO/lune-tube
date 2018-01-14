@@ -216,20 +216,20 @@ enyo.kind({
 
 		
 
-			if(this.videoId[0].restricted){ //tratamos si es un video restringido restringido
+		if(this.videoId[0].restricted){ //tratamos si es un video restringido restringido
 
-				var poster = this.videoId[i].poster.split("default");
+			var poster = this.videoId[i].poster.split("default");
 			
-				if(poster[0]){
-					this.$.player.setPoster(poster[0] + "hqdefault" + poster[1]);
-				}
-
-				this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].title + " " + this.videoId[i].restricted);
-				this.$.player.showFSControls();
-				this.startJob("videoRestricted", function() { this.bubble("onVideoFinished",this); }, 3000);
-				return;
-
+			if(poster[0]){
+				this.$.player.setPoster(poster[0] + "hqdefault" + poster[1]);
 			}
+
+			this.$.videoInfoHeader.setSubSubTitle(this.videoId[i].title + " " + this.videoId[i].restricted);
+			this.$.player.showFSControls();
+			this.startJob("videoRestricted", function() { this.bubble("onVideoFinished",this); }, 3000);
+			return;
+
+		}
 
 		for (var i = 0; i < this.videoId.length; i++) {
 			

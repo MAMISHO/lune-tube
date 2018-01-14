@@ -1,3 +1,4 @@
 {
-  "logLevel": 0
+  "logLevel": 99,
+  "logEvents": true
 }

@@ -85,7 +85,7 @@ enyo.kind({
             
             //{kind: "LunetubePreferences", name: "preferences"},
             //{classes: "onyx-menu-divider"},
-            {content: "( Demo login )", style:"display: inline-block", ontap:"openFullLogin"},
+            // {content: "( Demo login )", style:"display: inline-block", ontap:"openFullLogin"},
             
             {name: "menuOption",classes: "menu-option-default", components: [
                 // {name:"status", content: "", classes:"menu-option-item"},
@@ -125,6 +125,7 @@ enyo.kind({
         }
     ],
     gotToken: false,
+    _inAppBrowserRef: null,
     create: function () {
         this.inherited(arguments);
         this.statusChanged();
@@ -222,6 +223,7 @@ enyo.kind({
     },
     tokenChanged: function(){
         this.$.token.setValue(this.token);
+        this.gotToken = true;
     },
 
     doPasteText: function(inSender, inEvent){
@@ -262,30 +264,20 @@ enyo.kind({
     },
 
     pageTitleChanged: function(sender, title, url) {
-        /*console.log(" Sender Keys ");
-            console.log(Object.keys(sender));
-            console.log(" Title Keys ");
-            console.log(Object.keys(title));
-            console.log(title.inTitle);*/
+        var ind = title.inTitle.indexOf("code=");
 
+        if (ind != -1) {
 
-             // var str = CircularJSON.stringify(obj);
-             // console.log(str);
-            var ind = title.inTitle.indexOf("code=");
+            var code = title.inTitle.substr(ind + 5);
 
-            if (ind != -1) {
-
-                var code = title.inTitle.substr(ind + 5);
-                this.log("**************** code: " + code);
-                if ( !this.gotToken){
-                    this.$.token.setValue(code);
-                    this.gotToken = true;
-                    this.authorizationToken();
-                }
-                return true;
-                // this.doGotAuthCode(code);
+            if ( !this.gotToken){
+                this.$.token.setValue(code);
+                this.gotToken = true;
+                this.authorizationToken();
             }
-        },
+            return true;
+        }
+    },
 
 
     /*Login functions*/
@@ -302,46 +294,33 @@ enyo.kind({
             }else if(enyo.platform.webos < 4){ //webOS
 
                 console.log("Se envia webos");
-                this.createWebView(url);
-                this.$.aboutContainer.hide();
+                //this.createWebView(url);
+                //this.$.aboutContainer.hide();
                 // this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
-
+                this.bubble("onOpenFullLogin", this);
+                return;
             }else{
 
-                // if(window.cordova){ //android
+                if(window.cordova){ //android
 
-                //  console.log("Se abre con android");
-                //  /*se usa el siguiente plugin*/
-                //  /* 
-                //  Plugin
-                //  cordova plugin add cordova-plugin-googleplus
-                //  Info
-                //  https://github.com/EddyVerbruggen/cordova-plugin-googleplus
-                //  */
-                //  window.plugins.googleplus.login(
-                //      {
-                //        'scopes': myApiKey.scope,
-                //        'webClientId': myApiKey.client_id,
-                //        'offline': true, // optional, but requires the webClientId - if set to true the plugin will also return a serverAuthCode, which can be used to grant offline access to a non-Google server
-                //      },
+                    // console.log("Se abre con android");
+                    /*se usa el siguiente plugin*/
+                    /* 
+                     Plugin
+                     cordova plugin add cordova-plugin-inappbrowser
+                     Info
+                     https://cordova.apache.org/docs/en/latest/reference/cordova-plugin-inappbrowser/#reference
+                    */
+                     
+                    this._inAppBrowserRef = cordova.InAppBrowser.open(url, '_blank', 'location=no,zoom=no,clearcache=yes,hardwareback=yes');
+                    this._inAppBrowserRef.addEventListener('loadstop', this.bindSafely(this.loadStopBrowser));
+                    this._inAppBrowserRef.addEventListener('exit', this.bindSafely(this.cancelLogin));
 
-                //      function (obj) {
-                //          console.log("recibe token");
-                //          console.log(obj);
-                //          alert(JSON.stringify(obj)); // do something useful instead of alerting
-                //      },
+                }else{ //desktop
 
-                //      function (msg) {
-
-                //          console.log("Error");
-                //          alert('error: ' + msg);
-                //      }
-                //  );
-                // }else{ //desktop
-
-                    console.log("Se abre con android");
+                    // console.log("Se abre con desktop");
                     window.open(url, '_blank');
-                // }
+                }
             }
 
             
@@ -361,6 +340,31 @@ enyo.kind({
             this.logout();
         }
     },
+    
+    loadStopBrowser: function(inSender, inEvent){
+
+        var long = 5;
+        var finalUrl = decodeURIComponent(inSender.url);
+        var ind = finalUrl.indexOf("code=");
+
+        if (ind === -1) {
+            ind = finalUrl.indexOf("approvalCode=");
+            long = 13;            
+        }
+
+        if (ind != -1) {
+            var code = finalUrl.substr(ind + long);
+            
+            if ( !this.gotToken){
+                this.$.token.setValue(code);
+                this.gotToken = true;
+                this.authorizationToken();
+            }
+            return true;
+        }
+
+        return true;
+    },
 
     confirmLogin: function(inSender, inEvent){
 
@@ -375,14 +379,6 @@ enyo.kind({
     },
 
     authorizationToken: function(){
-        // var formData = new enyo.FormData();
-        // console.log(myApiKey);
-
-        /*formData.append("code", this.$.token.getValue());
-        formData.append("client_id", myApiKey.client_id);
-        formData.append("client_secret", myApiKey.client_secret);
-        formData.append("redirect_uri", myApiKey.redirect_uri);
-        formData.append("grant_type", myApiKey.grant_type);*/
 
         var postBody = {
                     code: this.$.token.getValue(),
@@ -394,7 +390,6 @@ enyo.kind({
         var ajax = new enyo.Ajax({
             url: "https://accounts.google.com/o/oauth2/token",
             method: "POST",
-            // postBody: formData,
             postBody: postBody,
             contentType: 'application/x-www-form-urlencoded',
             cacheBust: false,
@@ -402,7 +397,6 @@ enyo.kind({
             overrideCallback: null
         });
         
-        // console.log(ajax);
         ajax.response(enyo.bind(this, "authorizationTokenResponse"));
         ajax.error(enyo.bind(this, "authorizationTokenError"));
         ajax.go();
@@ -441,6 +435,9 @@ enyo.kind({
         this.$.webViewContent.hide();
         this.$.cancelButton.hide();
         this.$.aboutContainer.show();
+        if (this._inAppBrowserRef !== null) {
+            this._inAppBrowserRef.hide();
+        }
     },
 
     authorizationTokenError: function(inRequest, inResponse){
@@ -469,11 +466,11 @@ enyo.kind({
 
     cancelLogin: function(inSender, inEvent){
         this.$.info.hide();
-                this.$.listChannel.hide();
-                this.$.loginGroup.hide();
-                this.$.webViewContent.hide();
-                this.$.cancelButton.hide();
-                this.$.aboutContainer.show();
+        this.$.listChannel.hide();
+        this.$.loginGroup.hide();
+        this.$.webViewContent.hide();
+        this.$.cancelButton.hide();
+        this.$.aboutContainer.show();
     },
 
     openVideoDemo: function(inSender, inEvent){
@@ -506,9 +503,9 @@ enyo.kind({
         return;
     },
 
-    openFullLogin: function(inSender, inEvent){
+    /*openFullLogin: function(inSender, inEvent){
         console.log("openFullLogin");
         this.bubble("onOpenFullLogin", this);
         return;
-    },
+    },*/
 });

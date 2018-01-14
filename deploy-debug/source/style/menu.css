@@ -367,6 +367,9 @@
 			width: 40px;
 			right: -36px;
 		}
+		.menu-option-item{
+			zoom: 1.4;
+		}
 
 	}
 	@media screen and (width: 320px) {

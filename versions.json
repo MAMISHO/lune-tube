@@ -3,6 +3,15 @@
 	"version":      	"0.5.1",
 	"title":		"LuneTube",
 	"versions": {
+		"0.5.2" : {
+			"url" : {
+				"ipk" : "https://app.box.com/shared/static/glinag2yxeo2edv9n8f0hjp9shrjkjng.ipk",
+				"apk" : "https://app.box.com/shared/static/b915i5eqsf2ywlg5haaqs9nm1pjkoyzd.apk"
+			},
+			"changelog": [
+				"Improve Login for Android and initial change for webOS."
+			]
+		},
 		"0.5.1" : {
 			"url" : {
 				"ipk" : "https://app.box.com/shared/static/og2nogtueoc6ty9wu2axvbbc1rcmv5au.ipk",
