@@ -1,6 +1,6 @@
 {
-	"id":		"com.emsoft.lunetube",
-	"version":      	"0.5.1",
+	"id":			"com.emsoft.lunetube",
+	"version":      "0.5.3",
 	"title":		"LuneTube",
 	"versions": {
 		"0.5.3" : {
