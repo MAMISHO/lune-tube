@@ -4,6 +4,7 @@ enyo.kind({
 	axis: "v",
 	overMoving: false,
 	draggable: false,
+	events: {},
 	components: [
 		{kind: "FittableRows", classes: "enyo-fit", components: [
 			{kind: 'Scroller', touchOverscroll: false, style: "height: 150%", components: [
@@ -13,93 +14,91 @@ enyo.kind({
 		]}
 	],
 	max: 100,
+	// min: -98,
 	value: 100,
-	unit: "%", 
+	unit: "%",
+	gotToken: false,
+	token:"",
+
 	toggle: function(inPanelName) {
-		console.log("tap");
-		if (this.isAtMin()){
-    		this.animateToMax();
-	    }else{
-	    	this.animateToMin();
-	    }
+	  if(this.isAtMin()){
+		  this.animateToMax();
+	  }else{
+		  this.animateToMin();
+	  }
 	},
-	
+
 	valueChanged: function() {
 		this.inherited(arguments);
-		if (this.value === 0) {
+		if(this.value === 0) {
 			this.youtubeLogin();
 		}
 	},
 
+	hide: function(inSender, inEvent){
+		this.min = -110;
+		this.animateToMin();
+	},
+
+	show: function(inSender, inEve){
+		this.min = -98;
+		this.animateToMin();
+	},
+
 	createWebView: function(url){
+		if (enyo.platform.webos < 4){
 
-        if (enyo.platform.webos < 4){
+			if(!this.$.webView){
 
-            if(!this.$.webView){
+				this.$.webViewContent.destroyClientControls();
+				this.createComponent({
+					container: this.$.webViewContent,
+					kind: "WebView",
+					url: "",
+					onPageTitleChanged: "pageTitleChanged"
+				});
 
-                this.$.webViewContent.destroyClientControls();
-                this.createComponent({
-                    container: this.$.webViewContent,
-                    kind: "WebView",
-                    url: url,
-                    style: "height: 100%",
-                    onPageTitleChanged: "pageTitleChanged",
-                    cacheAdapter: false,
-                    headerHeight: 10
-                });
-                
-                // this.$.webView.clearCache();
-                // this.$.webView.clearCookies();
-                // this.$.webView.clearHistory();
-                this.$.webView.setUrl(url);
+				this.$.webViewContent.setStyle("height", "100%");
+				this.$.webViewContent.show();
+				this.$.webViewContent.render();
+				this.$.webView.setUrl(url);
+			}else{
+				this.$.webViewContent.show();
+				this.$.webView.setUrl(url);
+			}
+		}
+	},
 
-                this.$.webViewContent.show();
-                this.$.webViewContent.render();
+	youtubeLogin: function(inSender, inEvent){
 
-            }else{
+		if( !myApiKey.login ){
 
-                this.$.webView.clearCache();
-                this.$.webView.clearCookies();
-                this.$.webView.clearHistory();
-                
-                this.$.webViewContent.show();
-                this.$.webView.render();
-                this.$.webView.setUrl(url);
-                this.$.webView.reloadPage();
-            }
-        }
-    },
+			var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
 
-    youtubeLogin: function(inSender, inEvent){
+			if(enyo.platform.webos < 4){ //webOS
 
-        if( !myApiKey.login ){
+				console.log("Se envia webos");
+				this.createWebView(url);
+			}
 
-            var url = myApiKey.url_base + "?client_id=" + myApiKey.client_id + "&redirect_uri=" + myApiKey.redirect_uri + "&scope=" + myApiKey.scope + "&response_type=" + myApiKey.response_type;
-            
-            if(enyo.platform.webos < 4){ //webOS
+		}
+	},
 
-                console.log("Se envia webos");
-                this.createWebView(url);
-            }
-        }
-    },
+	pageTitleChanged: function(sender, title, url) {
+		
+		var ind = title.inTitle.indexOf("code=");
 
-    pageTitleChanged: function(sender, title, url) {
-        var ind = title.inTitle.indexOf("code=");
+		if (ind != -1) {
 
-        if (ind != -1) {
-
-            var code = title.inTitle.substr(ind + 5);
-
-            if ( !this.gotToken){
-                this.gotToken = true;
-                this.sendAuthorizationToken(code);
-            }
-            return true;
-        }
-    },
-
-    sendAuthorizationToken: function(code){
-        this.bubble("onGotAutorizationToken", code);
-    }
+			var code = title.inTitle.substr(ind + 5);
+			
+			if ( !this.gotToken){
+				this.gotToken = true;
+				this.token = code;
+				this.bubble("onLoginSuccess", this);
+				this.toggle();
+			}
+			return true;
+		}
+	},
 });

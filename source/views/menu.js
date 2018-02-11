@@ -85,7 +85,6 @@ enyo.kind({
             
             //{kind: "LunetubePreferences", name: "preferences"},
             //{classes: "onyx-menu-divider"},
-            // {content: "( Demo login )", style:"display: inline-block", ontap:"openFullLogin"},
             
             {name: "menuOption",classes: "menu-option-default", components: [
                 // {name:"status", content: "", classes:"menu-option-item"},
@@ -293,12 +292,12 @@ enyo.kind({
                 this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
             }else if(enyo.platform.webos < 4){ //webOS
 
-                console.log("Se envia webos");
+                //console.log("Se envia webos");
                 //this.createWebView(url);
                 //this.$.aboutContainer.hide();
                 // this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
-                this.bubble("onOpenFullLogin", this);
-                return;
+
+                this.openFullLogin();
             }else{
 
                 if(window.cordova){ //android
@@ -379,7 +378,7 @@ enyo.kind({
     },
 
     authorizationToken: function(){
-
+        this.gotToken = true;
         var postBody = {
                     code: this.$.token.getValue(),
                     client_id: myApiKey.client_id,  

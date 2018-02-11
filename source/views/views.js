@@ -33,13 +33,15 @@ enyo.kind({
 		onLoadWatchLater: "loadPlaylistById",
 		onLoadMyChannel: "loadMyChannel",
 		onOpenFullLogin: "openFullLogin",
-		onGotAutorizationToken: "gotAutorizationToken",
+		// onGotAutorizationToken: "gotAutorizationToken",
 		//events from list
 		onUpdateTime: "updateTime",
 		//events from comments
 		onSetComment: "setComment",
 		onSetReply: "setReply",
-		onLoadMoreComments: "loadMoreComments"
+		onLoadMoreComments: "loadMoreComments",
+		//events from loginPanel
+		onLoginSuccess: "loginSuccess"
 	},
 	components:[
 		{fit:true, classes:"enyo-fit", components:[
