@@ -42,12 +42,12 @@ module.exports = function(grunt) {
         },
         android: {
             command: [
-
                 'rm -r /Users/Developer/Desarrollo/movil/lune-tube/www/*',
-                'cp -r ./deploy/* /Users/Developer/Desarrollo/movil/lune-tube/www/'
-                // '(cd /Users/Developer/Desarrollo/movil/lune-tube; cordova build android)',
-                // '(cd /Users/Developer/Desarrollo/movil/lune-tube; cordova run android)'
-
+                'cp -r ./deploy/* /Users/Developer/Desarrollo/movil/lune-tube/www/',
+                '(cd /Users/Developer/Desarrollo/movil/lune-tube; cordova build android)',
+                //'(cd /Users/Developer/Desarrollo/movil/lune-tube; cordova run android)',
+                'cp -r ./playground-code/android-deploy/index.html /Users/Developer/Desarrollo/movil/lune-tube/platforms/android/assets/www',
+                'cp -r ./playground-code/android-deploy/cordova.js /Users/Developer/Desarrollo/movil/lune-tube/platforms/android/assets/www'
             ].join('&&')
         },
         default:{

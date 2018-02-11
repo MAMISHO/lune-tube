@@ -95,7 +95,7 @@ enyo.kind({
 			if ( !this.gotToken){
 				this.gotToken = true;
 				this.token = code;
-				this.bubble("onLoginSuccess", this);
+				this.bubble("onLoginSuccess", this.token);
 				this.toggle();
 			}
 			return true;

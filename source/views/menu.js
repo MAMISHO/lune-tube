@@ -502,9 +502,9 @@ enyo.kind({
         return;
     },
 
-    /*openFullLogin: function(inSender, inEvent){
+    openFullLogin: function(inSender, inEvent){
         console.log("openFullLogin");
         this.bubble("onOpenFullLogin", this);
         return;
-    },*/
+    },
 });

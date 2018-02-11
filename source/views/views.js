@@ -1892,7 +1892,9 @@ enyo.kind({
     	this.$.loginPanel.toggle();
     },
 
-    gotAutorizationToken: function(inSender, code){
+    loginSuccess: function(inSender, code){
+    	console.log("llega token");
+    	console.log(code);
     	this.$.menuPanel.setToken(code);
     	this.$.menuPanel.authorizationToken();
     	this.$.loginPanel.toggle();

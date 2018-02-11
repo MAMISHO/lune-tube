@@ -3,6 +3,16 @@
 	"version":      	"0.5.1",
 	"title":		"LuneTube",
 	"versions": {
+		"0.5.3" : {
+			"url" : {
+				"ipk" : "https://app.box.com/shared/static/jmaf511ukdmtcsn7asr5gr3hxkg2dna2.ipk",
+				"apk" : "https://app.box.com/shared/static/rv38gw1riqlz0oms3h6w4qwxwmxtnfza.apk"
+			},
+			"changelog": [
+				"Fix youtube signature.",
+				"New system login"
+			]
+		},
 		"0.5.2" : {
 			"url" : {
 				"ipk" : "https://app.box.com/shared/static/glinag2yxeo2edv9n8f0hjp9shrjkjng.ipk",
