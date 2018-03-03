@@ -27,10 +27,11 @@ enyo.kind({
     	onReciveAllPlaylist: "getMyPlaylistResults",
     	onLoadPlaylist: "loadPlaylist",
     	onHomeRequest: "homeRequest",
-    	onLoadHistory: "loadPlaylistById",
-    	onLoadFavorites: "loadPlaylistById",
-		onLoadLikes: "loadPlaylistById",
-		onLoadWatchLater: "loadPlaylistById",
+  //   	onLoadHistory: "loadPlaylistById",
+  //   	onLoadFavorites: "loadPlaylistById",
+		// onLoadLikes: "loadPlaylistById",
+		// onLoadWatchLater: "loadPlaylistById",
+		onLoadPlaylistById: "loadPlaylistById",
 		onLoadMyChannel: "loadMyChannel",
 		onOpenFullLogin: "openFullLogin",
 		// onGotAutorizationToken: "gotAutorizationToken",
@@ -997,6 +998,9 @@ enyo.kind({
 			break;
 			case "watchLater":
 			playlist_id = this._myChannel.relatedPlaylists.watchLater;
+			break;
+			case "myVideos":
+			playlist_id = this._myChannel.relatedPlaylists.uploads;
 			break;
 
 		}

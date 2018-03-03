@@ -84,11 +84,10 @@
 	text-align: center;
 }
 .menu-login-img{
-	height: 100%;
-	min-height: 90px;
-	/*background-image: url();*/
-	width: 100% !important;
-	max-width: 90px;
+	/*height: 100%;*/
+	min-height: 120px;
+	/*width: 100% !important;*/
+	max-width: 120px;
 	background-position: center;
 	border-radius: 66px;
 }
