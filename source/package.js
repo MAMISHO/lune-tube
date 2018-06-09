@@ -8,6 +8,7 @@ enyo.depends(
 	"$lib/webos-lib/",
 	"$lib/mochi/",
 	"$lib/modules/",
+	"$lib/modernizer/",
 	"style",
 	"data",
 	"views",
