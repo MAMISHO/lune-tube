@@ -27,19 +27,22 @@ enyo.kind({
     	onReciveAllPlaylist: "getMyPlaylistResults",
     	onLoadPlaylist: "loadPlaylist",
     	onHomeRequest: "homeRequest",
-    	onLoadHistory: "loadPlaylistById",
-    	onLoadFavorites: "loadPlaylistById",
-		onLoadLikes: "loadPlaylistById",
-		onLoadWatchLater: "loadPlaylistById",
+  //   	onLoadHistory: "loadPlaylistById",
+  //   	onLoadFavorites: "loadPlaylistById",
+		// onLoadLikes: "loadPlaylistById",
+		// onLoadWatchLater: "loadPlaylistById",
+		onLoadPlaylistById: "loadPlaylistById",
 		onLoadMyChannel: "loadMyChannel",
 		onOpenFullLogin: "openFullLogin",
-		onGotAutorizationToken: "gotAutorizationToken",
+		// onGotAutorizationToken: "gotAutorizationToken",
 		//events from list
 		onUpdateTime: "updateTime",
 		//events from comments
 		onSetComment: "setComment",
 		onSetReply: "setReply",
-		onLoadMoreComments: "loadMoreComments"
+		onLoadMoreComments: "loadMoreComments",
+		//events from loginPanel
+		onLoginSuccess: "loginSuccess"
 	},
 	components:[
 		{fit:true, classes:"enyo-fit", components:[
@@ -58,7 +61,7 @@ enyo.kind({
 									// {kind:"VideoList", name:"videoList"},
 								{kind: "Panels", name:"listPanels", fit:true, realtimeFit: false,draggable:false, components: [
 									// {kind:"VideoGridList", name:"videoList"},
-									{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist", onCreatePlaylist:"createPlaylist"},
+									{kind:"VideoList", name:"videoList", onAddToPlaylist: "addVideoToPlaylist", onRemoveFromPlaylist: "removeFromPlaylist", onCreatePlaylist:"createPlaylist", onSendVideoToDownload: "sendVideoToDownload"},
 									{kind:"VideoList", name:"videoListRelated", onAddToPlaylist: "addVideoToPlaylist", onCreatePlaylist:"createPlaylist"},
 									// {tag:"div", components:[
 									{layoutKind: "FittableRowsLayout", components: [
@@ -176,6 +179,7 @@ enyo.kind({
 		    onResponse : "internetGotResponse",
     		subscribe  : true
 		},
+		{name: "psDownloadService", kind: "LunaService", service: "palm://com.palm.downloadmanager/", method: "download", onSuccess: "gotDownloadStatus", onFailure: "gotDownloadFailure", subscribe: true, resubscribe: true}
 	],
 	videos:[],
 	videosRelated:[],
@@ -995,6 +999,9 @@ enyo.kind({
 			break;
 			case "watchLater":
 			playlist_id = this._myChannel.relatedPlaylists.watchLater;
+			break;
+			case "myVideos":
+			playlist_id = this._myChannel.relatedPlaylists.uploads;
 			break;
 
 		}
@@ -1890,11 +1897,53 @@ enyo.kind({
     	this.$.loginPanel.toggle();
     },
 
-    gotAutorizationToken: function(code){
+    loginSuccess: function(inSender, code){
+    	console.log("llega token");
+    	console.log(code);
     	this.$.menuPanel.setToken(code);
     	this.$.menuPanel.authorizationToken();
+    	this.$.loginPanel.toggle();
     	return true;
     },
+
+    sendVideoToDownload: function(inSender, inEvent){
+    	if(inEvent.video){ // buscamos el vídeo que está reproduciendo
+    		var video = cache.getVideo(inEvent.video)
+    	}
+
+    	if(this.$.player.$.player.sources){
+    		var inUrl = this.$.player.$.player.sources[0].src;
+    		var inMime = this.$.player.$.player.sources[0].type;
+    		this.$.downloadService.send({target: inUrl, mime: inMime});	
+    	}
+    	
+    	return true;
+    },
+
+    gotDownloadStatus: function(inSender, inResponse) {
+		var d = this.findDownload(inResponse);
+		if (d) {
+			// download manager returns the wrong mimetype
+			inResponse.mimetype = d.mimetype;
+			enyo.mixin(d, inResponse);
+			if (!this.$.downloads.showing && d.completed) {
+				var filename = d.destFile.replace(/%20/g, " ");
+				var params = enyo.json.stringify({toasterOpen:"downloads"});
+				if (d.completionStatusCode == 200) {
+					enyo.windows.addBannerMessage(filename + ' ' + $L("finished downloading"), params);
+				} else {
+					enyo.windows.addBannerMessage($L("There was a problem downloading ") + filename, params);
+				}
+			}
+			if (this.$.downloads.showing) {
+				this.$.downloads.setDownloads(this.downloads);
+			}
+		}
+	},
+
+	gotDownloadFailure: function(inSender, inResponse) {
+		this.log(inResponse);
+	}
 
 	/*windowRotated: function(inSender, inEvent){
 		console.log("se ha rotado el dispositivo");

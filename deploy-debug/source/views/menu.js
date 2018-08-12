@@ -68,9 +68,13 @@ enyo.kind({
                     {kind: "Image", src: "assets/favorites-icon.png"},
                     {content: "Favorites", style: "display: inline-block"}
                 ]},
-                {ontap: "loadLikes", classes: "menu-option-item lunetube-option-item-after-bottom", components: [
+                {ontap: "loadLikes", classes: "menu-option-item", components: [
                     {kind: "Image", src: "assets/likes-icon.png"},
                     {content: "Likes", style: "display: inline-block"}
+                ]},
+                {ontap: "loadMyVideos", classes: "menu-option-item lunetube-option-item-after-bottom", components: [
+                    {kind: "Image", src: "assets/my-videos-icon.png"},
+                    {content: "My videos", style: "display: inline-block"}
                 ]},
                 /*{ontap:"loadWatchLater", classes:"menu-option-item lunetube-option-item-after-bottom", components:[
                     {kind:"Image", src:"assets/later-icon.png"},
@@ -85,13 +89,13 @@ enyo.kind({
             
             //{kind: "LunetubePreferences", name: "preferences"},
             //{classes: "onyx-menu-divider"},
-            // {content: "( Demo login )", style:"display: inline-block", ontap:"openFullLogin"},
             
             {name: "menuOption",classes: "menu-option-default", components: [
                 // {name:"status", content: "", classes:"menu-option-item"},
-                {kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},        
+                //{kind: "onyx.Icon", name:"imageUser", src: "", style:"width:48px; height:48px", classes:"menu-login-img"},
+                {kind: "Image", name:"imageUser", src: "", classes:"menu-login-img"},
                 {ontap:"youtubeLogin", popup: "loginPopup", classes:"menu-login", components:[
-                    {name:"loginIcon",kind:"Image", src:"assets/login-icon.png"},
+                    {name:"loginIcon", kind:"Image", src:"assets/login-icon.png"},
                     {name:"loginButton", content: "Login", style:"display: inline-block"}
                 ]},
 
@@ -171,7 +175,7 @@ enyo.kind({
     },
 
     imageUserChanged: function(){
-        this.$.imageUser.setSrc(this.imageUser);
+        this.$.imageUser.setSrc(this.imageUser + "?sz=240");
     },
 
     playlistUserChanged: function(){
@@ -204,23 +208,33 @@ enyo.kind({
 
     loadHistory: function(inSender, inEvent){
 
-        this.bubble("onLoadHistory", "history");
+        //this.bubble("onLoadHistory", "history");
+        this.bubble("onLoadPlaylistById", "history");
     },
 
     loadFavorites: function(inSender, inEvent){
 
-        this.bubble("onLoadFavorites", "favorites");
+        //this.bubble("onLoadFavorites", "favorites");
+        this.bubble("onLoadPlaylistById", "favorites");
     },
 
     loadLikes: function(inSender, inEvent){
 
-        this.bubble("onLoadLikes", "likes");
+        // this.bubble("onLoadLikes", "likes");
+        this.bubble("onLoadPlaylistById", "likes");
     },
 
     loadWatchLater: function(inSender, inEvent){
 
-        this.bubble("onLoadWatchLater", "watchLater");
+        // this.bubble("onLoadWatchLater", "watchLater");
+        this.bubble("onLoadPlaylistById", "watchLater");
     },
+
+    loadMyVideos: function(inSender, inEvent){
+        this.bubble("onLoadPlaylistById", "myVideos");
+    },
+
+
     tokenChanged: function(){
         this.$.token.setValue(this.token);
         this.gotToken = true;
@@ -293,12 +307,12 @@ enyo.kind({
                 this.$.launchBrowserCall.send({"id": "org.webosports.app.browser", "params":{"target": url}});
             }else if(enyo.platform.webos < 4){ //webOS
 
-                console.log("Se envia webos");
-                // this.createWebView(url);
-                // this.$.aboutContainer.hide();
-                // // this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
-                this.bubble("onOpenFullLogin", this);
-                return;
+                //console.log("Se envia webos");
+                //this.createWebView(url);
+                //this.$.aboutContainer.hide();
+                // this.$.launchBrowserCall.send({"id": "com.palm.app.browser", "params":{"target": url}});
+
+                this.openFullLogin();
             }else{
 
                 if(window.cordova){ //android
@@ -319,7 +333,8 @@ enyo.kind({
                 }else{ //desktop
 
                     // console.log("Se abre con desktop");
-                    window.open(url, '_blank');
+                    this.openFullLogin();
+                    // window.open(url, '_blank');
                 }
             }
 
@@ -379,7 +394,7 @@ enyo.kind({
     },
 
     authorizationToken: function(){
-
+        this.gotToken = true;
         var postBody = {
                     code: this.$.token.getValue(),
                     client_id: myApiKey.client_id,  
@@ -503,9 +518,9 @@ enyo.kind({
         return;
     },
 
-    /*openFullLogin: function(inSender, inEvent){
+    openFullLogin: function(inSender, inEvent){
         console.log("openFullLogin");
         this.bubble("onOpenFullLogin", this);
         return;
-    },*/
+    },
 });

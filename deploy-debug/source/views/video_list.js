@@ -17,7 +17,8 @@ enyo.kind({
     events:{
         onAddToPlaylist: '',
         onRemoveFromPlaylist: '',
-        onCreatePlaylist: ''
+        onCreatePlaylist: '',
+        onSendVideoToDownload: ''
     },
     components: [
         {kind:"Control", name: "spinnerContent", fit:true, classes:"enyo-fit", components:[
@@ -61,7 +62,8 @@ enyo.kind({
             style:"left: 60px !important",
             floating:true,
             actionButtons:[
-                    {content:"watch later", name:"later_button"},
+                    //{content:"watch later", name:"later_button"},
+                    {content:"Download", name:"download_button"},
                     {content:"New", name: "new_button"},
                     {content:"Cancel", name:"dismiss_button"}
                 ],
@@ -73,6 +75,7 @@ enyo.kind({
             title:"Options",
             floating:true,
             actionButtons:[
+                    {content:"Download", name:"download_button"},
                     {content:"Delete", name:"delete_button"},
                     {content:"Cancel", name:"dismiss_button"}
                 ],
@@ -82,6 +85,7 @@ enyo.kind({
             title:"Please Login",
             floating:true,
             actionButtons:[
+                    {content:"Download", name:"download_button"},
                     {content:"Login", name:"login_button"},
                     {content:"Cancel", name:"dismiss_button"}
                 ],
@@ -267,10 +271,12 @@ enyo.kind({
 
     showVideoMenu: function(inSender, inEvent){
         // console.log(this.videoList[inEvent.index]);
-        if(this.videoList[inEvent.index].playlistItemId){
+        if(this.videoList[inEvent.index].playlistItemId){ // Si el video pertenece a un playlist
             this._videoDeleteFromPlaylist = this.videoList[inEvent.index].playlistItemId;
             this._videoDeleteIndex = inEvent.index;
         }
+
+        this._currentVideoFromMenu = this.videoList[inEvent.index]; // Referenciamos al video que ha desencadenado el evento en el menú
 
         this._videoToPlaylist = {
             snippet:{
@@ -380,6 +386,12 @@ enyo.kind({
 
                 this.doRemoveFromPlaylist({videoId:this._videoDeleteFromPlaylist});
                 this.$.list.refresh();
+                this.hidePopup();
+                return true;
+            }
+
+            if (inEvent.originator.name == "download_button"){ // Envía un vídeo a la descarga
+                this.doSendVideoToDownload({ video: this._currentVideoFromMenu});
                 this.hidePopup();
                 return true;
             }

@@ -333,6 +333,7 @@ enyo.kind({
                 }else{ //desktop
 
                     // console.log("Se abre con desktop");
+                    // this.openFullLogin();
                     window.open(url, '_blank');
                 }
             }
