@@ -28,8 +28,10 @@ enyo.kind({
                 {kind: "Control", name: "webViewContent", fit: true, classes: "enyo-fill",
                 style:"width: 1000px; height: 1000px;"}
             ]},*/
-            {kind: "IFrameWebView", name: "webView", style: "height: 100%", onPageTitleChanged: "pageTitleChanged"},
-            {name: "badge", kind: "mochi.Badge", background: "red", classes: "login-panel-closebutton",  content: "X", ontap: "toggle"}
+            // {kind: "IFrameWebView", name: "webView", style: "height: 100%", onPageTitleChanged: "pageTitleChanged"},
+            {name: "badge", kind: "mochi.Badge", background: "red", classes: "login-panel-closebutton",  content: "X", ontap: "toggle"},
+            {kind: "Control", name: "webViewContent", fit: true, classes: "enyo-fill", style:"width: 100%; height: 100%;"}
+            // {kind: "IFrameWebView", name: "webView", style: "height: 100%", onPageTitleChanged: "pageTitleChanged"}
 		]}
 	],
 	max: 100,
@@ -120,7 +122,20 @@ enyo.kind({
 			}
 			// {tag: "iframe", src: "http://cnn.com", classes: "enyo-fill", style: "border: none;"}
 		}*/
-		this.$.webView.setUrl(url);
+		if (enyo.platform.webos < 4){
+
+			this.$.webViewContent.destroyClientControls();
+			this.createComponent({
+				container: this.$.webViewContent,
+				kind: "IFrameWebView", name: "webView", style: "height: 100%", onPageTitleChanged: "pageTitleChanged"
+			});
+			this.$.webView.render();
+			this.$.webViewContent.show();
+			this.$.webViewContent.render();
+			this.$.webView.setUrl(url);
+			
+		}
+		
 	},
 
 	youtubeLogin: function(inSender, inEvent){

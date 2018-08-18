@@ -1908,13 +1908,13 @@ enyo.kind({
 
     sendVideoToDownload: function(inSender, inEvent){
     	if(inEvent.video){ // buscamos el vídeo que está reproduciendo
-    		var video = cache.getVideo(inEvent.video)
+    		var video = cache.getVideo(inEvent.video);
     	}
 
     	if(this.$.player.$.player.sources){
     		var inUrl = this.$.player.$.player.sources[0].src;
     		var inMime = this.$.player.$.player.sources[0].type;
-    		this.$.downloadService.send({target: inUrl, mime: inMime});	
+    		this.$.psDownloadService.send({target: inUrl, mime: inMime});	
     	}
     	
     	return true;
