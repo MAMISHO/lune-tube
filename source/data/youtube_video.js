@@ -286,7 +286,7 @@ enyo.kind({
       console.log(inResponse);
     },
 
-    youtubeDecryptLocalService: function(video_id){ //third tryç
+    /*youtubeDecryptLocalService: function(video_id){ //third tryç
       // console.log("Se envia akax 3");
       var url = "https://www.youtube.com/watch";
       var request = new enyo.Ajax({
@@ -302,6 +302,9 @@ enyo.kind({
 
       request.response(enyo.bind(this, "youtubeDecryptLocalServiceResponse"));
       request.error(enyo.bind(this, "youtubeGetBodyError"));
+
+      // Se fuerza los parámetros de cliente y app para que la llamada sea como
+      // si se tratase de un navegador de escritorio
 
       if(video_id){
         // return request.go({v:video_id});
@@ -345,7 +348,32 @@ enyo.kind({
       }else{
         console.log("YoutubeVideo -> youtubeGetBodyResponse: No hay jsonStr del body");
       }
+    },*/
+
+    youtubeDecryptLocalService: function(video_id, options){ //third tryç
+      var request = new enyo.Async();
+      console.log(request);
+      // response.go();
+      request.response(
+        ytdl.getInfo(video_id, (err, info) => {
+        if(err) throw err;
+        if(options && options.type) {
+          switch(options.type) {
+            case "audio":
+              var audio = ytdl.filterFormats(info.formats, 'audioonly');
+              console.log(audio);
+              info.formats = audio;
+            break;
+
+          }
+        }
+        
+        return this.callbackFromYT(null, info);
+        
+      }));
+      return request.go();
     },
+
 
     callbackFromYT: function(err, info){
       if(err) {

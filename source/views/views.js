@@ -1921,6 +1921,7 @@ enyo.kind({
     },
 
     gotDownloadStatus: function(inSender, inResponse) {
+    	console.log("Llega el video");
 		var d = this.findDownload(inResponse);
 		if (d) {
 			// download manager returns the wrong mimetype
