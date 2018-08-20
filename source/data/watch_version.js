@@ -42,6 +42,7 @@ enyo.kind({
 			url: "appinfo.json",
 			contentType: "application/json",
 			dataType: "json",
+			mimeType: "application/json",
 			cacheBust: true,
 			callbackName: null,
 			overrideCallback: null,

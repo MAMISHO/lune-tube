@@ -310,6 +310,9 @@ enyo.kind({
 
 			Se ha hecho uso de browserify para llevar el paquete
 			al front-end
+			ejecutar 
+			browserify when.js --standalone when --outfile when-global.js
+			y añadir when-global.js en el package.json de las librerías
 
 			implementación con ENYO:
 					http://codebrocken.blogspot.com.es/2012/01/implementing-promises-with-enyo.html
