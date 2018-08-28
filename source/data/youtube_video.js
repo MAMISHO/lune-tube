@@ -12,8 +12,9 @@ enyo.kind({
         
     ],
     // numberOfTries:0,
-    video_id_try:"",
-    _videoId:"",
+    video_id_try: "",
+    _videoId: "",
+    _options: undefined,
     create:function() {
         this.inherited(arguments);
     },
@@ -354,8 +355,9 @@ enyo.kind({
       var request = new enyo.Async();
       console.log(request);
       // response.go();
+      this._options = options
       request.response(
-        ytdl.getInfo(video_id, (err, info) => {
+        /*ytdl.getInfo(video_id, function (err, info) {
         if(err) throw err;
         if(options && options.type) {
           switch(options.type) {
@@ -368,10 +370,40 @@ enyo.kind({
           }
         }
         
-        return this.callbackFromYT(null, info);
+        return enyo.bind(this, this.callbackFromYT(null, info))
         
-      }));
+        //return this.callbackFromYT(null, info);
+        
+        })*/
+        ytdl.getInfo(video_id, enyo.bind(this, "getInfoHandler"))
+        // ytdl.getInfo(video_id, enyo.bind(this, this.getInfoHandler(options)))
+      );
       return request.go();
+    },
+
+    getInfoHandler: function(err, info) {
+
+      // console.log("getInfoHandler -> vars");
+      // console.log(this);
+      // console.log(err);
+      // console.log(info);
+      // console.log(options);
+      var options = this._options;
+      if(err) throw err;
+        if(options && options.type) {
+          switch(options.type) {
+            case "audio":
+              var audio = ytdl.filterFormats(info.formats, 'audioonly');
+              console.log(audio);
+              info.formats = audio;
+            break;
+
+          }
+        }
+        
+        // return enyo.bind(this, this.callbackFromYT(null, info))
+        
+        return this.callbackFromYT(null, info);
     },
 
 

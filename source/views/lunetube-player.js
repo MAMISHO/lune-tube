@@ -783,6 +783,7 @@
 				/*webos 2.2.4 problema al crear kind Audio*/
 				if (this._webosPhone) {
 					this.$.playAudio.send({"id": "com.palm.app.streamingmusicplayer", "params":{"target": source.src}});
+					// this.$.playAudio.send({"id": "com.palm.app.streamingmusicplayer", "params":{"target": source.src, "mimeType": "audio/mp4"});
 					return true;
 				}
 				
