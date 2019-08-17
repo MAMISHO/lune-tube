@@ -1,6 +1,6 @@
 // Run paml package when app is deployed
 module.exports = function(grunt) {
-    
+
     var appinfo = require('../../appinfo.json'); //cargamos el fichero para leer la versión
     grunt.config.set('shell', {
         luneos: {
@@ -11,7 +11,7 @@ module.exports = function(grunt) {
         },
         webos: {
             command: [
-                
+
                 'palm-package deploy',
                 'palm-install com.emsoft.lunetube_' + appinfo.version + '_all.ipk',
                 'palm-launch com.emsoft.lunetube',
@@ -40,7 +40,7 @@ module.exports = function(grunt) {
                 'palm-log -f com.emsoft.lunetube'
             ].join('&&')
         },
-        android: {
+        android:  {
             command: [
                 'rm -r /Users/Developer/Desarrollo/movil/lune-tube/www/*',
                 'cp -r ./deploy/* /Users/Developer/Desarrollo/movil/lune-tube/www/',
@@ -50,10 +50,10 @@ module.exports = function(grunt) {
                 'cp -r ./playground-code/android-deploy/cordova.js /Users/Developer/Desarrollo/movil/lune-tube/platforms/android/assets/www'
             ].join('&&')
         },
-        default:{
+        default: {
             command: 'sh ./tools/deploy.sh'
         }
     });
 
     grunt.loadNpmTasks('grunt-shell');
-}; 
+};

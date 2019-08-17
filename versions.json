@@ -1,84 +1,94 @@
 {
-	"id":			"com.emsoft.lunetube",
-	"version":      "0.5.3",
-	"title":		"LuneTube",
-	"versions": {
-		"0.5.3" : {
-			"url" : {
-				"ipk" : "https://app.box.com/shared/static/jmaf511ukdmtcsn7asr5gr3hxkg2dna2.ipk",
-				"apk" : "https://app.box.com/shared/static/rv38gw1riqlz0oms3h6w4qwxwmxtnfza.apk"
-			},
-			"changelog": [
-				"Fix youtube signature.",
-				"New system login"
-			]
-		},
-		"0.5.2" : {
-			"url" : {
-				"ipk" : "https://app.box.com/shared/static/glinag2yxeo2edv9n8f0hjp9shrjkjng.ipk",
-				"apk" : "https://app.box.com/shared/static/b915i5eqsf2ywlg5haaqs9nm1pjkoyzd.apk"
-			},
-			"changelog": [
-				"Improve Login for Android and initial change for webOS."
-			]
-		},
-		"0.5.1" : {
-			"url" : {
-				"ipk" : "https://app.box.com/shared/static/og2nogtueoc6ty9wu2axvbbc1rcmv5au.ipk",
-				"apk" : "https://app.box.com/shared/static/aklv3kzq1temc427l5nu8r4cb6aztvr6.apk"
-			},
-			"changelog": [
-				"Fixed bug that causes the player does not start the video.",
-				"Improve Login"
-			]
-		},
-		"0.5.0" : {
-			"url" : {
-				"ipk" : "https://app.box.com/shared/static/qmie7y6118m4vox0f7mw2shrx00k78kw.ipk",
-				"apk" : "https://app.box.com/shared/static/linu8cd6qgmaly6x456yre8a6gbf0kk1.apk"
-			},
-			"changelog": [
-				"Google Login within Lunetube (webos)",
-				"Added feature to play only audio",
-				"Improve Play audio on webOS ",
-				"Play audio on webOS background | LuneOS is supported already",
-				"Added feature to set playback speed",
-				"Added feature to repeat audio/vide",
-				"Added feature to sleep",
-				"Minor bug fixes"
-			]
-		},
-		"0.4.1" : {
-			"url" : {
-				"ipk" : "https://app.box.com/shared/static/qmie7y6118m4vox0f7mw2shrx00k78kw.ipk",
-				"apk" : "https://app.box.com/shared/static/linu8cd6qgmaly6x456yre8a6gbf0kk1.apk"
-			},
-			"changelog": [
-				"Play automatically when paste youtube link (Just Type webos)",
-				"Bug Fixed on menu paste option for text on webos devices",
-				"Improve video playing on video restricted",
-				"Search updates automatically",
-				"Other minors bug fixes"
-			]
-		},
-		"0.4.0" : {
-			"url" : {
-				"ipk" : "https://app.box.com/shared/static/2vojnffubfsi9hajxsqpdfj6xs3g1zzf.ipk",
-				"apk" : "https://app.box.com/shared/static/c20nnkdpdc726m0f645lj3urn4r1tntp.apk"
-			},
-			"changelog": [
-				"Add support for bluetooth headsets",
-				"Bug fixes"
-			]
-		},
-		"0.3.0" : {
-			"url": {
-				"ipk" : "https://app.box.com/shared/static/u776gx862dx8od3x5g4mfyuxhd6kv5d1.ipk",
-				"apk" : "https://app.box.com/shared/static/enbzeqhcw97fulx13oliph1yvz8t5jp9.apk"
-			},
-			"changelog": [
-				"Fix range touch in var"
-			]
-		}
-	}
+    "id": "com.emsoft.lunetube",
+    "version": "0.5.4",
+    "title": "LuneTube",
+    "versions": {
+        "0.5.4": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/jmaf511ukdmtcsn7asr5gr3hxkg2dna2.ipk",
+                "apk": "https://app.box.com/shared/static/rv38gw1riqlz0oms3h6w4qwxwmxtnfza.apk"
+            },
+            "changelog": [
+                "Fix youtube signature.",
+                "New system login"
+            ]
+        },
+        "0.5.3": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/jmaf511ukdmtcsn7asr5gr3hxkg2dna2.ipk",
+                "apk": "https://app.box.com/shared/static/rv38gw1riqlz0oms3h6w4qwxwmxtnfza.apk"
+            },
+            "changelog": [
+                "Fix youtube signature.",
+                "New system login"
+            ]
+        },
+        "0.5.2": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/glinag2yxeo2edv9n8f0hjp9shrjkjng.ipk",
+                "apk": "https://app.box.com/shared/static/b915i5eqsf2ywlg5haaqs9nm1pjkoyzd.apk"
+            },
+            "changelog": [
+                "Improve Login for Android and initial change for webOS."
+            ]
+        },
+        "0.5.1": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/og2nogtueoc6ty9wu2axvbbc1rcmv5au.ipk",
+                "apk": "https://app.box.com/shared/static/aklv3kzq1temc427l5nu8r4cb6aztvr6.apk"
+            },
+            "changelog": [
+                "Fixed bug that causes the player does not start the video.",
+                "Improve Login"
+            ]
+        },
+        "0.5.0": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/qmie7y6118m4vox0f7mw2shrx00k78kw.ipk",
+                "apk": "https://app.box.com/shared/static/linu8cd6qgmaly6x456yre8a6gbf0kk1.apk"
+            },
+            "changelog": [
+                "Google Login within Lunetube (webos)",
+                "Added feature to play only audio",
+                "Improve Play audio on webOS ",
+                "Play audio on webOS background | LuneOS is supported already",
+                "Added feature to set playback speed",
+                "Added feature to repeat audio/vide",
+                "Added feature to sleep",
+                "Minor bug fixes"
+            ]
+        },
+        "0.4.1": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/qmie7y6118m4vox0f7mw2shrx00k78kw.ipk",
+                "apk": "https://app.box.com/shared/static/linu8cd6qgmaly6x456yre8a6gbf0kk1.apk"
+            },
+            "changelog": [
+                "Play automatically when paste youtube link (Just Type webos)",
+                "Bug Fixed on menu paste option for text on webos devices",
+                "Improve video playing on video restricted",
+                "Search updates automatically",
+                "Other minors bug fixes"
+            ]
+        },
+        "0.4.0": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/2vojnffubfsi9hajxsqpdfj6xs3g1zzf.ipk",
+                "apk": "https://app.box.com/shared/static/c20nnkdpdc726m0f645lj3urn4r1tntp.apk"
+            },
+            "changelog": [
+                "Add support for bluetooth headsets",
+                "Bug fixes"
+            ]
+        },
+        "0.3.0": {
+            "url": {
+                "ipk": "https://app.box.com/shared/static/u776gx862dx8od3x5g4mfyuxhd6kv5d1.ipk",
+                "apk": "https://app.box.com/shared/static/enbzeqhcw97fulx13oliph1yvz8t5jp9.apk"
+            },
+            "changelog": [
+                "Fix range touch in var"
+            ]
+        }
+    }
 }

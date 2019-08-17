@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "target": "ES5"
+    },
+    "include": [
+        "/source/views/views.js",
+        "/source/data/youtube_video.js"
+    ],
+    "exclude": [
+        "playground-code",
+        "build",
+        // "enyo",
+        // "lib",
+        "task",
+        "tools",
+        "node_modules",
+        "**/node_modules/*"
+    ]
+}

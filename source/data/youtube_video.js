@@ -466,17 +466,17 @@ enyo.kind({
         for (var i = 0; i < formats.length; i++) {
             var v = {
                 resolution: "SD-3GP",
-                duration: info.length_seconds,
+                duration: info.length_seconds ? info.length_seconds : info.player_response.videoDetails.lengthSeconds,
                 poster: info.thumbnail_url,
                 status: "ok",
-                title: info.title,
+                title: info.title ? info.title : info.player_response.videoDetails.title,
                 url: formats[i].url,
                 descriptionHtml: ""
             };
 
             if (info.description) {
                 // v.descriptionHtml = info.description.join();
-                v.descriptionHtml = info.description[0];
+                v.descriptionHtml = info.description;
             }
 
             /*switch(formats[i].itag){
