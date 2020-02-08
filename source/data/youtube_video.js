@@ -441,11 +441,40 @@ enyo.kind({
             '46', // 1080p HD-WebM
             '38', // 3072p HD-MP4
         ];
+        var formats_compatibles_number = [
+            139, // Audio
+            140, // Audio mp4 128 bit aac
+            141,
+            171, // Audio webM 128 bit vorbis
+            249, // Audio webM 50 bit opus
+            250, // Audio webM 70 bit opus
+            251, // Audio webM 160 bit opus 
+            // '17',   // 144p 3GP
+            160, // 144p MP4
+            264, // 144p DASH-MP4
+            36, // 240p 3GP,
+            133, // 240p DASH-MP4
+            43, // 360p WebM
+            18, // 360p HD-H.264 (MP4)
+            134, // 360p HD-H.264 (DASH-MP4)
+            44, // 480p WebM
+            135, // 480p HD-DASH-MP4
+            45, // 720p WebM
+            22, // 720p HD-MP4
+            // '136',  // 720p HD-DASH-MP4
+            37, // 1080p HD-MP4
+            46, // 1080p HD-WebM
+            38, // 3072p HD-MP4
+        ];
 
         //filtramos los formatos permitidos
         var formats = info.formats.filter(function findFormatCompatible(v) {
             if (v.itag) {
                 if (formats_compatibles.indexOf(v.itag) > -1) {
+                    return v;
+                }
+                if (formats_compatibles_number.indexOf(v.itag) > -1) {
+                    v.itag = v.itag.toString();
                     return v;
                 }
             }
