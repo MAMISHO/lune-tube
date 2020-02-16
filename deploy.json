@@ -17,6 +17,7 @@
 		"./lib/enyo-webos",
 		"./lib/enyo-ilib",
 		"./lib/webos-lib",
-		"./lib/mochi"
+		"./lib/mochi",
+		"./lib/modules"
 	]
 }

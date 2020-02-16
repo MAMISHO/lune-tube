@@ -376,7 +376,7 @@ enyo.kind({
             //return this.callbackFromYT(null, info);
         
             })*/
-            ytdl.getInfo(video_id, enyo.bind(this, "getInfoHandler"))
+            ytdl.getFullInfo(video_id, enyo.bind(this, "getInfoHandler"))
             // ytdl.getInfo(video_id, enyo.bind(this, this.getInfoHandler(options)))
         );
         return request.go();
@@ -486,9 +486,9 @@ enyo.kind({
         console.log("Solo formatos permitidos");
         console.log(formats);
         formats.sort(function(a, b) {
-            var x = a.itag ? formats.indexOf(a.itag) : -1;
-            var y = b.itag ? formats.indexOf(b.itag) : -1;
-            return y - x;
+            var x = a.itag ? Number(a.itag) : -1;
+            var y = b.itag ? Number(b.itag) : -1;
+            return x - y;
         });
         var videos = [];
 
@@ -781,6 +781,19 @@ enyo.kind({
 
                 if (!item.quality_label) {
                     q.quality_label = '360p';
+                }
+
+                if (item.resolution) {
+                    q.resolution = item.resolution;
+                }
+                break;
+            case '135':
+                if (item.quality) {
+                    q.resolution = '480p';
+                }
+
+                if (!item.quality_label) {
+                    q.quality_label = '480p';
                 }
 
                 if (item.resolution) {

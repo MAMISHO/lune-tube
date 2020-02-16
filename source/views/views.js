@@ -594,7 +594,17 @@ enyo.kind({
 		try {
           videosAUX = JSON.parse(this.videos);
         } catch (err) {
-          videosAUX = JSON.parse(JSON.stringify(this.videos)); 
+		  var seen = [];
+		  videosAUX = JSON.parse(JSON.stringify(this.videos, function(key, val) {
+			if (val != null && typeof val == "object") {
+				 if (seen.indexOf(val) >= 0) {
+					 return;
+				 }
+				 seen.push(val);
+			 }
+			 return val;
+			}
+		  ));
         }
 		this.$.videoList.setVideoList(videosAUX);
 	},
