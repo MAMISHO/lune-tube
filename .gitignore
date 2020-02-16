@@ -1,5 +1,9 @@
 deploy/
 build/
+cordova/www
+cordova/platforms
+cordova/node_modules
+cordova/plugins
 **/**.DS_Store
 com.emsoft.lunetube_0.5.3_all.ipk
 
